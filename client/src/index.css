@@ -3,6 +3,9 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Google Fonts - Merriweather (serif) and Open Sans (sans-serif) */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600;700&display=swap');
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -43,39 +46,50 @@
 }
 
 :root {
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
-  --sidebar-primary: var(--color-blue-600);
-  --sidebar-primary-foreground: var(--color-blue-50);
-  --chart-1: var(--color-blue-300);
-  --chart-2: var(--color-blue-500);
-  --chart-3: var(--color-blue-600);
-  --chart-4: var(--color-blue-700);
-  --chart-5: var(--color-blue-800);
-  --radius: 0.65rem;
+  /* Right at Home Brand Colors */
+  --color-teal: #007e8a;
+  --color-teal-dark: #1b7a7a;
+  --color-navy: #2c3e50;
+  --color-orange: #ff8c42;
+  --color-white: #ffffff;
+  --color-gray-dark: #212529;
+  --color-gray-light: #f5f5f5;
+  --color-gray-text: #6c757d;
+  
+  /* Tailwind Theme Colors */
+  --primary: var(--color-teal);
+  --primary-foreground: var(--color-white);
+  --sidebar-primary: var(--color-teal);
+  --sidebar-primary-foreground: var(--color-white);
+  --chart-1: var(--color-teal);
+  --chart-2: var(--color-teal-dark);
+  --chart-3: var(--color-orange);
+  --chart-4: var(--color-navy);
+  --chart-5: var(--color-gray-dark);
+  --radius: 0;
   --background: oklch(1 0 0);
-  --foreground: oklch(0.235 0.015 65);
+  --foreground: oklch(0.15 0.01 65);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.235 0.015 65);
+  --card-foreground: oklch(0.15 0.01 65);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.235 0.015 65);
+  --popover-foreground: oklch(0.15 0.01 65);
   --secondary: oklch(0.98 0.001 286.375);
   --secondary-foreground: oklch(0.4 0.015 65);
   --muted: oklch(0.967 0.001 286.375);
   --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.141 0.005 285.823);
+  --accent: var(--color-orange);
+  --accent-foreground: var(--color-white);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0 0);
   --border: oklch(0.92 0.004 286.32);
   --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.623 0.214 259.815);
+  --ring: var(--color-teal);
   --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.235 0.015 65);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.141 0.005 285.823);
+  --sidebar-foreground: oklch(0.15 0.01 65);
+  --sidebar-accent: var(--color-teal);
+  --sidebar-accent-foreground: var(--color-white);
   --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.623 0.214 259.815);
+  --sidebar-ring: var(--color-teal);
 }
 
 .dark {
@@ -118,7 +132,19 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif font-normal;
+  }
+  h1 {
+    @apply text-5xl md:text-6xl;
+  }
+  h2 {
+    @apply text-4xl md:text-5xl;
+  }
+  h3 {
+    @apply text-2xl md:text-3xl;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -130,6 +156,31 @@
   input[type="checkbox"]:not(:disabled),
   input[type="radio"]:not(:disabled) {
     @apply cursor-pointer;
+  }
+  
+  /* Right at Home Typography */
+  body {
+    @apply font-sans text-base leading-relaxed;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif font-normal leading-tight;
+  }
+  
+  /* Button Styles */
+  button, [role="button"] {
+    @apply font-sans font-semibold transition-colors duration-200;
+  }
+  
+  /* Link Styles */
+  a {
+    @apply font-bold hover:underline;
+    color: var(--color-teal);
+  }
+  
+  /* Form Elements */
+  input, textarea, select {
+    @apply font-sans;
   }
 }
 
@@ -158,6 +209,44 @@
   .flex {
     min-height: 0;
     min-width: 0;
+  }
+  
+  /* Typography utilities */
+  .font-serif {
+    font-family: 'Merriweather', serif;
+  }
+  
+  .font-sans {
+    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+  
+  /* Color utilities for Right at Home brand */
+  .text-teal {
+    color: var(--color-teal) !important;
+  }
+  
+  .bg-teal {
+    background-color: var(--color-teal) !important;
+  }
+  
+  .text-orange {
+    color: var(--color-orange) !important;
+  }
+  
+  .bg-orange {
+    background-color: var(--color-orange) !important;
+  }
+  
+  .text-navy {
+    color: var(--color-navy) !important;
+  }
+  
+  .bg-navy {
+    background-color: var(--color-navy) !important;
+  }
+  
+  .border-teal {
+    border-color: var(--color-teal) !important;
   }
 
   @media (min-width: 640px) {
