@@ -2,13 +2,60 @@ import express from "express";
 import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
+import { defaultSiteContent, type SiteContent } from "../shared/cms";
+import { mkdir, readFile, writeFile } from "fs/promises";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const dataDir = path.resolve(__dirname, "data");
+const cmsFile = path.join(dataDir, "cms.json");
+
+async function ensureCmsFile() {
+  await mkdir(dataDir, { recursive: true });
+
+  try {
+    await readFile(cmsFile, "utf-8");
+  } catch {
+    await writeFile(cmsFile, JSON.stringify(defaultSiteContent, null, 2));
+  }
+}
+
+async function readCmsContent(): Promise<SiteContent> {
+  try {
+    const raw = await readFile(cmsFile, "utf-8");
+    return { ...defaultSiteContent, ...JSON.parse(raw) };
+  } catch {
+    return defaultSiteContent;
+  }
+}
+
+async function saveCmsContent(content: SiteContent) {
+  await writeFile(cmsFile, JSON.stringify(content, null, 2));
+}
 
 async function startServer() {
   const app = express();
   const server = createServer(app);
+
+  await ensureCmsFile();
+
+  app.use(express.json({ limit: "1mb" }));
+
+  app.get("/api/cms", async (_req, res) => {
+    const content = await readCmsContent();
+    res.json(content);
+  });
+
+  app.put("/api/cms", async (req, res) => {
+    const nextContent = req.body as SiteContent;
+
+    if (!nextContent || typeof nextContent !== "object") {
+      return res.status(400).json({ error: "Invalid CMS payload." });
+    }
+
+    await saveCmsContent({ ...defaultSiteContent, ...nextContent });
+    return res.status(204).send();
+  });
 
   // Serve static files from dist/public in production
   const staticPath =
