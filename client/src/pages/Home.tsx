@@ -144,7 +144,7 @@ export default function Home() {
                 <h3 className="text-2xl font-serif mb-4 text-navy group-hover:text-teal transition-colors">{service.title}</h3>
                 <p className="text-gray-600 font-sans text-sm mb-8 flex-grow leading-relaxed">{service.description}</p>
                   <Link 
-                  href={`/services/${service.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}")}`} 
+                  href={`/services/${service.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} 
                   className="font-bold text-sm uppercase tracking-widest text-teal hover:underline no-underline inline-flex items-center gap-2"
                 >
                   Learn more <ChevronRight className="w-4 h-4" />
