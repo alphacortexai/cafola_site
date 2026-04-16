@@ -127,6 +127,21 @@ export const defaultSiteContent: SiteContent = {
         { title: "Home Visits", description: "Planned or full-time (24/7) care in the comfort of our client's own homes." }
       ]
     },
+    {
+      title: "Our Story",
+      description: "Learn how CAFOLA grew from bedside and home nursing into trusted recovery homes delivering continuity of care.",
+      icon: "📖",
+      longDescription: "CAFOLA is a recovery care center /residential care home providing continuity of professional nursing care to individuals who no longer need hospital admission.",
+      details: [
+        { title: "Experience", description: "With 10 years of experience providing bedside and home nursing care services, we now operate recovery center and residential care offering safe and premium living with hospital-level 24/7 nursing support to our residents." },
+        { title: "Why Families Choose CAFOLA", description: "There is nothing more comforting than knowing that your loved one or relative is in safe hands. We know that some medical conditions need extended care, the reason CAFOLA is here to ensure continuity of care. This significantly reduce hospital overstay, improve psychological comfort and enhance our resident's independence. This help family to find time for other activities." },
+        { title: "Scope of Service", description: "Whether your loved one need basic or skilled, short- or long-term care, CAFOLA is the right fit for you. We personalize every care and support plan in collaborations with your physician and hospital to help you live the life you deserve." },
+        { title: "Our Staff", description: "Our staff are not only qualified but are also passionate, dependable and trustworthy individuals who respect privacy, personal dignity and maintain confidentiality with professionalism." },
+        { title: "Culture & Family Connections", description: "As our principal has always been, maintaining culture and family connections, we design your routines around your choices so you can stay connected to the people and places you love. Our resident's choice to have a loved one or member of the family to stay around is welcomed." },
+        { title: "Best-Fit Matching", description: "In the strive to improve comfort, we pair our residents with the most fit staff to serve the best. Talk to us if you need a Hindi, Chinese, Arabic or Swahili speaker." },
+        { title: "Locations", description: "CAFOLA operates residential care homes / recovery centers in three locations: Off Mawanda road, Kololo and Bukoto." }
+      ]
+    },
   ],
   storyHeading: "Our Story",
   storyParagraphs: [
