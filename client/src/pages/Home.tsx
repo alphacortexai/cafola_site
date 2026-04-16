@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Star, Phone, MapPin, CheckCircle2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star, Phone, MapPin, CheckCircle2, Award } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { defaultSiteContent, type SiteContent } from "@shared/cms";
 import { Link } from "wouter";
@@ -75,9 +75,14 @@ export default function Home() {
           </div>
 
           <nav className="hidden lg:flex gap-8 items-center">
-            {cms.navItems.map((item) => (
-              <a key={item} href={item === "Services" ? "#services" : "#"} className="text-gray-700 font-sans font-bold hover:text-teal no-underline text-sm uppercase tracking-wide">{item}</a>
-            ))}
+            {cms.navItems.map((item) => {
+              let href = "#";
+              if (item === "Services") href = "#services";
+              if (item === "About Us") href = "/about";
+              return (
+                <a key={item} href={href} className="text-gray-700 font-sans font-bold hover:text-teal no-underline text-sm uppercase tracking-wide">{item}</a>
+              );
+            })}
           </nav>
 
           <div className="flex items-center gap-4 md:gap-8">
@@ -138,14 +143,42 @@ export default function Home() {
                 <div className="text-5xl mb-6 group-hover:scale-110 transition-transform duration-300">{service.icon}</div>
                 <h3 className="text-2xl font-serif mb-4 text-navy group-hover:text-teal transition-colors">{service.title}</h3>
                 <p className="text-gray-600 font-sans text-sm mb-8 flex-grow leading-relaxed">{service.description}</p>
-                <Link 
-                  href={`/services/${service.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} 
+                  <Link 
+                  href={`/services/${service.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}")}`} 
                   className="font-bold text-sm uppercase tracking-widest text-teal hover:underline no-underline inline-flex items-center gap-2"
                 >
                   Learn more <ChevronRight className="w-4 h-4" />
                 </Link>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* About Us Card Section */}
+      <section className="py-20 md:py-32 bg-white border-t border-gray-100">
+        <div className="container">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div className="order-2 lg:order-1">
+              <span className="text-orange text-xs font-bold uppercase tracking-widest">About CAFOLA</span>
+              <h2 className="text-4xl md:text-5xl font-serif mb-6 text-navy mt-2">Professional Care with a Personal Touch</h2>
+              <p className="text-gray-700 font-sans text-lg leading-relaxed mb-6">
+                {cms.aboutUs.headline}
+              </p>
+              <p className="text-gray-600 font-sans text-base leading-relaxed mb-8">
+                {cms.aboutUs.description}
+              </p>
+              <Link href="/about" className="inline-block border-2 border-teal text-teal px-10 py-4 font-bold uppercase tracking-widest hover:bg-teal hover:text-white transition-all duration-300 no-underline">
+                Learn More About Us
+              </Link>
+            </div>
+            <div className="order-1 lg:order-2">
+              <div className="bg-gradient-to-br from-teal/20 to-navy/20 p-12 rounded-none aspect-square flex flex-col items-center justify-center text-center">
+                <Award className="w-16 h-16 text-teal mb-6" />
+                <h3 className="text-3xl font-serif text-navy mb-4">10+ Years</h3>
+                <p className="text-gray-700 font-sans text-lg">of Professional Nursing Care Experience</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>

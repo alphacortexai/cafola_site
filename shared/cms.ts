@@ -24,6 +24,17 @@ export type Article = {
   featured?: boolean;
 };
 
+export type AboutUsContent = {
+  headline: string;
+  description: string;
+  experience: string;
+  scopeOfService: string;
+  staffDescription: string;
+  cultureAndFamily: string;
+  staffMatching: string;
+  locations: string[];
+};
+
 export type SiteContent = {
   brandName: string;
   tagline: string;
@@ -39,6 +50,7 @@ export type SiteContent = {
   storyParagraphs: string[];
   caregiversHeading: string;
   caregiversCopy: string[];
+  aboutUs: AboutUsContent;
   resourcesHeading: string;
   articles: Article[];
   newsletterHeading: string;
@@ -127,6 +139,16 @@ export const defaultSiteContent: SiteContent = {
     "CAFOLA caregivers are selected for compassion, trained for excellence, and matched to each client's needs.",
     "If you're driven by purpose and want a meaningful career in home care, we'd love to meet you.",
   ],
+  aboutUs: {
+    headline: "CAFOLA is a recovery care center /residential care home providing continuity of professional nursing care to individuals who no longer need hospital admission.",
+    description: "There is nothing more comforting than knowing that your loved one or relative is in safe hands. We know that some medical conditions need extended care, the reason CAFOLA is here to ensure continuity of care. This significantly reduce hospital overstay, improve psychological comfort and enhance our resident's independence. This help family to find time for other activities.",
+    experience: "With 10 years of experience providing bedside and home nursing care services, we now operate recovery center and residential care offering safe and premium living with hospital-level 24/7 nursing support to our residents.",
+    scopeOfService: "Whether your loved one need basic or skilled, short- or long-term care, CAFOLA is the right fit for you. We personalize every care and support plan in collaborations with your physician and hospital to help you live the life you deserve.",
+    staffDescription: "Our staff are not only qualified but are also passionate, dependable and trustworthy individuals who respect privacy, personal dignity and maintain confidentiality with professionalism.",
+    cultureAndFamily: "As our principal has always been, maintaining culture and family connections, we design your routines around your choices so you can stay connected to the people and places you love. Our resident's choice to have a loved one or member of the family to stay around is welcomed.",
+    staffMatching: "In the strive to improve comfort, we pair our residents with the most fit staff to serve the best. Talk to us if you need a Hindi, Chinese, Arabic or Swahili speaker.",
+    locations: ["Off Mawanda road, Kololo", "Bukoto"]
+  },
   resourcesHeading: "Latest Resources for Families",
   articles: [
     {
