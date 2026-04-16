@@ -139,7 +139,7 @@ export default function Home() {
                 <h3 className="text-2xl font-serif mb-4 text-navy group-hover:text-teal transition-colors">{service.title}</h3>
                 <p className="text-gray-600 font-sans text-sm mb-8 flex-grow leading-relaxed">{service.description}</p>
                 <Link 
-                  href={`/services/${service.title.toLowerCase().replace(/\s+/g, "-")}`} 
+                  href={`/services/${service.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} 
                   className="font-bold text-sm uppercase tracking-widest text-teal hover:underline no-underline inline-flex items-center gap-2"
                 >
                   Learn more <ChevronRight className="w-4 h-4" />
@@ -359,7 +359,7 @@ export default function Home() {
               <h4 className="text-xs uppercase tracking-widest font-bold mb-8 text-gray-500">Our Services</h4>
               <div className="space-y-4">
                 {cms.services.map((s) => (
-                  <Link key={s.title} href={`/services/${s.title.toLowerCase().replace(/\s+/g, "-")}`} className="block text-gray-400 hover:text-white no-underline text-sm transition-colors">{s.title}</Link>
+                  <Link key={s.title} href={`/services/${s.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} className="block text-gray-400 hover:text-white no-underline text-sm transition-colors">{s.title}</Link>
                 ))}
               </div>
             </div>

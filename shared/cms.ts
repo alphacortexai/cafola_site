@@ -5,10 +5,17 @@ export type Testimonial = {
   location: string;
 };
 
+export type ServiceDetailItem = {
+  title: string;
+  description: string;
+};
+
 export type Service = {
   title: string;
   description: string;
   icon: string;
+  longDescription: string;
+  details?: ServiceDetailItem[];
 };
 
 export type Article = {
@@ -50,27 +57,63 @@ export const defaultSiteContent: SiteContent = {
   heroSubheading: "Personalized care that helps families thrive at home.",
   servicesHeading: "What CAFOLA Can Do for You",
   servicesIntro:
-    "From companionship to specialized support, our care team adapts to each family and each stage of life.",
+    "From post-hospital recovery to specialized long-term support, our care team provides professional nursing and compassionate assistance.",
   services: [
     {
-      title: "Companion Care",
-      description: "Friendly visits, meal prep, transportation, and everyday support to reduce isolation.",
-      icon: "🏠",
+      title: "Post-Hospital Recovery",
+      description: "Skilled nursing care tailored to support residents following acute hospital admission, ensuring continuity of care and preventing re-admission.",
+      icon: "🏥",
+      longDescription: "Many patients are discharged from hospitals but still need skilled nursing care. Our services are tailored to support residents in our recovery center / residential care centers following acute hospital admission. CAFOLA work to ensure continuity of care structured to facilitate complication prevention, avoid re-admission and complete healing.",
+      details: [
+        { title: "Vital Signs Monitoring", description: "Closely observing and managing blood pressure, blood oxygen, respiratory rate, temperatures and heart rate." },
+        { title: "Wound Care", description: "Expert management of wounds and sores, including professional cleaning and dressing." },
+        { title: "Medication Management", description: "Helping and guiding residents in the administration of their prescribed medicines." },
+        { title: "24/7 Nursing Care", description: "Qualified nurses providing round-the-clock support including pressure point care, feeding (NG tube), and hygiene." },
+        { title: "Catheter and Stoma Care", description: "Daily cleaning, bag changes, and monitoring for infections or complications." },
+        { title: "Emotional Support", description: "Companionship and comfort for residents and families through the journey of distress." },
+        { title: "GP Visits", description: "In-house general practitioner visits to observe and monitor health conditions." }
+      ]
     },
     {
-      title: "Personal Care",
-      description: "Respectful help with hygiene, dressing, mobility, and routines that preserve dignity.",
-      icon: "👤",
+      title: "Stroke Recovery & Rehab",
+      description: "One-on-one professional nursing care and personalized rehabilitation plans for residents recovering from stroke in a comfortable environment.",
+      icon: "🧠",
+      longDescription: "When a serious or chronic health issue affects someone you love, it seems overwhelming. Fortunately we are here to provide one on one professional nursing care and attention while outside the hospital, in a comfortable recovery center. We personalize care plan for our residents recovering from stroke.",
+      details: [
+        { title: "Therapy & Rehab", description: "Speech and language therapy, mobility training, and occupational therapy." },
+        { title: "Specialized Care", description: "Feeding (Oral/NG), hygiene, grooming, and toileting/bowl programs." },
+        { title: "Clinical Support", description: "Suction, pressure sore management, and medication administration." },
+        { title: "Physiotherapy", description: "Professional physiotherapy based on need and physician's recommendation." }
+      ]
     },
     {
-      title: "Nursing Services",
-      description: "Skilled in-home care coordination, medication support, and health monitoring.",
-      icon: "⚕️",
+      title: "Long-Term Care",
+      description: "Round-the-clock support for daily living, health monitoring, and professional nursing for chronic conditions like Diabetes, Hypertension, and Cancer.",
+      icon: "⏳",
+      longDescription: "CAFOLA is here to work with family in providing round the clock support for individuals needing assistance with daily living activities, health monitoring, psychological comfort, and professional nursing care.",
+      details: [
+        { title: "Diabetes Management", description: "Blood glucose monitoring, medication timing, diabetic diet, and neuropathy prevention." },
+        { title: "Hypertension Care", description: "Blood pressure monitoring, medication adherence, and lifestyle modification support." },
+        { title: "Cancer Support", description: "Symptom management, psychosocial support, and infection prevention (neutropenic precautions)." },
+        { title: "Pain & Fatigue", description: "Pain assessment and management, energy conservation, and light exercise promotion." },
+        { title: "Gastrointestinal Care", description: "Managing nausea/vomiting, promoting nutritious diets, and managing digestive issues." },
+        { title: "Psychological Support", description: "Counseling and spiritual support to help residents and families cope with anxiety and depression." }
+      ]
     },
     {
       title: "Specialty Care",
-      description: "Condition-specific care plans for dementia, Parkinson's, stroke recovery, and more.",
-      icon: "🏥",
+      description: "Unique care designs including Dementia care, Geriatry, and specialized therapies like Psychotherapy and Speech therapy.",
+      icon: "✨",
+      longDescription: "At CAFOLA, we believe that care should be designed towards each person's unique needs. That's the exact reason you should rely on people with the skills.",
+      details: [
+        { title: "Dementia & Memory Care", description: "Helping loved ones live a quality and independent life despite cognitive changes." },
+        { title: "Speech & Physiotherapy", description: "Verified professional therapists planning sessions to improve communication and body functioning." },
+        { title: "Psychotherapy", description: "Specialized support from psychologists for various psychological concerns." },
+        { title: "Geriatry", description: "Addressing unique needs of older residents: mobility, safety, nutrition, and family ties." },
+        { title: "Orthopedic & Disability", description: "Promoting independence, dignity, and self-worth through daily living support." },
+        { title: "Medical Daycare", description: "Helping mothers with baby feeding, care, hygiene routines, and medication." },
+        { title: "Home Visits", description: "Planned or full-time (24/7) care in the comfort of our client's own homes." }
+      ]
     },
   ],
   storyHeading: "Our Story",
