@@ -100,7 +100,7 @@ export default function Home() {
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: 'url("https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/LRzuDYSEMDbDhXef.jpg")',
+            backgroundImage: 'url("https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/wsYsqfTvfhPHNFhG.png")',
           }}
         />
         <div className="absolute inset-0 bg-navy/40" />
