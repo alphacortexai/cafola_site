@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { defaultSiteContent, type SiteContent } from "@shared/cms";
 import { Link } from "wouter";
-import { COOKIE_NAME, getLoginUrl } from "@/const";
+import { COOKIE_NAME, getLoginConfigIssue, getLoginUrl } from "@/const";
 
 type ContactSubmission = {
   firstName: string;
@@ -28,6 +28,7 @@ export default function Admin() {
     "No submissions loaded yet"
   );
   const loginUrl = getLoginUrl();
+  const loginConfigIssue = getLoginConfigIssue();
 
   const headers = useMemo<Record<string, string>>(() => {
     const nextHeaders: Record<string, string> = {
@@ -181,10 +182,37 @@ export default function Admin() {
               <strong>I already signed in</strong>.
             </p>
             {!loginUrl && (
-              <p className="text-xs text-red-300">
-                Missing or invalid <code>VITE_OAUTH_PORTAL_URL</code> or{" "}
-                <code>VITE_APP_ID</code> configuration.
-              </p>
+              <div className="text-xs text-red-200 space-y-2">
+                <p>
+                  {loginConfigIssue ? (
+                    <>
+                      {loginConfigIssue} For this site,{" "}
+                      <code>VITE_APP_ID</code> should be the OAuth portal app
+                      ID, not the Firebase Web app ID (for example{" "}
+                      <code>1:199417967284:web:...</code>).
+                    </>
+                  ) : (
+                    <>
+                      Missing or invalid <code>VITE_OAUTH_PORTAL_URL</code> or{" "}
+                      <code>VITE_APP_ID</code> configuration.
+                    </>
+                  )}
+                </p>
+                <ul className="list-disc pl-5 space-y-1 text-red-100">
+                  <li>
+                    Check the last working deployment environment variables and
+                    copy <code>VITE_APP_ID</code> from there.
+                  </li>
+                  <li>
+                    Check your hosting provider settings (for example Vercel
+                    Project Settings → Environment Variables).
+                  </li>
+                  <li>
+                    If unavailable, ask whoever manages the OAuth portal for
+                    the app ID mapped by <code>/app-auth</code>.
+                  </li>
+                </ul>
+              </div>
             )}
           </section>
         </main>
