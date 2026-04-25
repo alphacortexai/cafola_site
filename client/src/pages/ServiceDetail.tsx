@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useRoute } from "wouter";
+import { useRoute, Link } from "wouter";
 import { defaultSiteContent, type SiteContent } from "@shared/cms";
 import { ChevronRight, Phone, MapPin, CheckCircle2 } from "lucide-react";
 
@@ -182,12 +182,12 @@ export default function ServiceDetail() {
                     <div className="text-4xl mb-6">{s.icon}</div>
                     <h3 className="text-xl font-serif mb-4 text-navy">{s.title}</h3>
                     <p className="text-gray-600 text-sm mb-8 line-clamp-2 leading-relaxed">{s.description}</p>
-                    <a 
+                    <Link 
                       href={`/services/${s.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} 
-                      className="mt-auto text-teal font-bold text-xs uppercase tracking-widest hover:underline no-underline inline-flex items-center gap-2"
+                      className="mt-auto text-teal font-bold text-xs uppercase tracking-widest hover:underline no-underline inline-flex items-center gap-2 cursor-pointer"
                     >
                       Learn more <ChevronRight className="w-4 h-4" />
-                    </a>
+                    </Link>
                   </div>
                 ))}
             </div>
