@@ -27,6 +27,7 @@ export default function Admin() {
   const [submissionsStatus, setSubmissionsStatus] = useState(
     "No submissions loaded yet"
   );
+  const loginUrl = getLoginUrl();
 
   const headers = useMemo<Record<string, string>>(() => {
     const nextHeaders: Record<string, string> = {
@@ -152,11 +153,21 @@ export default function Admin() {
               console.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Button asChild className="bg-orange hover:bg-orange/90">
-                <a href={getLoginUrl()}>
-                  Sign in with Gmail
-                </a>
-              </Button>
+              {loginUrl ? (
+                <Button asChild className="bg-orange hover:bg-orange/90">
+                  <a href={loginUrl}>
+                    Sign in with Gmail
+                  </a>
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  disabled
+                  className="bg-slate-700 text-slate-300 cursor-not-allowed"
+                >
+                  Sign in unavailable
+                </Button>
+              )}
               <Button
                 variant="outline"
                 className="text-white"
@@ -169,6 +180,12 @@ export default function Admin() {
               After successful sign-in, return to this page and click{" "}
               <strong>I already signed in</strong>.
             </p>
+            {!loginUrl && (
+              <p className="text-xs text-red-300">
+                Missing or invalid <code>VITE_OAUTH_PORTAL_URL</code>{" "}
+                configuration.
+              </p>
+            )}
           </section>
         </main>
       </div>
