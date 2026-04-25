@@ -182,8 +182,8 @@ export default function Admin() {
             </p>
             {!loginUrl && (
               <p className="text-xs text-red-300">
-                Missing or invalid <code>VITE_OAUTH_PORTAL_URL</code>{" "}
-                configuration.
+                Missing or invalid <code>VITE_OAUTH_PORTAL_URL</code> or{" "}
+                <code>VITE_APP_ID</code> configuration.
               </p>
             )}
           </section>

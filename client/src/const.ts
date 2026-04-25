@@ -26,16 +26,16 @@ export const getLoginUrl = () => {
   const oauthPortalUrl = normalizeOAuthPortalUrl(
     import.meta.env.VITE_OAUTH_PORTAL_URL
   );
-  const appId = import.meta.env.VITE_APP_ID;
+  const appId = import.meta.env.VITE_APP_ID?.trim();
   const redirectUri = `${window.location.origin}/api/oauth/callback`;
   const state = btoa(redirectUri);
 
-  if (!oauthPortalUrl) return "";
+  // The auth portal requires both its base URL and an appId to resolve
+  // the Google OAuth client configuration for this application.
+  if (!oauthPortalUrl || !appId) return "";
 
   const url = new URL("/app-auth", oauthPortalUrl);
-  if (appId) {
-    url.searchParams.set("appId", appId);
-  }
+  url.searchParams.set("appId", appId);
   url.searchParams.set("redirectUri", redirectUri);
   url.searchParams.set("state", state);
   url.searchParams.set("type", "signIn");
