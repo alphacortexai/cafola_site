@@ -1,5 +1,5 @@
-import { defaultSiteContent, type SiteContent } from "../shared/cms";
-import { readFirestoreDocument, writeFirestoreDocument } from "../server/firebase";
+import { defaultSiteContent, type SiteContent } from "../shared/cms.js";
+import { readFirestoreDocument, writeFirestoreDocument } from "../server/firebase.js";
 
 type VercelRequest = {
   method?: string;
