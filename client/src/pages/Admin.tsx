@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { defaultSiteContent, type SiteContent } from "@shared/cms";
 import { Link } from "wouter";
+import { COOKIE_NAME, getLoginUrl } from "@/const";
 
 type ContactSubmission = {
   firstName: string;
@@ -14,6 +15,7 @@ type ContactSubmission = {
 };
 
 export default function Admin() {
+  const [isGmailAuthenticated, setIsGmailAuthenticated] = useState(false);
   const [tokenInput, setTokenInput] = useState("");
   const [activeToken, setActiveToken] = useState("");
   const [cms, setCms] = useState<SiteContent>(defaultSiteContent);
@@ -33,6 +35,13 @@ export default function Admin() {
     if (activeToken) nextHeaders["X-Admin-Token"] = activeToken;
     return nextHeaders;
   }, [activeToken]);
+
+  const refreshGmailAuthStatus = () => {
+    const hasSessionCookie = document.cookie
+      .split(";")
+      .some(cookie => cookie.trim().startsWith(`${COOKIE_NAME}=`));
+    setIsGmailAuthenticated(hasSessionCookie);
+  };
 
   const loadCms = async () => {
     try {
@@ -79,12 +88,18 @@ export default function Admin() {
   };
 
   useEffect(() => {
-    void loadCms();
+    refreshGmailAuthStatus();
   }, []);
 
   useEffect(() => {
+    if (!isGmailAuthenticated) return;
+    void loadCms();
+  }, [isGmailAuthenticated]);
+
+  useEffect(() => {
+    if (!isGmailAuthenticated) return;
     void loadSubmissions();
-  }, [activeToken]);
+  }, [activeToken, isGmailAuthenticated]);
 
   const saveCms = async () => {
     try {
@@ -111,6 +126,54 @@ export default function Admin() {
         : "Token cleared. Reloading..."
     );
   };
+
+  if (!isGmailAuthenticated) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white">
+        <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur">
+          <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div>
+              <p className="text-xs uppercase tracking-widest text-slate-400">
+                CAFOLA
+              </p>
+              <h1 className="text-2xl font-serif">Admin Sign-in Required</h1>
+            </div>
+            <Link href="/" className="text-teal no-underline hover:underline">
+              Return to site
+            </Link>
+          </div>
+        </header>
+
+        <main className="container mx-auto px-4 py-10">
+          <section className="max-w-2xl bg-slate-900 border border-slate-800 p-6 space-y-4">
+            <h2 className="text-xl font-serif">Continue with Gmail</h2>
+            <p className="text-slate-300 text-sm leading-relaxed">
+              You must sign in with Gmail before you can access the admin
+              console.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Button asChild className="bg-orange hover:bg-orange/90">
+                <a href={getLoginUrl()}>
+                  Sign in with Gmail
+                </a>
+              </Button>
+              <Button
+                variant="outline"
+                className="text-white"
+                onClick={refreshGmailAuthStatus}
+              >
+                I already signed in
+              </Button>
+            </div>
+            <p className="text-xs text-slate-400">
+              After successful sign-in, return to this page and click{" "}
+              <strong>I already signed in</strong>.
+            </p>
+          </section>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
