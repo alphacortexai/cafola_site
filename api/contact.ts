@@ -1,4 +1,4 @@
-import { createFirestoreDocument } from "../server/firebase";
+import { createFirestoreDocument } from "../server/firebase.js";
 
 type VercelRequest = {
   method?: string;
