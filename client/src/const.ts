@@ -27,7 +27,7 @@ export const getLoginUrl = () => {
     import.meta.env.VITE_OAUTH_PORTAL_URL
   );
   const appId = import.meta.env.VITE_APP_ID?.trim();
-  const redirectUri = `${window.location.origin}/api/oauth/callback`;
+  const redirectUri = `${window.location.origin}/__/auth/handler`;
   const state = btoa(redirectUri);
 
   // The auth portal requires both its base URL and an appId to resolve
