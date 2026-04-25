@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { defaultSiteContent, type SiteContent } from "../shared/cms";
 import { mkdir, readFile, writeFile } from "fs/promises";
+import { createFirestoreDocument, readFirestoreDocument, writeFirestoreDocument } from "./firebase";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,6 +23,15 @@ async function ensureCmsFile() {
 
 async function readCmsContent(): Promise<SiteContent> {
   try {
+    const remoteContent = await readFirestoreDocument<SiteContent>("cms/siteContent");
+    if (remoteContent) {
+      return { ...defaultSiteContent, ...remoteContent };
+    }
+  } catch {
+    // Fallback to file-based CMS
+  }
+
+  try {
     const raw = await readFile(cmsFile, "utf-8");
     return { ...defaultSiteContent, ...JSON.parse(raw) };
   } catch {
@@ -30,6 +40,18 @@ async function readCmsContent(): Promise<SiteContent> {
 }
 
 async function saveCmsContent(content: SiteContent) {
+  try {
+    const wroteToFirebase = await writeFirestoreDocument("cms/siteContent", {
+      ...content,
+      updatedAt: new Date().toISOString(),
+    });
+    if (wroteToFirebase) {
+      return;
+    }
+  } catch {
+    // Fallback to file-based CMS
+  }
+
   await writeFile(cmsFile, JSON.stringify(content, null, 2));
 }
 
@@ -55,6 +77,37 @@ async function startServer() {
 
     await saveCmsContent({ ...defaultSiteContent, ...nextContent });
     return res.status(204).send();
+  });
+
+  app.post("/api/contact", async (req, res) => {
+    const payload = req.body as {
+      firstName?: string;
+      lastName?: string;
+      email?: string;
+      phone?: string;
+      message?: string;
+      source?: string;
+    };
+
+    if (!payload?.firstName || !payload?.email) {
+      return res.status(400).json({ error: "firstName and email are required." });
+    }
+
+    const created = await createFirestoreDocument("contactSubmissions", {
+      firstName: payload.firstName.trim(),
+      lastName: payload.lastName?.trim() ?? "",
+      email: payload.email.trim(),
+      phone: payload.phone?.trim() ?? "",
+      message: payload.message?.trim() ?? "",
+      source: payload.source?.trim() ?? "unknown",
+      createdAt: new Date().toISOString(),
+    });
+
+    if (!created) {
+      return res.status(500).json({ error: "Firebase is not configured on the server." });
+    }
+
+    return res.status(201).json({ ok: true });
   });
 
   // Serve static files from dist/public in production

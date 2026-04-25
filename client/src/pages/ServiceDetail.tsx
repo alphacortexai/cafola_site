@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import { useRoute, Link } from "wouter";
 import { defaultSiteContent, type SiteContent } from "@shared/cms";
 import { ChevronRight, Phone, MapPin, CheckCircle2 } from "lucide-react";
@@ -7,6 +7,13 @@ export default function ServiceDetail() {
   const [, params] = useRoute("/services/:slug");
   const slug = params?.slug;
   const [cms, setCms] = useState<SiteContent>(defaultSiteContent);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    email: "",
+  });
+  const [formStatus, setFormStatus] = useState<string>("");
 
   useEffect(() => {
     const loadCms = async () => {
@@ -21,6 +28,37 @@ export default function ServiceDetail() {
     };
     void loadCms();
   }, []);
+
+  const submitContact = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setFormStatus("Sending...");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          message: `Service request for: ${service?.title ?? "Unknown service"}`,
+          source: `service-${slug ?? "unknown"}`,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Could not submit form");
+      }
+
+      setFormData({
+        firstName: "",
+        lastName: "",
+        phone: "",
+        email: "",
+      });
+      setFormStatus("Thanks! We received your request.");
+    } catch {
+      setFormStatus("Sorry, we could not submit your request.");
+    }
+  };
 
   // Find the service based on slug
   const service = cms.services.find(
@@ -125,26 +163,49 @@ export default function ServiceDetail() {
               <div className="sticky top-24 space-y-8">
                 <div className="bg-white border-t-8 border-orange shadow-2xl p-8">
                   <h3 className="text-2xl font-serif mb-6 text-navy">Start Care Now</h3>
-                  <form className="space-y-4">
+                  <form className="space-y-4" onSubmit={submitContact}>
                     <div>
                       <label className="block text-[10px] uppercase tracking-widest font-bold mb-1 text-gray-500">First Name</label>
-                      <input type="text" className="w-full px-4 py-3 bg-gray-50 border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans" />
+                      <input
+                        required
+                        type="text"
+                        value={formData.firstName}
+                        onChange={(event) => setFormData((prev) => ({ ...prev, firstName: event.target.value }))}
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans"
+                      />
                     </div>
                     <div>
                       <label className="block text-[10px] uppercase tracking-widest font-bold mb-1 text-gray-500">Last Name</label>
-                      <input type="text" className="w-full px-4 py-3 bg-gray-50 border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans" />
+                      <input
+                        type="text"
+                        value={formData.lastName}
+                        onChange={(event) => setFormData((prev) => ({ ...prev, lastName: event.target.value }))}
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans"
+                      />
                     </div>
                     <div>
                       <label className="block text-[10px] uppercase tracking-widest font-bold mb-1 text-gray-500">Phone</label>
-                      <input type="tel" className="w-full px-4 py-3 bg-gray-50 border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans" />
+                      <input
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(event) => setFormData((prev) => ({ ...prev, phone: event.target.value }))}
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans"
+                      />
                     </div>
                     <div>
                       <label className="block text-[10px] uppercase tracking-widest font-bold mb-1 text-gray-500">Email</label>
-                      <input type="email" className="w-full px-4 py-3 bg-gray-50 border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans" />
+                      <input
+                        required
+                        type="email"
+                        value={formData.email}
+                        onChange={(event) => setFormData((prev) => ({ ...prev, email: event.target.value }))}
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans"
+                      />
                     </div>
-                    <button className="w-full bg-orange text-white py-4 font-bold uppercase tracking-widest hover:bg-orange/90 transition-all shadow-lg mt-4">
+                    <button type="submit" className="w-full bg-orange text-white py-4 font-bold uppercase tracking-widest hover:bg-orange/90 transition-all shadow-lg mt-4">
                       Submit Request
                     </button>
+                    {formStatus && <p className="text-xs text-gray-500">{formStatus}</p>}
                   </form>
                   <p className="text-[10px] mt-4 text-gray-400 leading-relaxed">
                     By submitting this form you are consenting to be contacted by {cms.brandName} regarding our services.
