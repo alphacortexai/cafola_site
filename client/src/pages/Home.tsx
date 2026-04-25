@@ -100,7 +100,7 @@ export default function Home() {
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: 'url("https://d2xsxph8kpxj0f.cloudfront.net/310519663269964698/G33c7Gr9Vjm6QbN5AtWjKi/hero-caregiver-senior-WfcaNGv39maDGZSj2Hmu4v.webp")',
+            backgroundImage: 'url("https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/LRzuDYSEMDbDhXef.jpg")',
           }}
         />
         <div className="absolute inset-0 bg-navy/40" />
@@ -254,7 +254,7 @@ export default function Home() {
             </button>
           </div>
           <div className="order-1 lg:order-2 relative">
-            <div className="aspect-[4/3] bg-cover bg-center shadow-2xl" style={{ backgroundImage: 'url("https://d2xsxph8kpxj0f.cloudfront.net/310519663269964698/G33c7Gr9Vjm6QbN5AtWjKi/story-section-image-gtFgEp5xjw8psZqcTXPwhD.webp")' }} />
+            <div className="aspect-[4/3] bg-cover bg-center shadow-2xl" style={{ backgroundImage: 'url("https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/WUcgTLPCbgcQqrTu.jpg")' }} />
             <div className="absolute -bottom-8 -left-8 bg-orange p-8 text-white hidden md:block shadow-xl">
               <p className="text-4xl font-serif font-bold">25+</p>
               <p className="text-sm uppercase tracking-widest font-bold">Years of Care</p>
@@ -271,9 +271,13 @@ export default function Home() {
             Each year, we honor caregivers who go above and beyond to provide exceptional care and support to our clients and their families.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-gray-50 aspect-square flex items-center justify-center border border-gray-100">
-                <span className="text-gray-400 font-serif italic">Caregiver Photo {i}</span>
+            {[
+              "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/JAwcPqUJQKQRINak.jpg",
+              "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/qkdIlIAqtIkSDlts.jpg",
+              "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/rPgteKUGGaMkPUpt.jpg"
+            ].map((url, i) => (
+              <div key={i} className="bg-gray-50 aspect-square overflow-hidden border border-gray-100 shadow-md">
+                <img src={url} alt={`Caregiver ${i + 1}`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
               </div>
             ))}
           </div>
@@ -299,8 +303,18 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {cms.articles.map((article, idx) => (
               <div key={idx} className={`group flex flex-col bg-white border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 ${article.featured ? "lg:col-span-2 lg:flex-row" : ""}`}>
-                <div className={`bg-navy/10 relative overflow-hidden ${article.featured ? "lg:w-1/2 aspect-video lg:aspect-auto" : "aspect-video"}`}>
-                  <div className="absolute inset-0 bg-gradient-to-br from-teal/20 to-navy/20 group-hover:scale-110 transition-transform duration-500" />
+                <div className={`relative overflow-hidden ${article.featured ? "lg:w-1/2 aspect-video lg:aspect-auto" : "aspect-video"}`}>
+                  <img 
+                    src={[
+                      "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/nXeqdbNLjMDKrnNe.jpg",
+                      "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/RlyEdRBUevkWVZSQ.jpg",
+                      "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/ONOUdGEpIDXDmimL.jpg",
+                      "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/nXeqdbNLjMDKrnNe.jpg"
+                    ][idx]} 
+                    alt={article.title}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-br from-teal/20 to-navy/20 opacity-40" />
                 </div>
                 <div className={`p-8 flex flex-col ${article.featured ? "lg:w-1/2" : ""}`}>
                   {article.featured && <span className="text-orange text-xs font-bold uppercase tracking-widest mb-4 block">Featured Article</span>}
