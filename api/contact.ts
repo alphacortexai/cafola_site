@@ -1,4 +1,7 @@
-import { createFirestoreDocument } from "../server/firebase.js";
+import {
+  createFirestoreDocument,
+  listFirestoreCollection,
+} from "../server/firebase.js";
 
 type VercelRequest = {
   method?: string;
@@ -36,12 +39,42 @@ function parseBody<T>(body: unknown): T | null {
   return null;
 }
 
+function isAdminRequest(req: VercelRequest) {
+  const adminToken = process.env.ADMIN_TOKEN;
+  if (!adminToken) return true;
+
+  const tokenFromHeader = (
+    req as { headers?: Record<string, string | string[] | undefined> }
+  ).headers?.["x-admin-token"];
+  const normalizedToken = Array.isArray(tokenFromHeader)
+    ? tokenFromHeader[0]
+    : tokenFromHeader;
+  return normalizedToken === adminToken;
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type,X-Admin-Token");
 
   if (req.method === "OPTIONS") {
     return res.status(204).send();
+  }
+
+  if (req.method === "GET") {
+    if (!isAdminRequest(req)) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const submissions =
+      (await listFirestoreCollection<ContactPayload & { createdAt?: string }>(
+        "contactSubmissions",
+        {
+          pageSize: 200,
+          orderBy: "createdAt desc",
+        }
+      )) ?? [];
+
+    return res.status(200).json(submissions);
   }
 
   if (req.method !== "POST") {
@@ -65,7 +98,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   });
 
   if (!created) {
-    return res.status(500).json({ error: "Firebase is not configured on the server." });
+    return res
+      .status(500)
+      .json({ error: "Firebase is not configured on the server." });
   }
 
   return res.status(201).json({ ok: true });

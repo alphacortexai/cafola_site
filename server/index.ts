@@ -4,12 +4,28 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { defaultSiteContent, type SiteContent } from "../shared/cms";
 import { mkdir, readFile, writeFile } from "fs/promises";
-import { createFirestoreDocument, readFirestoreDocument, writeFirestoreDocument } from "./firebase";
+import {
+  createFirestoreDocument,
+  listFirestoreCollection,
+  readFirestoreDocument,
+  writeFirestoreDocument,
+} from "./firebase";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const dataDir = path.resolve(__dirname, "data");
 const cmsFile = path.join(dataDir, "cms.json");
+const contactsFile = path.join(dataDir, "contact-submissions.json");
+
+type ContactSubmission = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  message: string;
+  source: string;
+  createdAt: string;
+};
 
 async function ensureCmsFile() {
   await mkdir(dataDir, { recursive: true });
@@ -21,9 +37,68 @@ async function ensureCmsFile() {
   }
 }
 
+async function ensureContactFile() {
+  await mkdir(dataDir, { recursive: true });
+
+  try {
+    await readFile(contactsFile, "utf-8");
+  } catch {
+    await writeFile(contactsFile, JSON.stringify([], null, 2));
+  }
+}
+
+function isAdminRequest(req: express.Request) {
+  const adminToken = process.env.ADMIN_TOKEN;
+  if (!adminToken) return true;
+  return req.header("x-admin-token") === adminToken;
+}
+
+async function readContactSubmissions(): Promise<ContactSubmission[]> {
+  try {
+    const remote = await listFirestoreCollection<ContactSubmission>(
+      "contactSubmissions",
+      {
+        pageSize: 200,
+        orderBy: "createdAt desc",
+      }
+    );
+    if (remote) {
+      return remote;
+    }
+  } catch {
+    // Fallback to local JSON file
+  }
+
+  try {
+    const raw = await readFile(contactsFile, "utf-8");
+    const parsed = JSON.parse(raw) as ContactSubmission[];
+    return parsed.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  } catch {
+    return [];
+  }
+}
+
+async function saveContactSubmission(payload: ContactSubmission) {
+  try {
+    const created = await createFirestoreDocument(
+      "contactSubmissions",
+      payload
+    );
+    if (created) {
+      return;
+    }
+  } catch {
+    // Fallback to local JSON file
+  }
+
+  const current = await readContactSubmissions();
+  await writeFile(contactsFile, JSON.stringify([payload, ...current], null, 2));
+}
+
 async function readCmsContent(): Promise<SiteContent> {
   try {
-    const remoteContent = await readFirestoreDocument<SiteContent>("cms/siteContent");
+    const remoteContent =
+      await readFirestoreDocument<SiteContent>("cms/siteContent");
     if (remoteContent) {
       return { ...defaultSiteContent, ...remoteContent };
     }
@@ -60,6 +135,7 @@ async function startServer() {
   const server = createServer(app);
 
   await ensureCmsFile();
+  await ensureContactFile();
 
   app.use(express.json({ limit: "1mb" }));
 
@@ -90,10 +166,12 @@ async function startServer() {
     };
 
     if (!payload?.firstName || !payload?.email) {
-      return res.status(400).json({ error: "firstName and email are required." });
+      return res
+        .status(400)
+        .json({ error: "firstName and email are required." });
     }
 
-    const created = await createFirestoreDocument("contactSubmissions", {
+    await saveContactSubmission({
       firstName: payload.firstName.trim(),
       lastName: payload.lastName?.trim() ?? "",
       email: payload.email.trim(),
@@ -103,11 +181,16 @@ async function startServer() {
       createdAt: new Date().toISOString(),
     });
 
-    if (!created) {
-      return res.status(500).json({ error: "Firebase is not configured on the server." });
+    return res.status(201).json({ ok: true });
+  });
+
+  app.get("/api/contact", async (req, res) => {
+    if (!isAdminRequest(req)) {
+      return res.status(401).json({ error: "Unauthorized" });
     }
 
-    return res.status(201).json({ ok: true });
+    const submissions = await readContactSubmissions();
+    return res.json(submissions);
   });
 
   // Serve static files from dist/public in production
