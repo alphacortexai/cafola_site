@@ -10,15 +10,24 @@ import {
 } from "firebase/auth";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
+const normalizeStorageBucket = (bucket?: string) => {
+  if (!bucket) return bucket;
+  return bucket
+    .replace(/^gs:\/\//, "")
+    .replace(/\/.*/, "")
+    .trim();
+};
+
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain:
     import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ||
     `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com`,
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket:
+  storageBucket: normalizeStorageBucket(
     import.meta.env.VITE_FIREBASE_STORAGE_BUCKET ||
-    `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.appspot.com`,
+      `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebasestorage.app`,
+  ),
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
@@ -59,9 +68,17 @@ export const uploadArticleImage = async (file: File, slug: string) => {
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
   const path = `articles/${cleanSlug}/${Date.now()}-${safeName}`;
   const fileRef = ref(activeStorage, path);
-  await uploadBytes(fileRef, file, {
-    contentType: file.type || "application/octet-stream",
-  });
+  try {
+    await uploadBytes(fileRef, file, {
+      contentType: file.type || "application/octet-stream",
+    });
+  } catch (error) {
+    const storageError = error as { code?: string; message?: string };
+    const code = storageError.code ? ` (${storageError.code})` : "";
+    throw new Error(
+      `Image upload failed${code}. Check Firebase Storage bucket name, rules, and CORS settings.`,
+    );
+  }
   return getDownloadURL(fileRef);
 };
 
