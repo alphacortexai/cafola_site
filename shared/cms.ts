@@ -77,7 +77,7 @@ export const defaultSiteContent: SiteContent = {
   services: [
     {
       title: "Post-Hospital Recovery",
-      description: "Skilled nursing care tailored to support residents following acute hospital admission, ensuring continuity of care and preventing re-admission.",
+      description: "Skilled nursing after hospital discharge for safer recovery...",
       icon: "🏥",
       longDescription: "Many patients are discharged from hospitals but still need skilled nursing care. Our services are tailored to support residents in our recovery center / residential care centers following acute hospital admission. CAFOLA work to ensure continuity of care structured to facilitate complication prevention, avoid re-admission and complete healing.",
       details: [
@@ -92,7 +92,7 @@ export const defaultSiteContent: SiteContent = {
     },
     {
       title: "Stroke Recovery & Rehab",
-      description: "One-on-one professional nursing care and personalized rehabilitation plans for residents recovering from stroke in a comfortable environment.",
+      description: "Personalized stroke rehab with one-on-one nursing support...",
       icon: "🧠",
       longDescription: "When a serious or chronic health issue affects someone you love, it seems overwhelming. Fortunately we are here to provide one on one professional nursing care and attention while outside the hospital, in a comfortable recovery center. We personalize care plan for our residents recovering from stroke.",
       details: [
@@ -104,7 +104,7 @@ export const defaultSiteContent: SiteContent = {
     },
     {
       title: "Long-Term Care",
-      description: "Round-the-clock support for daily living, health monitoring, and professional nursing for chronic conditions like Diabetes, Hypertension, and Cancer.",
+      description: "24/7 chronic condition care for daily living support...",
       icon: "⏳",
       longDescription: "CAFOLA is here to work with family in providing round the clock support for individuals needing assistance with daily living activities, health monitoring, psychological comfort, and professional nursing care.",
       details: [
@@ -118,7 +118,7 @@ export const defaultSiteContent: SiteContent = {
     },
     {
       title: "Specialty Care",
-      description: "Unique care designs including Dementia care, Geriatry, and specialized therapies like Psychotherapy and Speech therapy.",
+      description: "Dementia, geriatric, and therapy-focused specialty care plans...",
       icon: "✨",
       longDescription: "At CAFOLA, we believe that care should be designed towards each person's unique needs. That's the exact reason you should rely on people with the skills.",
       details: [
@@ -133,7 +133,7 @@ export const defaultSiteContent: SiteContent = {
     },
     {
       title: "Our Story",
-      description: "Learn how CAFOLA grew from bedside and home nursing into trusted recovery homes delivering continuity of care.",
+      description: "From bedside nursing to trusted recovery homes...",
       icon: "📖",
       longDescription: "CAFOLA is a recovery care center /residential care home providing continuity of professional nursing care to individuals who no longer need hospital admission.",
       details: [
