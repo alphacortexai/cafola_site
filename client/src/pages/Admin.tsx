@@ -2,7 +2,8 @@ import { Button } from "@/components/ui/button";
 import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { defaultSiteContent, type SiteContent } from "@shared/cms";
 import { Link } from "wouter";
-import { COOKIE_NAME, getLoginConfigIssue, getLoginUrl } from "@/const";
+import { getLoginConfigIssue } from "@/const";
+import { auth, signInWithGoogle, logout, onAuthStateChanged, type User } from "@/lib/firebase";
 
 type ContactSubmission = {
   firstName: string;
@@ -15,7 +16,8 @@ type ContactSubmission = {
 };
 
 export default function Admin() {
-  const [isGmailAuthenticated, setIsGmailAuthenticated] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const [tokenInput, setTokenInput] = useState("");
   const [activeToken, setActiveToken] = useState("");
   const [cms, setCms] = useState<SiteContent>(defaultSiteContent);
@@ -27,7 +29,6 @@ export default function Admin() {
   const [submissionsStatus, setSubmissionsStatus] = useState(
     "No submissions loaded yet"
   );
-  const loginUrl = getLoginUrl();
   const loginConfigIssue = getLoginConfigIssue();
 
   const headers = useMemo<Record<string, string>>(() => {
@@ -38,11 +39,28 @@ export default function Admin() {
     return nextHeaders;
   }, [activeToken]);
 
-  const refreshGmailAuthStatus = () => {
-    const hasSessionCookie = document.cookie
-      .split(";")
-      .some(cookie => cookie.trim().startsWith(`${COOKIE_NAME}=`));
-    setIsGmailAuthenticated(hasSessionCookie);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogin = async () => {
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      console.error("Login failed", error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
   };
 
   const loadCms = async () => {
@@ -90,18 +108,14 @@ export default function Admin() {
   };
 
   useEffect(() => {
-    refreshGmailAuthStatus();
-  }, []);
-
-  useEffect(() => {
-    if (!isGmailAuthenticated) return;
+    if (!user) return;
     void loadCms();
-  }, [isGmailAuthenticated]);
+  }, [user]);
 
   useEffect(() => {
-    if (!isGmailAuthenticated) return;
+    if (!user) return;
     void loadSubmissions();
-  }, [activeToken, isGmailAuthenticated]);
+  }, [activeToken, user]);
 
   const saveCms = async () => {
     try {
@@ -129,7 +143,15 @@ export default function Admin() {
     );
   };
 
-  if (!isGmailAuthenticated) {
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
     return (
       <div className="min-h-screen bg-slate-950 text-white">
         <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur">
@@ -154,66 +176,32 @@ export default function Admin() {
               console.
             </p>
             <div className="flex flex-wrap gap-3">
-              {loginUrl ? (
-                <Button asChild className="bg-orange hover:bg-orange/90">
-                  <a href={loginUrl}>
-                    Sign in with Gmail
-                  </a>
+              {!loginConfigIssue ? (
+                <Button onClick={handleLogin} className="bg-orange hover:bg-orange/90">
+                  Sign in with Gmail
                 </Button>
               ) : (
-                <Button
-                  type="button"
-                  disabled
-                  className="bg-slate-700 text-slate-300 cursor-not-allowed"
-                >
-                  Sign in unavailable
-                </Button>
+                <div className="space-y-4 w-full">
+                  <Button
+                    type="button"
+                    disabled
+                    className="bg-slate-700 text-slate-300 cursor-not-allowed"
+                  >
+                    Sign in unavailable
+                  </Button>
+                  <div className="text-xs text-red-200 p-4 bg-red-900/20 border border-red-900/50">
+                    <p className="font-bold mb-2">Configuration Issue:</p>
+                    <p>{loginConfigIssue}</p>
+                    <p className="mt-2">Please ensure the following environment variables are set in Vercel:</p>
+                    <ul className="list-disc pl-5 mt-1 space-y-1">
+                      <li><code>VITE_FIREBASE_API_KEY</code></li>
+                      <li><code>VITE_FIREBASE_PROJECT_ID</code></li>
+                      <li><code>VITE_FIREBASE_APP_ID</code></li>
+                    </ul>
+                  </div>
+                </div>
               )}
-              <Button
-                variant="outline"
-                className="text-white"
-                onClick={refreshGmailAuthStatus}
-              >
-                I already signed in
-              </Button>
             </div>
-            <p className="text-xs text-slate-400">
-              After successful sign-in, return to this page and click{" "}
-              <strong>I already signed in</strong>.
-            </p>
-            {!loginUrl && (
-              <div className="text-xs text-red-200 space-y-2">
-                <p>
-                  {loginConfigIssue ? (
-                    <>
-                      {loginConfigIssue} For this site,{" "}
-                      <code>VITE_APP_ID</code> should be the OAuth portal app
-                      ID, not the Firebase Web app ID (for example{" "}
-                      <code>1:199417967284:web:...</code>).
-                    </>
-                  ) : (
-                    <>
-                      Missing or invalid <code>VITE_OAUTH_PORTAL_URL</code> or{" "}
-                      <code>VITE_APP_ID</code> configuration.
-                    </>
-                  )}
-                </p>
-                <ul className="list-disc pl-5 space-y-1 text-red-100">
-                  <li>
-                    Check the last working deployment environment variables and
-                    copy <code>VITE_APP_ID</code> from there.
-                  </li>
-                  <li>
-                    Check your hosting provider settings (for example Vercel
-                    Project Settings → Environment Variables).
-                  </li>
-                  <li>
-                    If unavailable, ask whoever manages the OAuth portal for
-                    the app ID mapped by <code>/app-auth</code>.
-                  </li>
-                </ul>
-              </div>
-            )}
           </section>
         </main>
       </div>
@@ -230,9 +218,15 @@ export default function Admin() {
             </p>
             <h1 className="text-2xl font-serif">Admin Console</h1>
           </div>
-          <Link href="/" className="text-teal no-underline hover:underline">
-            Return to site
-          </Link>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-slate-400 hidden md:inline">{user.email}</span>
+            <Button variant="outline" size="sm" onClick={handleLogout} className="text-white border-slate-700">
+              Sign out
+            </Button>
+            <Link href="/" className="text-teal no-underline hover:underline">
+              Return to site
+            </Link>
+          </div>
         </div>
       </header>
 
