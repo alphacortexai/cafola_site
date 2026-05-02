@@ -141,13 +141,6 @@ export default function Home() {
               <Phone className="w-4 h-4" />
               {cms.phone}
             </a>
-            <a
-              href="tel:0730728080"
-              className="font-bold text-sm md:text-base no-underline"
-              style={{ color: "#007e8a" }}
-            >
-              0730728080
-            </a>
           </div>
         </div>
       </header>
