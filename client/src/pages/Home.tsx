@@ -115,6 +115,7 @@ export default function Home() {
               let href = "#";
               if (item === "Services") href = "#services";
               if (item === "About Us") href = "/about";
+              if (item === "Resources") href = "/articles";
               return (
                 <a
                   key={item}
