@@ -52,6 +52,9 @@ export default function Articles() {
               ) : null}
               <h2 className="text-2xl font-serif text-navy mb-3">{article.title}</h2>
               <p className="text-gray-600 leading-relaxed">{article.description}</p>
+              <Link href={`/articles/${article.slug}`} className="inline-block mt-4 text-teal font-bold uppercase text-xs tracking-wider no-underline hover:underline">
+                Read more
+              </Link>
             </article>
           ))}
         </div>

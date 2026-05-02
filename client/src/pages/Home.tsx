@@ -426,12 +426,12 @@ export default function Home() {
                 journey.
               </p>
             </div>
-            <a
-              href="#"
+            <Link
+              href="/articles"
               className="text-teal font-bold uppercase tracking-widest hover:underline no-underline flex items-center gap-2"
             >
               Latest articles <ChevronRight className="w-4 h-4" />
-            </a>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -473,12 +473,12 @@ export default function Home() {
                   <p className="text-gray-600 font-sans text-sm mb-8 line-clamp-3 leading-relaxed">
                     {article.description}
                   </p>
-                  <a
-                    href="#"
+                  <Link
+                    href={`/articles/${article.slug}`}
                     className="mt-auto text-teal font-bold text-sm uppercase tracking-widest hover:underline no-underline inline-flex items-center gap-2"
                   >
                     Read more <ChevronRight className="w-4 h-4" />
-                  </a>
+                  </Link>
                 </div>
               </div>
             ))}
