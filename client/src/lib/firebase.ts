@@ -3,6 +3,7 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithRedirect,
   signOut,
   onAuthStateChanged as firebaseOnAuthStateChanged,
   type User,
@@ -44,7 +45,24 @@ const ensureAuth = () => {
 
 export const signInWithGoogle = async () => {
   const activeAuth = ensureAuth();
-  const result = await signInWithPopup(activeAuth, googleProvider);
+  let result;
+  try {
+    result = await signInWithPopup(activeAuth, googleProvider);
+  } catch (error) {
+    const authError = error as { code?: string };
+    const shouldFallbackToRedirect =
+      authError.code === "auth/popup-blocked" ||
+      authError.code === "auth/popup-closed-by-user" ||
+      authError.code === "auth/cancelled-popup-request";
+
+    if (shouldFallbackToRedirect) {
+      await signInWithRedirect(activeAuth, googleProvider);
+      return null;
+    }
+
+    throw error;
+  }
+
   return result.user;
 };
 
@@ -57,7 +75,7 @@ export const onAuthStateChanged = (
   callback: Parameters<typeof firebaseOnAuthStateChanged>[1],
 ) => {
   if (!auth) {
-    callback(null);
+    if (typeof callback === "function") callback(null);
     return () => {};
   }
 

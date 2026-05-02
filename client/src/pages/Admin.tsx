@@ -29,6 +29,7 @@ export default function Admin() {
   const [submissionsStatus, setSubmissionsStatus] = useState(
     "No submissions loaded yet"
   );
+  const [loginError, setLoginError] = useState<string | null>(null);
   const loginConfigIssue = getLoginConfigIssue() ?? firebaseInitError;
 
   const headers = useMemo<Record<string, string>>(() => {
@@ -49,9 +50,18 @@ export default function Admin() {
 
   const handleLogin = async () => {
     try {
+      setLoginError(null);
       await signInWithGoogle();
     } catch (error) {
       console.error("Login failed", error);
+      const authError = error as { code?: string };
+      if (authError.code === "auth/unauthorized-domain") {
+        setLoginError(
+          "This domain is not authorized for Firebase Google sign-in. Add your site URL under Firebase Authentication → Settings → Authorized domains."
+        );
+        return;
+      }
+      setLoginError("Google sign-in failed. Check Firebase auth settings and try again.");
     }
   };
 
@@ -202,6 +212,11 @@ export default function Admin() {
                 </div>
               )}
             </div>
+            {loginError ? (
+              <p className="text-xs text-red-200 p-3 bg-red-900/20 border border-red-900/50">
+                {loginError}
+              </p>
+            ) : null}
           </section>
         </main>
       </div>
