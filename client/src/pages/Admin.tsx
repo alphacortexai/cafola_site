@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { type FormEvent, useEffect, useMemo, useState } from "react";
+import { type ChangeEvent, type FormEvent, useEffect, useMemo, useState } from "react";
 import { defaultSiteContent, type SiteContent } from "@shared/cms";
 import { Link } from "wouter";
 import { getLoginConfigIssue } from "@/const";
-import { signInWithGoogle, logout, onAuthStateChanged, firebaseInitError, type User } from "@/lib/firebase";
+import { signInWithGoogle, logout, onAuthStateChanged, firebaseInitError, uploadArticleImage, type User } from "@/lib/firebase";
 import type { Article } from "@shared/cms";
 
 type ContactSubmission = {
@@ -37,6 +37,7 @@ export default function Admin() {
   const [articleForm, setArticleForm] = useState<Article>({ slug: "", title: "", description: "", content: "", section: "", imageUrl: "", featured: false });
   const [editingSlug, setEditingSlug] = useState<string | null>(null);
   const [articlesStatus, setArticlesStatus] = useState("Articles ready");
+  const [uploadingArticleImage, setUploadingArticleImage] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const loginConfigIssue = getLoginConfigIssue() ?? firebaseInitError;
 
@@ -221,6 +222,25 @@ export default function Admin() {
     setArticlesStatus("Article removed from draft");
   };
 
+  const onArticleImageSelected = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setUploadingArticleImage(true);
+    setArticlesStatus("Uploading article image...");
+
+    try {
+      const uploadedUrl = await uploadArticleImage(file, articleForm.slug);
+      setArticleForm((prev) => ({ ...prev, imageUrl: uploadedUrl }));
+      setArticlesStatus("Article image uploaded");
+    } catch (error) {
+      console.error("Article image upload failed", error);
+      setArticlesStatus("Failed to upload image. Check Firebase storage settings.");
+    } finally {
+      setUploadingArticleImage(false);
+      event.target.value = "";
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
@@ -346,6 +366,10 @@ export default function Admin() {
             <input value={articleForm.section ?? ""} onChange={(e) => setArticleForm((p) => ({ ...p, section: e.target.value }))} placeholder="section" className="px-3 py-2 bg-slate-950 border border-slate-700" />
             <input value={articleForm.title} onChange={(e) => setArticleForm((p) => ({ ...p, title: e.target.value }))} placeholder="title" className="px-3 py-2 bg-slate-950 border border-slate-700 md:col-span-2" />
             <input value={articleForm.imageUrl ?? ""} onChange={(e) => setArticleForm((p) => ({ ...p, imageUrl: e.target.value }))} placeholder="image url" className="px-3 py-2 bg-slate-950 border border-slate-700 md:col-span-2" />
+            <label className="md:col-span-2 text-sm text-slate-300 space-y-2">
+              <span className="block">Or upload image to Firebase Storage</span>
+              <input type="file" accept="image/*" onChange={(e) => void onArticleImageSelected(e)} disabled={uploadingArticleImage} className="w-full px-3 py-2 bg-slate-950 border border-slate-700" />
+            </label>
             <textarea value={articleForm.description} onChange={(e) => setArticleForm((p) => ({ ...p, description: e.target.value }))} placeholder="description" className="px-3 py-2 bg-slate-950 border border-slate-700 md:col-span-2 min-h-[80px]" />
             <textarea value={articleForm.content ?? ""} onChange={(e) => setArticleForm((p) => ({ ...p, content: e.target.value }))} placeholder="full content" className="px-3 py-2 bg-slate-950 border border-slate-700 md:col-span-2 min-h-[120px]" />
           </div>
