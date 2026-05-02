@@ -26,6 +26,14 @@ export default function Home() {
   });
   const [newsletterConsent, setNewsletterConsent] = useState(false);
   const [newsletterStatus, setNewsletterStatus] = useState("");
+  const [talkToUsData, setTalkToUsData] = useState({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    email: "",
+    talkToUs: "",
+  });
+  const [talkToUsStatus, setTalkToUsStatus] = useState("");
 
   useEffect(() => {
     const loadCms = async () => {
@@ -83,6 +91,41 @@ export default function Home() {
     setCurrentTestimonial(
       prev => (prev - 1 + cms.testimonials.length) % cms.testimonials.length
     );
+  };
+
+  const submitTalkToUs = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setTalkToUsStatus("Sending...");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: talkToUsData.firstName,
+          lastName: talkToUsData.lastName,
+          phone: talkToUsData.phone,
+          email: talkToUsData.email,
+          message: talkToUsData.talkToUs.trim(),
+          source: "home-talk-to-us",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit form");
+      }
+
+      setTalkToUsData({
+        firstName: "",
+        lastName: "",
+        phone: "",
+        email: "",
+        talkToUs: "",
+      });
+      setTalkToUsStatus("Thanks! We received your request.");
+    } catch {
+      setTalkToUsStatus("Sorry, we could not submit your request.");
+    }
   };
 
   return (
@@ -464,6 +507,46 @@ export default function Home() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 bg-white border-t border-gray-100">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="bg-gray-50 border-t-8 border-orange shadow-xl p-8 md:p-10">
+            <h2 className="text-3xl md:text-4xl font-serif mb-8 text-navy text-center">
+              Start Care Now
+            </h2>
+            <form className="space-y-6" onSubmit={submitTalkToUs}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs uppercase tracking-widest font-bold mb-2 text-gray-500">First name</label>
+                  <input required type="text" value={talkToUsData.firstName} onChange={event => setTalkToUsData(prev => ({ ...prev, firstName: event.target.value }))} className="w-full px-4 py-3 bg-white border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans" />
+                </div>
+                <div>
+                  <label className="block text-xs uppercase tracking-widest font-bold mb-2 text-gray-500">Last name</label>
+                  <input type="text" value={talkToUsData.lastName} onChange={event => setTalkToUsData(prev => ({ ...prev, lastName: event.target.value }))} className="w-full px-4 py-3 bg-white border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans" />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs uppercase tracking-widest font-bold mb-2 text-gray-500">Phone</label>
+                  <input type="tel" value={talkToUsData.phone} onChange={event => setTalkToUsData(prev => ({ ...prev, phone: event.target.value }))} className="w-full px-4 py-3 bg-white border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans" />
+                </div>
+                <div>
+                  <label className="block text-xs uppercase tracking-widest font-bold mb-2 text-gray-500">Email</label>
+                  <input required type="email" value={talkToUsData.email} onChange={event => setTalkToUsData(prev => ({ ...prev, email: event.target.value }))} className="w-full px-4 py-3 bg-white border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs uppercase tracking-widest font-bold mb-2 text-gray-500">Talk to us</label>
+                <textarea rows={5} value={talkToUsData.talkToUs} onChange={event => setTalkToUsData(prev => ({ ...prev, talkToUs: event.target.value }))} className="w-full px-4 py-3 bg-white border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans" placeholder="Tell us about your care needs" />
+              </div>
+              <button type="submit" className="w-full md:w-auto bg-orange text-white px-12 py-4 font-bold uppercase tracking-widest hover:bg-orange/90 transition-all shadow-lg">
+                Submit request
+              </button>
+              {talkToUsStatus && <p className="text-sm text-gray-600">{talkToUsStatus}</p>}
+            </form>
           </div>
         </div>
       </section>
