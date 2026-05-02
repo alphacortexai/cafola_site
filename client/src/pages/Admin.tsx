@@ -29,6 +29,10 @@ export default function Admin() {
   const [submissionsStatus, setSubmissionsStatus] = useState(
     "No submissions loaded yet"
   );
+  const [rawArticles, setRawArticles] = useState(
+    JSON.stringify(defaultSiteContent.articles, null, 2)
+  );
+  const [articlesStatus, setArticlesStatus] = useState("Articles ready");
   const [loginError, setLoginError] = useState<string | null>(null);
   const loginConfigIssue = getLoginConfigIssue() ?? firebaseInitError;
 
@@ -80,6 +84,7 @@ export default function Admin() {
       const payload = (await response.json()) as SiteContent;
       setCms(payload);
       setRawCms(JSON.stringify(payload, null, 2));
+      setRawArticles(JSON.stringify(payload.articles, null, 2));
       setCmsStatus("CMS loaded");
     } catch {
       setCmsStatus("Using default CMS content");
@@ -151,6 +156,29 @@ export default function Admin() {
         ? "Token set. Reloading..."
         : "Token cleared. Reloading..."
     );
+  };
+
+  const saveArticles = async () => {
+    try {
+      const parsed = JSON.parse(rawArticles) as SiteContent["articles"];
+      if (!Array.isArray(parsed)) {
+        throw new Error("Articles must be an array");
+      }
+
+      const response = await fetch("/api/cms", {
+        method: "PUT",
+        headers,
+        body: JSON.stringify({ ...cms, articles: parsed }),
+      });
+      if (!response.ok) throw new Error("Failed to save articles");
+
+      const nextCms = { ...cms, articles: parsed };
+      setCms(nextCms);
+      setRawCms(JSON.stringify(nextCms, null, 2));
+      setArticlesStatus("Articles saved");
+    } catch {
+      setArticlesStatus("Invalid JSON or save failed");
+    }
   };
 
   if (loading) {
@@ -263,6 +291,33 @@ export default function Admin() {
           <p className="text-sm text-slate-400">
             If ADMIN_TOKEN is configured on the server, enter it here.
           </p>
+        </section>
+
+        <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
+            <h2 className="text-xl font-serif">Articles CMS section</h2>
+            <p className="text-sm text-slate-400">Status: {articlesStatus}</p>
+          </div>
+          <p className="text-sm text-slate-400">
+            Manage only the articles array used by the public Articles page.
+          </p>
+          <textarea
+            value={rawArticles}
+            onChange={event => setRawArticles(event.target.value)}
+            className="w-full min-h-[260px] p-4 bg-slate-950 border border-slate-700 font-mono text-sm"
+          />
+          <div className="flex gap-3">
+            <Button onClick={saveArticles} className="bg-orange hover:bg-orange/90">
+              Save Articles
+            </Button>
+            <Button
+              variant="outline"
+              className="text-white"
+              onClick={() => setRawArticles(JSON.stringify(cms.articles, null, 2))}
+            >
+              Reset articles editor
+            </Button>
+          </div>
         </section>
 
         <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
