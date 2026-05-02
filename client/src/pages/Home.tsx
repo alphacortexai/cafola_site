@@ -11,6 +11,12 @@ import { defaultSiteContent, type SiteContent } from "@shared/cms";
 import { Link } from "wouter";
 
 export default function Home() {
+  const truncateWords = (text: string, maxWords: number) => {
+    const words = text.trim().split(/\s+/);
+    if (words.length <= maxWords) return text;
+    return `${words.slice(0, maxWords).join(" ")}...`;
+  };
+
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [cms, setCms] = useState<SiteContent>(defaultSiteContent);
   const [newsletterData, setNewsletterData] = useState({
@@ -193,7 +199,7 @@ export default function Home() {
                   {service.title}
                 </h3>
                 <p className="text-gray-600 font-sans text-sm mb-8 flex-grow leading-relaxed text-center">
-                  {service.description}
+                  {truncateWords(service.description, 8)}
                 </p>
                 <Link
                   href={`/services/${service.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
