@@ -162,11 +162,8 @@ export default function Home() {
 
       <section className="relative -mt-16 z-10 pb-8 md:pb-12">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl bg-white/95 backdrop-blur-sm shadow-2xl border-t-4 border-teal px-8 py-8 md:px-12 md:py-10">
-            <h1 className="text-4xl md:text-6xl font-serif text-navy mb-3 leading-tight">
-              {cms.brandName}
-            </h1>
-            <p className="text-2xl md:text-4xl font-serif text-teal leading-tight">
+          <div className="max-w-4xl mx-auto bg-teal shadow-2xl px-8 py-8 md:px-14 md:py-12 text-center">
+            <p className="text-2xl md:text-4xl font-serif text-white leading-tight">
               {cms.heroSubheading}
             </p>
           </div>
