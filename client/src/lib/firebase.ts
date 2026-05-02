@@ -8,6 +8,7 @@ import {
   onAuthStateChanged as firebaseOnAuthStateChanged,
   type User,
 } from "firebase/auth";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -23,11 +24,13 @@ const firebaseConfig = {
 };
 
 let auth: ReturnType<typeof getAuth> | null = null;
+let storage: ReturnType<typeof getStorage> | null = null;
 let firebaseInitError: string | null = null;
 
 try {
   const app = initializeApp(firebaseConfig);
   auth = getAuth(app);
+  storage = getStorage(app);
 } catch (error) {
   console.error("Firebase initialization failed", error);
   firebaseInitError = "Firebase initialization failed. Check your Firebase web app credentials.";
@@ -41,6 +44,25 @@ const ensureAuth = () => {
     throw new Error(firebaseInitError ?? "Firebase Auth is unavailable.");
   }
   return auth;
+};
+
+const ensureStorage = () => {
+  if (!storage) {
+    throw new Error(firebaseInitError ?? "Firebase Storage is unavailable.");
+  }
+  return storage;
+};
+
+export const uploadArticleImage = async (file: File, slug: string) => {
+  const activeStorage = ensureStorage();
+  const cleanSlug = slug.trim() || "untitled";
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
+  const path = `articles/${cleanSlug}/${Date.now()}-${safeName}`;
+  const fileRef = ref(activeStorage, path);
+  await uploadBytes(fileRef, file, {
+    contentType: file.type || "application/octet-stream",
+  });
+  return getDownloadURL(fileRef);
 };
 
 export const signInWithGoogle = async () => {
