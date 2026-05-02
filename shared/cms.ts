@@ -77,7 +77,7 @@ export const defaultSiteContent: SiteContent = {
   services: [
     {
       title: "Post-Hospital Recovery",
-      description: "Skilled nursing after hospital discharge for safer recovery...",
+      description: "Skilled nursing for safer post-hospital recovery.",
       icon: "🏥",
       longDescription: "Many patients are discharged from hospitals but still need skilled nursing care. Our services are tailored to support residents in our recovery center / residential care centers following acute hospital admission. CAFOLA work to ensure continuity of care structured to facilitate complication prevention, avoid re-admission and complete healing.",
       details: [
@@ -92,7 +92,7 @@ export const defaultSiteContent: SiteContent = {
     },
     {
       title: "Stroke Recovery & Rehab",
-      description: "Personalized stroke rehab with one-on-one nursing support...",
+      description: "Personalized stroke rehab with one-on-one nursing care.",
       icon: "🧠",
       longDescription: "When a serious or chronic health issue affects someone you love, it seems overwhelming. Fortunately we are here to provide one on one professional nursing care and attention while outside the hospital, in a comfortable recovery center. We personalize care plan for our residents recovering from stroke.",
       details: [
@@ -104,7 +104,7 @@ export const defaultSiteContent: SiteContent = {
     },
     {
       title: "Long-Term Care",
-      description: "24/7 chronic condition care for daily living support...",
+      description: "24/7 support for chronic conditions and daily living.",
       icon: "⏳",
       longDescription: "CAFOLA is here to work with family in providing round the clock support for individuals needing assistance with daily living activities, health monitoring, psychological comfort, and professional nursing care.",
       details: [
@@ -118,7 +118,7 @@ export const defaultSiteContent: SiteContent = {
     },
     {
       title: "Specialty Care",
-      description: "Dementia, geriatric, and therapy-focused specialty care plans...",
+      description: "Specialty care for dementia, geriatrics, and therapies.",
       icon: "✨",
       longDescription: "At CAFOLA, we believe that care should be designed towards each person's unique needs. That's the exact reason you should rely on people with the skills.",
       details: [
