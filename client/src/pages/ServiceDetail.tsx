@@ -12,6 +12,7 @@ export default function ServiceDetail() {
     lastName: "",
     phone: "",
     email: "",
+    talkToUs: "",
   });
   const [formStatus, setFormStatus] = useState<string>("");
 
@@ -39,7 +40,9 @@ export default function ServiceDetail() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          message: `Service request for: ${service?.title ?? "Unknown service"}`,
+          message: `Service request for: ${service?.title ?? "Unknown service"}${formData.talkToUs.trim() ? `
+
+Talk to us: ${formData.talkToUs.trim()}` : ""}`,
           source: `service-${slug ?? "unknown"}`,
         }),
       });
@@ -53,6 +56,7 @@ export default function ServiceDetail() {
         lastName: "",
         phone: "",
         email: "",
+        talkToUs: "",
       });
       setFormStatus("Thanks! We received your request.");
     } catch {
@@ -190,6 +194,16 @@ export default function ServiceDetail() {
                         value={formData.phone}
                         onChange={(event) => setFormData((prev) => ({ ...prev, phone: event.target.value }))}
                         className="w-full px-4 py-3 bg-gray-50 border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] uppercase tracking-widest font-bold mb-1 text-gray-500">Talk to us</label>
+                      <textarea
+                        rows={4}
+                        value={formData.talkToUs}
+                        onChange={(event) => setFormData((prev) => ({ ...prev, talkToUs: event.target.value }))}
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans"
+                        placeholder="Tell us about your care needs"
                       />
                     </div>
                     <div>
