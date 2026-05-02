@@ -126,14 +126,7 @@ export default function Home() {
             })}
           </nav>
 
-          <div className="flex items-center gap-4 md:gap-8">
-            <a
-              href="#"
-              className="font-bold text-sm hidden md:block no-underline hover:underline"
-              style={{ color: "#007e8a" }}
-            >
-              Find a location
-            </a>
+          <div className="flex flex-col items-end gap-1">
             <a
               href={`tel:${cms.phone}`}
               className="font-bold text-sm md:text-base flex items-center gap-2 no-underline"
@@ -141,6 +134,13 @@ export default function Home() {
             >
               <Phone className="w-4 h-4" />
               {cms.phone}
+            </a>
+            <a
+              href="tel:0730728080"
+              className="font-bold text-sm md:text-base no-underline"
+              style={{ color: "#007e8a" }}
+            >
+              0730728080
             </a>
           </div>
         </div>
