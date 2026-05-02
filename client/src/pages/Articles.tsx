@@ -45,6 +45,14 @@ export default function Articles() {
               key={`${article.title}-${index}`}
               className="border border-gray-200 p-6 bg-white"
             >
+              {article.imageUrl ? (
+                <img
+                  src={article.imageUrl}
+                  alt={article.title}
+                  className="w-full aspect-[16/9] object-cover mb-4"
+                  loading="lazy"
+                />
+              ) : null}
               {article.featured ? (
                 <p className="text-xs font-bold uppercase tracking-wider text-orange mb-3">
                   Featured
