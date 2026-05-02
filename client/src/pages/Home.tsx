@@ -3,7 +3,6 @@ import {
   ChevronRight,
   Star,
   Phone,
-  MapPin,
   CheckCircle2,
   Award,
 } from "lucide-react";
@@ -13,7 +12,6 @@ import { Link } from "wouter";
 
 export default function Home() {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
-  const [searchLocation, setSearchLocation] = useState("");
   const [cms, setCms] = useState<SiteContent>(defaultSiteContent);
   const [newsletterData, setNewsletterData] = useState({
     firstName: "",
@@ -159,30 +157,18 @@ export default function Home() {
         />
         <div className="absolute inset-0 bg-navy/40" />
 
-        <div className="relative container mx-auto px-4 h-full flex flex-col justify-center">
-          <div className="max-w-2xl">
-            <h1 className="text-4xl md:text-6xl font-serif text-white mb-4 leading-tight">
-              {cms.brandName} <br />
-              <span className="text-3xl md:text-5xl opacity-90">
-                {cms.heroSubheading}
-              </span>
-            </h1>
+        <div className="relative container mx-auto px-4 h-full" />
+      </section>
 
-            <div className="mt-12 bg-white p-2 flex flex-col md:flex-row gap-2 max-w-lg shadow-2xl">
-              <div className="flex-1 flex items-center px-4 border-b md:border-b-0 md:border-r border-gray-200">
-                <MapPin className="w-5 h-5 text-gray-400 mr-2" />
-                <input
-                  type="text"
-                  placeholder="Enter ZIP code/City, State"
-                  value={searchLocation}
-                  onChange={e => setSearchLocation(e.target.value)}
-                  className="w-full py-4 border-0 focus:ring-0 font-sans text-navy outline-none"
-                />
-              </div>
-              <button className="bg-teal text-white px-8 py-4 font-sans font-bold uppercase tracking-widest hover:bg-teal-dark transition-colors">
-                Search
-              </button>
-            </div>
+      <section className="relative -mt-16 z-10 pb-8 md:pb-12">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl bg-white/95 backdrop-blur-sm shadow-2xl border-t-4 border-teal px-8 py-8 md:px-12 md:py-10">
+            <h1 className="text-4xl md:text-6xl font-serif text-navy mb-3 leading-tight">
+              {cms.brandName}
+            </h1>
+            <p className="text-2xl md:text-4xl font-serif text-teal leading-tight">
+              {cms.heroSubheading}
+            </p>
           </div>
         </div>
       </section>
