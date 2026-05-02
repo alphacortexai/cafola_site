@@ -179,19 +179,19 @@ export default function Home() {
             {cms.servicesIntro}
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             {cms.services.map((service, idx) => (
               <div
                 key={idx}
-                className="group flex flex-col h-full border border-gray-200 p-8 hover:shadow-2xl transition-all duration-300 bg-gray-100 items-center text-center"
+                className="group flex flex-col h-full border border-gray-200 p-6 hover:shadow-2xl transition-all duration-300 bg-gray-100 items-center text-center"
               >
-                <div className="text-5xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
                   {service.icon}
                 </div>
-                <h3 className="text-2xl font-serif mb-4 text-navy group-hover:text-teal transition-colors">
+                <h3 className="text-xl font-serif mb-3 text-navy group-hover:text-teal transition-colors">
                   {service.title}
                 </h3>
-                <p className="text-gray-600 font-sans text-sm mb-8 flex-grow leading-relaxed text-center">
+                <p className="text-gray-600 font-sans text-sm mb-5 flex-grow leading-relaxed text-center">
                   {truncateWords(service.description, 8)}
                 </p>
                 <Link
