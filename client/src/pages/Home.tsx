@@ -187,7 +187,7 @@ export default function Home() {
             {cms.services.map((service, idx) => (
               <div
                 key={idx}
-                className="group flex flex-col h-full border border-gray-100 p-8 hover:shadow-2xl transition-all duration-300 bg-white"
+                className="group flex flex-col h-full border border-gray-200 p-8 hover:shadow-2xl transition-all duration-300 bg-gray-100 items-center text-center"
               >
                 <div className="text-5xl mb-6 group-hover:scale-110 transition-transform duration-300">
                   {service.icon}
@@ -195,12 +195,12 @@ export default function Home() {
                 <h3 className="text-2xl font-serif mb-4 text-navy group-hover:text-teal transition-colors">
                   {service.title}
                 </h3>
-                <p className="text-gray-600 font-sans text-sm mb-8 flex-grow leading-relaxed">
+                <p className="text-gray-600 font-sans text-sm mb-8 flex-grow leading-relaxed text-center">
                   {service.description}
                 </p>
                 <Link
                   href={`/services/${service.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
-                  className="font-bold text-sm uppercase tracking-widest text-teal hover:underline no-underline inline-flex items-center gap-2"
+                  className="font-bold text-sm tracking-wide text-teal hover:underline no-underline inline-flex items-center gap-2"
                 >
                   Learn more <ChevronRight className="w-4 h-4" />
                 </Link>
