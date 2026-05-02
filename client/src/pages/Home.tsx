@@ -177,7 +177,7 @@ export default function Home() {
       </section>
 
       {/* Services Section */}
-      <section id="services" className="pt-20 pb-12 md:pt-32 md:pb-16 bg-white">
+      <section id="services" className="pt-12 pb-12 md:pt-20 md:pb-16 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl md:text-5xl font-serif text-center mb-6 text-navy">
             {cms.servicesHeading}
