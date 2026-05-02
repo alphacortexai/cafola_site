@@ -19,8 +19,12 @@ export type Service = {
 };
 
 export type Article = {
+  slug: string;
   title: string;
   description: string;
+  content?: string;
+  section?: string;
+  imageUrl?: string;
   featured?: boolean;
 };
 
@@ -167,21 +171,33 @@ export const defaultSiteContent: SiteContent = {
   resourcesHeading: "Latest Resources for Families",
   articles: [
     {
+      slug: "how-to-build-a-safer-home-for-aging-in-place",
       title: "How to Build a Safer Home for Aging in Place",
       description: "Simple room-by-room updates that improve safety, comfort, and independence.",
+      section: "Home Safety",
+      content: "Creating a safer home starts with lighting, clear pathways, and bathroom support tools such as grab bars and non-slip mats. Review each room for fall risks and make small updates that preserve independence.",
       featured: true,
     },
     {
+      slug: "early-signs-that-extra-daily-support-may-help",
       title: "Early Signs That Extra Daily Support May Help",
       description: "Learn practical indicators and how to start a conversation with empathy.",
+      section: "Care Planning",
+      content: "Watch for missed medications, increasing fatigue, social withdrawal, or skipped meals. Start conversations with empathy, focusing on goals and quality of life instead of limitations.",
     },
     {
+      slug: "nutrition-tips-for-older-adults-at-home",
       title: "Nutrition Tips for Older Adults at Home",
       description: "Keep meals balanced, accessible, and enjoyable with these caregiver-backed ideas.",
+      section: "Nutrition",
+      content: "Prioritize protein, fiber, hydration, and colorful produce. Keep healthy snacks visible and easy to prepare. Use meal routines and shared mealtimes to support appetite and consistency.",
     },
     {
+      slug: "how-respite-care-supports-family-caregivers",
       title: "How Respite Care Supports Family Caregivers",
       description: "Why short breaks can prevent burnout and improve long-term care outcomes.",
+      section: "Family Caregiving",
+      content: "Respite care provides temporary support so family caregivers can rest, work, and attend to personal needs. Planned breaks reduce stress and improve long-term care sustainability.",
     },
   ],
   newsletterHeading: "Get CAFOLA care insights in your inbox",

@@ -4,6 +4,7 @@ import { defaultSiteContent, type SiteContent } from "@shared/cms";
 import { Link } from "wouter";
 import { getLoginConfigIssue } from "@/const";
 import { signInWithGoogle, logout, onAuthStateChanged, firebaseInitError, type User } from "@/lib/firebase";
+import type { Article } from "@shared/cms";
 
 type ContactSubmission = {
   firstName: string;
@@ -32,6 +33,9 @@ export default function Admin() {
   const [rawArticles, setRawArticles] = useState(
     JSON.stringify(defaultSiteContent.articles, null, 2)
   );
+  const [articlesDraft, setArticlesDraft] = useState<SiteContent["articles"]>(defaultSiteContent.articles);
+  const [articleForm, setArticleForm] = useState<Article>({ slug: "", title: "", description: "", content: "", section: "", imageUrl: "", featured: false });
+  const [editingSlug, setEditingSlug] = useState<string | null>(null);
   const [articlesStatus, setArticlesStatus] = useState("Articles ready");
   const [loginError, setLoginError] = useState<string | null>(null);
   const loginConfigIssue = getLoginConfigIssue() ?? firebaseInitError;
@@ -85,6 +89,7 @@ export default function Admin() {
       setCms(payload);
       setRawCms(JSON.stringify(payload, null, 2));
       setRawArticles(JSON.stringify(payload.articles, null, 2));
+      setArticlesDraft(payload.articles);
       setCmsStatus("CMS loaded");
     } catch {
       setCmsStatus("Using default CMS content");
@@ -160,10 +165,7 @@ export default function Admin() {
 
   const saveArticles = async () => {
     try {
-      const parsed = JSON.parse(rawArticles) as SiteContent["articles"];
-      if (!Array.isArray(parsed)) {
-        throw new Error("Articles must be an array");
-      }
+      const parsed = articlesDraft;
 
       const response = await fetch("/api/cms", {
         method: "PUT",
@@ -175,10 +177,48 @@ export default function Admin() {
       const nextCms = { ...cms, articles: parsed };
       setCms(nextCms);
       setRawCms(JSON.stringify(nextCms, null, 2));
+      setRawArticles(JSON.stringify(parsed, null, 2));
       setArticlesStatus("Articles saved");
     } catch {
       setArticlesStatus("Invalid JSON or save failed");
     }
+  };
+
+  const resetArticleForm = () => {
+    setEditingSlug(null);
+    setArticleForm({ slug: "", title: "", description: "", content: "", section: "", imageUrl: "", featured: false });
+  };
+
+  const upsertArticle = () => {
+    if (!articleForm.slug.trim() || !articleForm.title.trim() || !articleForm.description.trim()) {
+      setArticlesStatus("Slug, title, and description are required");
+      return;
+    }
+    const draft = [...articlesDraft];
+    const idx = draft.findIndex((a) => a.slug === editingSlug);
+    if (idx >= 0) {
+      draft[idx] = articleForm;
+      setArticlesStatus("Article updated in draft");
+    } else {
+      draft.push(articleForm);
+      setArticlesStatus("Article added to draft");
+    }
+    setArticlesDraft(draft);
+    setRawArticles(JSON.stringify(draft, null, 2));
+    resetArticleForm();
+  };
+
+  const editArticle = (article: Article) => {
+    setEditingSlug(article.slug);
+    setArticleForm(article);
+  };
+
+  const deleteArticle = (slug: string) => {
+    const draft = articlesDraft.filter((a) => a.slug !== slug);
+    setArticlesDraft(draft);
+    setRawArticles(JSON.stringify(draft, null, 2));
+    if (editingSlug === slug) resetArticleForm();
+    setArticlesStatus("Article removed from draft");
   };
 
   if (loading) {
@@ -299,13 +339,34 @@ export default function Admin() {
             <p className="text-sm text-slate-400">Status: {articlesStatus}</p>
           </div>
           <p className="text-sm text-slate-400">
-            Manage only the articles array used by the public Articles page.
+            Create, edit, delete, and publish articles. Click Save Articles to publish.
           </p>
-          <textarea
-            value={rawArticles}
-            onChange={event => setRawArticles(event.target.value)}
-            className="w-full min-h-[260px] p-4 bg-slate-950 border border-slate-700 font-mono text-sm"
-          />
+          <div className="grid md:grid-cols-2 gap-3">
+            <input value={articleForm.slug} onChange={(e) => setArticleForm((p) => ({ ...p, slug: e.target.value }))} placeholder="slug" className="px-3 py-2 bg-slate-950 border border-slate-700" />
+            <input value={articleForm.section ?? ""} onChange={(e) => setArticleForm((p) => ({ ...p, section: e.target.value }))} placeholder="section" className="px-3 py-2 bg-slate-950 border border-slate-700" />
+            <input value={articleForm.title} onChange={(e) => setArticleForm((p) => ({ ...p, title: e.target.value }))} placeholder="title" className="px-3 py-2 bg-slate-950 border border-slate-700 md:col-span-2" />
+            <input value={articleForm.imageUrl ?? ""} onChange={(e) => setArticleForm((p) => ({ ...p, imageUrl: e.target.value }))} placeholder="image url" className="px-3 py-2 bg-slate-950 border border-slate-700 md:col-span-2" />
+            <textarea value={articleForm.description} onChange={(e) => setArticleForm((p) => ({ ...p, description: e.target.value }))} placeholder="description" className="px-3 py-2 bg-slate-950 border border-slate-700 md:col-span-2 min-h-[80px]" />
+            <textarea value={articleForm.content ?? ""} onChange={(e) => setArticleForm((p) => ({ ...p, content: e.target.value }))} placeholder="full content" className="px-3 py-2 bg-slate-950 border border-slate-700 md:col-span-2 min-h-[120px]" />
+          </div>
+          <div className="flex gap-3">
+            <Button type="button" onClick={upsertArticle} className="bg-teal hover:bg-teal/90">{editingSlug ? "Update Draft" : "Add Draft"}</Button>
+            <Button type="button" variant="outline" className="text-white" onClick={resetArticleForm}>Clear</Button>
+          </div>
+          <div className="space-y-2">
+            {articlesDraft.map((article) => (
+              <div key={article.slug} className="border border-slate-800 p-3 flex items-start justify-between gap-3">
+                <div>
+                  <p className="font-semibold">{article.title}</p>
+                  <p className="text-xs text-slate-400">/{article.slug} • {article.section ?? "General"}</p>
+                </div>
+                <div className="flex gap-2">
+                  <Button type="button" size="sm" variant="outline" className="text-white" onClick={() => editArticle(article)}>Edit</Button>
+                  <Button type="button" size="sm" onClick={() => deleteArticle(article.slug)} className="bg-red-600 hover:bg-red-700">Delete</Button>
+                </div>
+              </div>
+            ))}
+          </div>
           <div className="flex gap-3">
             <Button onClick={saveArticles} className="bg-orange hover:bg-orange/90">
               Save Articles

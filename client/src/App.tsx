@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import ServiceDetail from "./pages/ServiceDetail";
 import AboutUs from "./pages/AboutUs";
 import Articles from "./pages/Articles";
+import ArticleDetail from "./pages/ArticleDetail";
 
 const Admin = lazy(() => import("./pages/Admin"));
 
@@ -19,6 +20,7 @@ function Router() {
       <Route path={"/services/:slug"} component={ServiceDetail} />
       <Route path={"/about"} component={AboutUs} />
       <Route path={"/articles"} component={Articles} />
+      <Route path={"/articles/:slug"} component={ArticleDetail} />
       <Route path={"/admin"}>
         <Suspense fallback={<div className="min-h-screen grid place-items-center">Loading admin...</div>}>
           <Admin />
