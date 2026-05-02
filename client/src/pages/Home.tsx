@@ -352,7 +352,7 @@ export default function Home() {
               }}
             />
             <div className="absolute -bottom-8 -left-8 bg-orange p-8 text-white hidden md:block shadow-xl">
-              <p className="text-4xl font-serif font-bold">25+</p>
+              <p className="text-4xl font-serif font-bold">10yrs</p>
               <p className="text-sm uppercase tracking-widest font-bold">
                 Years of Care
               </p>
