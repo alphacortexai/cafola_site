@@ -3,7 +3,7 @@ import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { defaultSiteContent, type SiteContent } from "@shared/cms";
 import { Link } from "wouter";
 import { getLoginConfigIssue } from "@/const";
-import { auth, signInWithGoogle, logout, onAuthStateChanged, type User } from "@/lib/firebase";
+import { signInWithGoogle, logout, onAuthStateChanged, firebaseInitError, type User } from "@/lib/firebase";
 
 type ContactSubmission = {
   firstName: string;
@@ -29,7 +29,7 @@ export default function Admin() {
   const [submissionsStatus, setSubmissionsStatus] = useState(
     "No submissions loaded yet"
   );
-  const loginConfigIssue = getLoginConfigIssue();
+  const loginConfigIssue = getLoginConfigIssue() ?? firebaseInitError;
 
   const headers = useMemo<Record<string, string>>(() => {
     const nextHeaders: Record<string, string> = {
@@ -40,7 +40,7 @@ export default function Admin() {
   }, [activeToken]);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged((currentUser) => {
       setUser(currentUser);
       setLoading(false);
     });
