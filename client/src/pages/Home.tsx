@@ -171,7 +171,7 @@ export default function Home() {
       </section>
 
       {/* Services Section */}
-      <section id="services" className="py-20 md:py-32 bg-white">
+      <section id="services" className="pt-20 pb-12 md:pt-32 md:pb-16 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl md:text-5xl font-serif text-center mb-6 text-navy">
             {cms.servicesHeading}
@@ -208,7 +208,7 @@ export default function Home() {
       </section>
 
       {/* About Us Card Section */}
-      <section className="py-20 md:py-32 bg-white border-t border-gray-100">
+      <section className="pt-10 pb-20 md:pt-14 md:pb-32 bg-white border-t border-gray-100">
         <div className="container">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="order-2 lg:order-1">
