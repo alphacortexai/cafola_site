@@ -1,12 +1,12 @@
-# Right at Home Website Analysis
+# Cafola Uganda Website Analysis
 
 ## Overview
-Right at Home is a senior care and in-home assistance service provider. The website is a professional, service-focused landing page with a warm, trustworthy aesthetic.
+Cafola Uganda is a senior care and in-home assistance service provider. The website is a professional, service-focused landing page with a warm, trustworthy aesthetic.
 
 ## Key Sections & Content
 
 ### 1. Header/Navigation
-- Logo: Right at Home (with house icon)
+- Logo: Cafola Uganda (with house icon)
 - Navigation Links: Services, Resources, About Us, Careers, Contact
 - Secondary Links: Medical & Community Partners, Franchise Opportunities
 - CTA: Find a location, Phone: (877) 697-7537
@@ -14,7 +14,7 @@ Right at Home is a senior care and in-home assistance service provider. The webs
 
 ### 2. Hero Section
 - Large background image: caregiver with senior client
-- Headline: "Right at Home - Let's start talking about living.®"
+- Headline: "Cafola Uganda - Let's start talking about living.®"
 - Tagline: "Find services in your area"
 - Search bar: ZIP code/City, State input
 

@@ -1,4 +1,4 @@
-# Right at Home - Design System
+# Cafola Uganda - Design System
 
 ## Typography
 
@@ -88,7 +88,7 @@
 
 ## Design Philosophy
 
-The Right at Home website embodies a **professional, trustworthy, and caring** aesthetic. The design choices reflect:
+The Cafola Uganda website embodies a **professional, trustworthy, and caring** aesthetic. The design choices reflect:
 
 1. **Trust**: Serif headings (Merriweather) convey professionalism and reliability
 2. **Care**: Warm photography and teal color create a welcoming, safe feeling
