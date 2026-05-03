@@ -46,7 +46,7 @@
 }
 
 :root {
-  /* Right at Home Brand Colors */
+  /* Cafola Uganda Brand Colors */
   --color-teal: #007e8a;
   --color-teal-dark: #1b7a7a;
   --color-navy: #2c3e50;
@@ -158,7 +158,7 @@
     @apply cursor-pointer;
   }
   
-  /* Right at Home Typography */
+  /* Cafola Uganda Typography */
   body {
     @apply font-sans text-base leading-relaxed;
   }
@@ -220,7 +220,7 @@
     font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   }
   
-  /* Color utilities for Right at Home brand */
+  /* Color utilities for Cafola Uganda brand */
   .text-teal {
     color: var(--color-teal) !important;
   }

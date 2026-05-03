@@ -1,8 +1,8 @@
-# Right at Home Clone - Design Approach
+# Cafola Uganda - Design Approach
 
 ## Selected Design Philosophy: Professional Care & Trust
 
-I have chosen to replicate the **original Right at Home design philosophy** with high fidelity to the source material. This approach emphasizes professional trustworthiness combined with warm, caring aesthetics.
+I have chosen to replicate the **original Cafola Uganda design philosophy** with high fidelity to the source material. This approach emphasizes professional trustworthiness combined with warm, caring aesthetics.
 
 ### Design Movement
 **Contemporary Professional Healthcare** - A modern approach that combines institutional trust (serif typography, structured layouts) with human warmth (photography, generous spacing, accessible color palette).
@@ -74,4 +74,4 @@ All typography maintains sufficient line-height (1.6+) for comfortable reading, 
 
 ## Implementation Notes
 
-This clone maintains high fidelity to the original design while implementing it with modern React, Tailwind CSS, and responsive design principles. The focus is on creating a professional, accessible, and emotionally resonant experience that reflects the core values of Right at Home: expertise, compassion, and commitment to helping seniors age in place.
+This clone maintains high fidelity to the original design while implementing it with modern React, Tailwind CSS, and responsive design principles. The focus is on creating a professional, accessible, and emotionally resonant experience that reflects the core values of Cafola Uganda: expertise, compassion, and commitment to helping seniors age in place.
