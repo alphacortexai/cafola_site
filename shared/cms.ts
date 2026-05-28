@@ -68,7 +68,7 @@ export const defaultSiteContent: SiteContent = {
   tagline: "Compassionate support for living well at home.",
   companyDescriptor: "In-Home Care & Assistance",
   navItems: ["Services", "Resources", "About Us", "Careers", "Contact"],
-  phone: "(877) 697-7537",
+  phone: "(+256) 782-512-703",
   heroHeading: "CAFOLA",
   heroSubheading: "Personalized care that helps families thrive at home.",
   servicesHeading: "What CAFOLA Can Do for You",

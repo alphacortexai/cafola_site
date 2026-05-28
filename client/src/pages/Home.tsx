@@ -10,7 +10,11 @@ import { type FormEvent, useEffect, useState } from "react";
 import { defaultSiteContent, type SiteContent } from "@shared/cms";
 import { Link } from "wouter";
 
-export default function Home() {
+type HomeProps = {
+  previewCms?: SiteContent;
+};
+
+export default function Home({ previewCms }: HomeProps) {
   const truncateWords = (text: string, maxWords: number) => {
     const words = text.trim().split(/\s+/);
     if (words.length <= maxWords) return text;
@@ -18,7 +22,7 @@ export default function Home() {
   };
 
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
-  const [cms, setCms] = useState<SiteContent>(defaultSiteContent);
+  const [cms, setCms] = useState<SiteContent>(previewCms ?? defaultSiteContent);
   const [newsletterData, setNewsletterData] = useState({
     firstName: "",
     lastName: "",
@@ -36,6 +40,11 @@ export default function Home() {
   const [talkToUsStatus, setTalkToUsStatus] = useState("");
 
   useEffect(() => {
+    if (previewCms) {
+      setCms(previewCms);
+      return;
+    }
+
     const loadCms = async () => {
       try {
         const response = await fetch("/api/cms");
@@ -48,7 +57,7 @@ export default function Home() {
     };
 
     void loadCms();
-  }, []);
+  }, [previewCms]);
 
   const submitNewsletter = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

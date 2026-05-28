@@ -16,12 +16,66 @@ type ContactSubmission = {
   createdAt: string;
 };
 
+function CmsPreview({ cms }: { cms: SiteContent }) {
+  return (
+    <div className="rounded border border-slate-800 bg-slate-950 p-5">
+      <div className="space-y-5">
+        <div className="space-y-2">
+          <p className="text-xs uppercase tracking-widest text-slate-400">Preview</p>
+          <h3 className="text-2xl font-serif text-white">{cms.brandName}</h3>
+          <p className="text-slate-400">{cms.companyDescriptor}</p>
+          <p className="text-slate-50 text-lg">{cms.heroSubheading}</p>
+        </div>
+
+        <div className="space-y-3">
+          <h4 className="text-lg font-semibold text-white">Services</h4>
+          <div className="grid gap-3 md:grid-cols-2">
+            {cms.services.slice(0, 4).map((service) => (
+              <div key={service.title} className="rounded border border-slate-800 bg-slate-900 p-4">
+                <div className="text-3xl mb-2">{service.icon}</div>
+                <h5 className="font-semibold text-white">{service.title}</h5>
+                <p className="text-slate-400 text-sm">{service.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <h4 className="text-lg font-semibold text-white">About</h4>
+          <p className="text-slate-300">{cms.aboutUs.headline}</p>
+          <p className="text-slate-400 text-sm">{cms.aboutUs.description}</p>
+        </div>
+
+        <div className="space-y-2">
+          <h4 className="text-lg font-semibold text-white">Articles</h4>
+          <ul className="space-y-2">
+            {cms.articles.slice(0, 3).map((article) => (
+              <li key={article.slug} className="rounded border border-slate-800 bg-slate-900 p-3">
+                <p className="font-semibold text-white">{article.title}</p>
+                <p className="text-slate-400 text-sm">{article.description}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="space-y-2">
+          <h4 className="text-lg font-semibold text-white">Footer</h4>
+          <p className="text-slate-400 text-sm">{cms.footerAddress.join(" • ")}</p>
+          <p className="text-slate-500 text-sm">{cms.footerLinks.join(" • ")}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Admin() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [tokenInput, setTokenInput] = useState("");
   const [activeToken, setActiveToken] = useState("");
   const [cms, setCms] = useState<SiteContent>(defaultSiteContent);
+  const [draftCms, setDraftCms] = useState<SiteContent>(defaultSiteContent);
+  const [previewError, setPreviewError] = useState<string | null>(null);
   const [rawCms, setRawCms] = useState(
     JSON.stringify(defaultSiteContent, null, 2)
   );
@@ -40,6 +94,16 @@ export default function Admin() {
   const [uploadingArticleImage, setUploadingArticleImage] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const loginConfigIssue = getLoginConfigIssue() ?? firebaseInitError;
+
+  useEffect(() => {
+    try {
+      const parsed = JSON.parse(rawCms) as SiteContent;
+      setDraftCms(parsed);
+      setPreviewError(null);
+    } catch {
+      setPreviewError("Invalid JSON preview");
+    }
+  }, [rawCms]);
 
   const headers = useMemo<Record<string, string>>(() => {
     const nextHeaders: Record<string, string> = {
@@ -88,6 +152,7 @@ export default function Admin() {
       if (!response.ok) throw new Error("Failed to load CMS");
       const payload = (await response.json()) as SiteContent;
       setCms(payload);
+      setDraftCms(payload);
       setRawCms(JSON.stringify(payload, null, 2));
       setRawArticles(JSON.stringify(payload.articles, null, 2));
       setArticlesDraft(payload.articles);
@@ -139,8 +204,17 @@ export default function Admin() {
   }, [activeToken, user]);
 
   const saveCms = async () => {
+    let parsed: SiteContent;
+
     try {
-      const parsed = JSON.parse(rawCms) as SiteContent;
+      parsed = JSON.parse(rawCms) as SiteContent;
+    } catch {
+      setCmsStatus("Invalid JSON or save failed");
+      setPreviewError("Invalid JSON preview");
+      return;
+    }
+
+    try {
       const response = await fetch("/api/cms", {
         method: "PUT",
         headers,
@@ -148,6 +222,8 @@ export default function Admin() {
       });
       if (!response.ok) throw new Error("Failed to save CMS");
       setCms(parsed);
+      setDraftCms(parsed);
+      setPreviewError(null);
       setCmsStatus("CMS saved");
     } catch {
       setCmsStatus("Invalid JSON or save failed");
@@ -427,6 +503,19 @@ export default function Admin() {
               Reset editor
             </Button>
           </div>
+        </section>
+
+        <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
+            <h2 className="text-xl font-serif">Live CMS preview</h2>
+            <p className="text-sm text-slate-400">Preview updates in real time from the JSON editor</p>
+          </div>
+          {previewError ? (
+            <div className="rounded border border-red-700 bg-red-900/20 p-4 text-sm text-red-200">
+              {previewError}
+            </div>
+          ) : null}
+          <CmsPreview cms={draftCms} />
         </section>
 
         <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
