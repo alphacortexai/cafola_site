@@ -24,6 +24,7 @@ export type ServicePageSection = {
   description: string;
   imageUrl?: string;
   imageAlt?: string;
+  mediaType?: "image" | "video";
   imagePosition?: "full" | "left" | "right";
 };
 
@@ -32,8 +33,18 @@ export type ServicePage = {
   title: string;
   description: string;
   heroImageUrl?: string;
+  heroMediaType?: "image" | "video";
   content?: string;
   sections: ServicePageSection[];
+};
+
+export type MediaAsset = {
+  id: string;
+  name: string;
+  url: string;
+  type: "image" | "video";
+  contentType?: string;
+  uploadedAt: string;
 };
 
 export type Article = {
@@ -88,6 +99,7 @@ export type SiteContent = {
   footerLinks: string[];
   testimonials: Testimonial[];
   customPages: CustomPage[];
+  mediaLibrary: MediaAsset[];
 };
 
 export const defaultSiteContent: SiteContent = {
@@ -232,6 +244,7 @@ export const defaultSiteContent: SiteContent = {
   footerAddress: ["6700 Mercy Rd", "Ste 400", "Omaha, NE 68106"],
   footerLinks: ["Find Care", "Find Jobs", "Contact Us", "FAQ"],
   customPages: [],
+  mediaLibrary: [],
   testimonials: [
     {
       quote: "CAFOLA gave our family peace of mind and helped my mother stay safely in her own home.",

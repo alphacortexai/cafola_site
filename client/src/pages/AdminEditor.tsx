@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { type ChangeEvent, type FormEvent, useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
-import { defaultSiteContent, type Article, type CustomPage as CustomPageType, type Service, type ServiceDetailItem, type ServicePage, type ServicePageSection, type SiteContent } from "@shared/cms";
+import { defaultSiteContent, type Article, type CustomPage as CustomPageType, type MediaAsset, type Service, type ServiceDetailItem, type ServicePage, type ServicePageSection, type SiteContent } from "@shared/cms";
 import { getLoginConfigIssue } from "@/const";
-import { signInWithGoogle, logout, onAuthStateChanged, firebaseInitError, type User } from "@/lib/firebase";
+import { signInWithGoogle, logout, onAuthStateChanged, firebaseInitError, uploadMediaAsset, type User } from "@/lib/firebase";
 import Home from "./Home";
 import AboutUs from "./AboutUs";
 import Articles from "./Articles";
@@ -51,6 +51,7 @@ const emptyServicePageSection: ServicePageSection = {
   description: "",
   imageUrl: "",
   imageAlt: "",
+  mediaType: "image",
   imagePosition: "full",
 };
 
@@ -59,6 +60,7 @@ const emptyServicePage: ServicePage = {
   title: "",
   description: "",
   heroImageUrl: "",
+  heroMediaType: "image",
   content: "",
   sections: [],
 };
@@ -83,6 +85,7 @@ export default function AdminEditor() {
   const [customPageSlugInput, setCustomPageSlugInput] = useState("");
   const [customPageDescriptionInput, setCustomPageDescriptionInput] = useState("");
   const [customPageContentInput, setCustomPageContentInput] = useState("");
+  const [uploadingMedia, setUploadingMedia] = useState(false);
   const loginConfigIssue = getLoginConfigIssue() ?? firebaseInitError;
 
   const headers = useMemo<Record<string, string>>(() => {
@@ -154,6 +157,44 @@ export default function AdminEditor() {
 
   const updateDraft = <K extends keyof SiteContent>(key: K, value: SiteContent[K]) => {
     setDraftCms((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const addMediaAsset = (asset: MediaAsset) => {
+    setDraftCms((prev) => ({ ...prev, mediaLibrary: [asset, ...(prev.mediaLibrary ?? [])] }));
+  };
+
+  const deleteMediaAsset = (assetId: string) => {
+    setDraftCms((prev) => ({ ...prev, mediaLibrary: (prev.mediaLibrary ?? []).filter((asset) => asset.id !== assetId) }));
+  };
+
+  const getMediaType = (contentType?: string): MediaAsset["type"] =>
+    contentType?.startsWith("video/") ? "video" : "image";
+
+  const onMediaSelected = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploadingMedia(true);
+    setStatus(`Uploading ${file.name}...`);
+    try {
+      const url = await uploadMediaAsset(file);
+      addMediaAsset({
+        id: `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`,
+        name: file.name,
+        url,
+        type: getMediaType(file.type),
+        contentType: file.type,
+        uploadedAt: new Date().toISOString(),
+      });
+      setStatus("Uploaded media to library");
+    } catch (error) {
+      console.error("Media upload failed", error);
+      const message = error instanceof Error ? error.message : "Media upload failed.";
+      setStatus(message);
+    } finally {
+      setUploadingMedia(false);
+      event.currentTarget.value = "";
+    }
   };
 
   const updateAboutUs = <K extends keyof SiteContent["aboutUs"]>(key: K, value: SiteContent["aboutUs"][K]) => {
@@ -386,6 +427,82 @@ export default function AdminEditor() {
     return slug;
   };
 
+  const renderMediaPicker = (
+    selectedUrl: string | undefined,
+    onSelect: (asset: MediaAsset) => void
+  ) => (
+    <div className="rounded border border-slate-800 bg-slate-950/80 p-3 space-y-3">
+      <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Choose from media library</p>
+      {(draftCms.mediaLibrary ?? []).length > 0 ? (
+        <div className="grid grid-cols-2 gap-2">
+          {(draftCms.mediaLibrary ?? []).map((asset) => (
+            <button
+              key={asset.id}
+              type="button"
+              onClick={() => onSelect(asset)}
+              className={`overflow-hidden rounded border text-left transition ${
+                selectedUrl === asset.url ? "border-teal bg-teal/10" : "border-slate-800 bg-slate-900 hover:border-slate-600"
+              }`}
+            >
+              {asset.type === "image" ? (
+                <img src={asset.url} alt={asset.name} className="h-20 w-full object-cover" loading="lazy" />
+              ) : (
+                <div className="grid h-20 place-items-center bg-slate-800 text-xs font-semibold uppercase tracking-wider text-slate-300">
+                  Video
+                </div>
+              )}
+              <span className="block truncate px-2 py-2 text-xs text-slate-300">{asset.name}</span>
+            </button>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm text-slate-400">Upload media below to make it available here.</p>
+      )}
+    </div>
+  );
+
+  const renderMediaLibraryEditor = () => (
+    <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
+      <div>
+        <h2 className="text-xl font-serif">Media</h2>
+        <p className="text-sm text-slate-400">Upload images or videos once, then choose them while editing page media.</p>
+      </div>
+      <input
+        type="file"
+        accept="image/*,video/*"
+        onChange={(event) => void onMediaSelected(event)}
+        disabled={uploadingMedia}
+        className="w-full px-3 py-2 bg-slate-950 border border-slate-700"
+      />
+      {uploadingMedia ? <p className="text-sm text-slate-400">Uploading...</p> : null}
+      {(draftCms.mediaLibrary ?? []).length > 0 ? (
+        <div className="grid grid-cols-2 gap-3">
+          {(draftCms.mediaLibrary ?? []).map((asset) => (
+            <div key={asset.id} className="overflow-hidden rounded border border-slate-800 bg-slate-950">
+              {asset.type === "image" ? (
+                <img src={asset.url} alt={asset.name} className="h-24 w-full object-cover" loading="lazy" />
+              ) : (
+                <video src={asset.url} className="h-24 w-full object-cover" muted controls />
+              )}
+              <div className="space-y-2 p-2">
+                <p className="truncate text-xs text-slate-300">{asset.name}</p>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="w-full text-white"
+                  onClick={() => deleteMediaAsset(asset.id)}
+                >
+                  Remove
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
+    </section>
+  );
+
   const renderServiceDetailsEditor = (service: Service, serviceIndex: number, inputClassName: string) => (
     <div className="space-y-3 rounded border border-slate-800 bg-slate-900/50 p-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -544,9 +661,20 @@ export default function AdminEditor() {
             <input
               value={page.heroImageUrl ?? ""}
               onChange={(e) => updateServicePage(pageIndex, { heroImageUrl: e.target.value })}
-              placeholder="Hero image URL"
+              placeholder="Hero media URL"
               className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
             />
+            {renderMediaPicker(page.heroImageUrl, (asset) =>
+              updateServicePage(pageIndex, { heroImageUrl: asset.url, heroMediaType: asset.type })
+            )}
+            <select
+              value={page.heroMediaType ?? "image"}
+              onChange={(e) => updateServicePage(pageIndex, { heroMediaType: e.target.value as ServicePage["heroMediaType"] })}
+              className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+            >
+              <option value="image">Hero is image</option>
+              <option value="video">Hero is video</option>
+            </select>
             <textarea
               value={page.content ?? ""}
               onChange={(e) => updateServicePage(pageIndex, { content: e.target.value })}
@@ -601,9 +729,24 @@ export default function AdminEditor() {
                       <input
                         value={section.imageUrl ?? ""}
                         onChange={(e) => updateServicePageSection(pageIndex, sectionIndex, { imageUrl: e.target.value })}
-                        placeholder="Image URL"
+                        placeholder="Media URL"
                         className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
                       />
+                      {renderMediaPicker(section.imageUrl, (asset) =>
+                        updateServicePageSection(pageIndex, sectionIndex, { imageUrl: asset.url, mediaType: asset.type })
+                      )}
+                      <select
+                        value={section.mediaType ?? "image"}
+                        onChange={(e) =>
+                          updateServicePageSection(pageIndex, sectionIndex, {
+                            mediaType: e.target.value as ServicePageSection["mediaType"],
+                          })
+                        }
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+                      >
+                        <option value="image">Media is image</option>
+                        <option value="video">Media is video</option>
+                      </select>
                       <input
                         value={section.imageAlt ?? ""}
                         onChange={(e) => updateServicePageSection(pageIndex, sectionIndex, { imageAlt: e.target.value })}
@@ -783,6 +926,8 @@ export default function AdminEditor() {
 
         <div className="grid gap-8 xl:grid-cols-[420px_minmax(0,1fr)]">
           <div className="space-y-6">
+            {renderMediaLibraryEditor()}
+
             {previewPage === "about" && (
               <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
                 <h2 className="text-xl font-serif">Edit About Us</h2>
@@ -888,9 +1033,20 @@ export default function AdminEditor() {
                       <input
                         value={page.heroImageUrl ?? ""}
                         onChange={(e) => updateServicePage(pageIndex, { heroImageUrl: e.target.value })}
-                        placeholder="Hero image URL"
+                        placeholder="Hero media URL"
                         className="w-full px-3 py-2 bg-slate-950 border border-slate-700"
                       />
+                      {renderMediaPicker(page.heroImageUrl, (asset) =>
+                        updateServicePage(pageIndex, { heroImageUrl: asset.url, heroMediaType: asset.type })
+                      )}
+                      <select
+                        value={page.heroMediaType ?? "image"}
+                        onChange={(e) => updateServicePage(pageIndex, { heroMediaType: e.target.value as ServicePage["heroMediaType"] })}
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700"
+                      >
+                        <option value="image">Hero is image</option>
+                        <option value="video">Hero is video</option>
+                      </select>
                       <textarea
                         value={page.content ?? ""}
                         onChange={(e) => updateServicePage(pageIndex, { content: e.target.value })}
@@ -945,9 +1101,24 @@ export default function AdminEditor() {
                                 <input
                                   value={section.imageUrl ?? ""}
                                   onChange={(e) => updateServicePageSection(pageIndex, sectionIndex, { imageUrl: e.target.value })}
-                                  placeholder="Image URL"
+                                  placeholder="Media URL"
                                   className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
                                 />
+                                {renderMediaPicker(section.imageUrl, (asset) =>
+                                  updateServicePageSection(pageIndex, sectionIndex, { imageUrl: asset.url, mediaType: asset.type })
+                                )}
+                                <select
+                                  value={section.mediaType ?? "image"}
+                                  onChange={(e) =>
+                                    updateServicePageSection(pageIndex, sectionIndex, {
+                                      mediaType: e.target.value as ServicePageSection["mediaType"],
+                                    })
+                                  }
+                                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+                                >
+                                  <option value="image">Media is image</option>
+                                  <option value="video">Media is video</option>
+                                </select>
                                 <input
                                   value={section.imageAlt ?? ""}
                                   onChange={(e) => updateServicePageSection(pageIndex, sectionIndex, { imageAlt: e.target.value })}

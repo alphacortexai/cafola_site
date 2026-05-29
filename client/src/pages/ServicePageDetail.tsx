@@ -23,8 +23,18 @@ const getNavHref = (item: string, cms: SiteContent) => {
 
 const getServiceSlug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
-function SectionImage({ section }: { section: ServicePageSection }) {
+function SectionMedia({ section }: { section: ServicePageSection }) {
   if (!section.imageUrl) return null;
+
+  if (section.mediaType === "video") {
+    return (
+      <video
+        src={section.imageUrl}
+        className="w-full aspect-[16/10] object-cover"
+        controls
+      />
+    );
+  }
 
   return (
     <img
@@ -43,7 +53,7 @@ function PageSection({ section }: { section: ServicePageSection }) {
     return (
       <section className="grid gap-8 md:grid-cols-2 md:items-center">
         <div className={position === "right" ? "md:order-2" : undefined}>
-          <SectionImage section={section} />
+          <SectionMedia section={section} />
         </div>
         <div className="space-y-4">
           <h2 className="text-3xl font-serif text-navy">{section.title}</h2>
@@ -55,7 +65,7 @@ function PageSection({ section }: { section: ServicePageSection }) {
 
   return (
     <section className="space-y-5">
-      <SectionImage section={section} />
+      <SectionMedia section={section} />
       <div className="max-w-3xl">
         <h2 className="text-3xl font-serif text-navy">{section.title}</h2>
         <p className="mt-4 text-gray-700 leading-8 whitespace-pre-line">{section.description}</p>
@@ -162,11 +172,19 @@ export default function ServicePageDetail({ previewCms, previewSlug }: ServicePa
         </section>
 
         <section className="container mx-auto px-4 py-12 md:py-16 max-w-5xl">
-          <img
-            src={page.heroImageUrl || FALLBACK_IMAGE}
-            alt={page.title}
-            className="w-full aspect-[16/7] object-cover mb-10"
-          />
+          {page.heroMediaType === "video" && page.heroImageUrl ? (
+            <video
+              src={page.heroImageUrl}
+              className="w-full aspect-[16/7] object-cover mb-10"
+              controls
+            />
+          ) : (
+            <img
+              src={page.heroImageUrl || FALLBACK_IMAGE}
+              alt={page.title}
+              className="w-full aspect-[16/7] object-cover mb-10"
+            />
+          )}
           {page.content ? (
             <p className="text-lg text-gray-700 leading-8 whitespace-pre-line max-w-4xl">{page.content}</p>
           ) : null}

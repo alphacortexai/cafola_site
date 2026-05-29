@@ -82,6 +82,25 @@ export const uploadArticleImage = async (file: File, slug: string) => {
   return getDownloadURL(fileRef);
 };
 
+export const uploadMediaAsset = async (file: File) => {
+  const activeStorage = ensureStorage();
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
+  const path = `media/${Date.now()}-${safeName}`;
+  const fileRef = ref(activeStorage, path);
+  try {
+    await uploadBytes(fileRef, file, {
+      contentType: file.type || "application/octet-stream",
+    });
+  } catch (error) {
+    const storageError = error as { code?: string; message?: string };
+    const code = storageError.code ? ` (${storageError.code})` : "";
+    throw new Error(
+      `Media upload failed${code}. Check Firebase Storage bucket name, rules, and CORS settings.`,
+    );
+  }
+  return getDownloadURL(fileRef);
+};
+
 export const signInWithGoogle = async () => {
   const activeAuth = ensureAuth();
   let result;
