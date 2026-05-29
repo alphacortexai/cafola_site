@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { type ChangeEvent, type FormEvent, useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
-import { defaultSiteContent, type Article, type CustomPage as CustomPageType, type Service, type SiteContent } from "@shared/cms";
+import { defaultSiteContent, type Article, type CustomPage as CustomPageType, type Service, type ServiceDetailItem, type SiteContent } from "@shared/cms";
 import { getLoginConfigIssue } from "@/const";
 import { signInWithGoogle, logout, onAuthStateChanged, firebaseInitError, type User } from "@/lib/firebase";
 import Home from "./Home";
@@ -26,6 +26,12 @@ const emptyService: Service = {
   description: "",
   icon: "",
   longDescription: "",
+  details: [],
+};
+
+const emptyServiceDetail: ServiceDetailItem = {
+  title: "",
+  description: "",
 };
 
 const emptyArticle: Article = {
@@ -140,6 +146,47 @@ export default function AdminEditor() {
     }));
   };
 
+  const updateServiceDetail = (
+    serviceIndex: number,
+    detailIndex: number,
+    patch: Partial<ServiceDetailItem>
+  ) => {
+    setDraftCms((prev) => ({
+      ...prev,
+      services: prev.services.map((service, i) => {
+        if (i !== serviceIndex) return service;
+        return {
+          ...service,
+          details: (service.details ?? []).map((detail, j) =>
+            j === detailIndex ? { ...detail, ...patch } : detail
+          ),
+        };
+      }),
+    }));
+  };
+
+  const addServiceDetail = (serviceIndex: number) => {
+    setDraftCms((prev) => ({
+      ...prev,
+      services: prev.services.map((service, i) =>
+        i === serviceIndex
+          ? { ...service, details: [...(service.details ?? []), emptyServiceDetail] }
+          : service
+      ),
+    }));
+  };
+
+  const deleteServiceDetail = (serviceIndex: number, detailIndex: number) => {
+    setDraftCms((prev) => ({
+      ...prev,
+      services: prev.services.map((service, i) =>
+        i === serviceIndex
+          ? { ...service, details: (service.details ?? []).filter((_, j) => j !== detailIndex) }
+          : service
+      ),
+    }));
+  };
+
   const addService = () => {
     setDraftCms((prev) => ({ ...prev, services: [...prev.services, emptyService] }));
   };
@@ -213,6 +260,60 @@ export default function AdminEditor() {
 
   const getServiceSlug = (service: Service) =>
     service.title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+
+  const renderServiceDetailsEditor = (service: Service, serviceIndex: number, inputClassName: string) => (
+    <div className="space-y-3 rounded border border-slate-800 bg-slate-900/50 p-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h4 className="font-semibold">Service page blocks</h4>
+          <p className="text-xs text-slate-400">These appear under "What We Offer" on this service page.</p>
+        </div>
+        <Button
+          type="button"
+          size="sm"
+          className="bg-teal hover:bg-teal/90"
+          onClick={() => addServiceDetail(serviceIndex)}
+        >
+          Add block
+        </Button>
+      </div>
+
+      {(service.details ?? []).length > 0 ? (
+        <div className="space-y-3">
+          {(service.details ?? []).map((detail, detailIndex) => (
+            <div key={`${detail.title}-${detailIndex}`} className="rounded border border-slate-800 bg-slate-950 p-3 space-y-3">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold text-slate-200">Block {detailIndex + 1}</p>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="text-white"
+                  onClick={() => deleteServiceDetail(serviceIndex, detailIndex)}
+                >
+                  Remove
+                </Button>
+              </div>
+              <input
+                value={detail.title}
+                onChange={(e) => updateServiceDetail(serviceIndex, detailIndex, { title: e.target.value })}
+                placeholder="Block title"
+                className={inputClassName}
+              />
+              <textarea
+                value={detail.description}
+                onChange={(e) => updateServiceDetail(serviceIndex, detailIndex, { description: e.target.value })}
+                placeholder="Block description"
+                className={`${inputClassName} min-h-[80px]`}
+              />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm text-slate-400">No detail blocks yet.</p>
+      )}
+    </div>
+  );
 
   useEffect(() => {
     if (previewPage === "service" && !previewSlug && draftCms.services.length > 0) {
@@ -384,7 +485,10 @@ export default function AdminEditor() {
                     <div key={`${service.title}-${index}`} className="space-y-3">
                       <input
                         value={service.title}
-                        onChange={(e) => updateService(index, { title: e.target.value })}
+                        onChange={(e) => {
+                          updateService(index, { title: e.target.value });
+                          setPreviewSlug(getServiceSlug({ ...service, title: e.target.value }));
+                        }}
                         placeholder="Title"
                         className="w-full px-3 py-2 bg-slate-950 border border-slate-700"
                       />
@@ -406,6 +510,11 @@ export default function AdminEditor() {
                         placeholder="Long description"
                         className="w-full px-3 py-2 bg-slate-950 border border-slate-700 min-h-[100px]"
                       />
+                      {renderServiceDetailsEditor(
+                        service,
+                        index,
+                        "w-full px-3 py-2 bg-slate-950 border border-slate-700"
+                      )}
                       <Button
                         type="button"
                         size="sm"
@@ -652,6 +761,11 @@ export default function AdminEditor() {
                       placeholder="Long description"
                       className="w-full px-3 py-2 bg-slate-900 border border-slate-700 min-h-[100px]"
                     />
+                    {renderServiceDetailsEditor(
+                      service,
+                      index,
+                      "w-full px-3 py-2 bg-slate-900 border border-slate-700"
+                    )}
                   </div>
                 ))}
               </div>
