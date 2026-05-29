@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { type ChangeEvent, type FormEvent, useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
-import { defaultSiteContent, type Article, type CustomPage as CustomPageType, type Service, type ServiceDetailItem, type SiteContent } from "@shared/cms";
+import { defaultSiteContent, type Article, type CustomPage as CustomPageType, type Service, type ServiceDetailItem, type ServicePage, type ServicePageSection, type SiteContent } from "@shared/cms";
 import { getLoginConfigIssue } from "@/const";
 import { signInWithGoogle, logout, onAuthStateChanged, firebaseInitError, type User } from "@/lib/firebase";
 import Home from "./Home";
@@ -10,6 +10,7 @@ import Articles from "./Articles";
 import ArticleDetail from "./ArticleDetail";
 import ServiceDetail from "./ServiceDetail";
 import CustomPage from "./CustomPage";
+import ServicePageDetail from "./ServicePageDetail";
 
 type ContactSubmission = {
   firstName: string;
@@ -32,6 +33,7 @@ const emptyService: Service = {
 const emptyServiceDetail: ServiceDetailItem = {
   title: "",
   description: "",
+  linkPageSlug: "",
 };
 
 const emptyArticle: Article = {
@@ -43,6 +45,25 @@ const emptyArticle: Article = {
   imageUrl: "",
   featured: false,
 };
+
+const emptyServicePageSection: ServicePageSection = {
+  title: "",
+  description: "",
+  imageUrl: "",
+  imageAlt: "",
+  imagePosition: "full",
+};
+
+const emptyServicePage: ServicePage = {
+  slug: "",
+  title: "",
+  description: "",
+  heroImageUrl: "",
+  content: "",
+  sections: [],
+};
+
+type PreviewPage = "home" | "about" | "articles" | "service" | "servicePage" | "article" | "custom";
 
 export default function AdminEditor() {
   const [user, setUser] = useState<User | null>(null);
@@ -56,7 +77,7 @@ export default function AdminEditor() {
   const [footerLinkInput, setFooterLinkInput] = useState("");
   const [addressInput, setAddressInput] = useState("");
   const [loginError, setLoginError] = useState<string | null>(null);
-  const [previewPage, setPreviewPage] = useState<"home" | "about" | "articles" | "service" | "article" | "custom">("home");
+  const [previewPage, setPreviewPage] = useState<PreviewPage>("home");
   const [previewSlug, setPreviewSlug] = useState<string>("");
   const [customPageTitleInput, setCustomPageTitleInput] = useState("");
   const [customPageSlugInput, setCustomPageSlugInput] = useState("");
@@ -187,6 +208,98 @@ export default function AdminEditor() {
     }));
   };
 
+  const updateServicePage = (index: number, patch: Partial<ServicePage>) => {
+    setDraftCms((prev) => ({
+      ...prev,
+      servicePages: (prev.servicePages ?? []).map((page, i) =>
+        i === index ? { ...page, ...patch } : page
+      ),
+      services:
+        patch.slug !== undefined
+          ? prev.services.map((service) => ({
+              ...service,
+              details: (service.details ?? []).map((detail) =>
+                detail.linkPageSlug === (prev.servicePages ?? [])[index]?.slug
+                  ? { ...detail, linkPageSlug: patch.slug }
+                  : detail
+              ),
+            }))
+          : prev.services,
+    }));
+  };
+
+  const addServicePage = (page?: Partial<ServicePage>) => {
+    const nextPage: ServicePage = {
+      ...emptyServicePage,
+      slug: page?.slug ?? "",
+      title: page?.title ?? "",
+      description: page?.description ?? "",
+      heroImageUrl: page?.heroImageUrl ?? "",
+      content: page?.content ?? "",
+      sections: page?.sections ?? [],
+    };
+
+    setDraftCms((prev) => ({ ...prev, servicePages: [...(prev.servicePages ?? []), nextPage] }));
+    return nextPage.slug;
+  };
+
+  const deleteServicePage = (index: number) => {
+    setDraftCms((prev) => {
+      const removed = (prev.servicePages ?? [])[index];
+      return {
+        ...prev,
+        servicePages: (prev.servicePages ?? []).filter((_, i) => i !== index),
+        services: prev.services.map((service) => ({
+          ...service,
+          details: (service.details ?? []).map((detail) =>
+            detail.linkPageSlug === removed?.slug ? { ...detail, linkPageSlug: "" } : detail
+          ),
+        })),
+      };
+    });
+  };
+
+  const updateServicePageSection = (
+    pageIndex: number,
+    sectionIndex: number,
+    patch: Partial<ServicePageSection>
+  ) => {
+    setDraftCms((prev) => ({
+      ...prev,
+      servicePages: (prev.servicePages ?? []).map((page, i) => {
+        if (i !== pageIndex) return page;
+        return {
+          ...page,
+          sections: (page.sections ?? []).map((section, j) =>
+            j === sectionIndex ? { ...section, ...patch } : section
+          ),
+        };
+      }),
+    }));
+  };
+
+  const addServicePageSection = (pageIndex: number) => {
+    setDraftCms((prev) => ({
+      ...prev,
+      servicePages: (prev.servicePages ?? []).map((page, i) =>
+        i === pageIndex
+          ? { ...page, sections: [...(page.sections ?? []), emptyServicePageSection] }
+          : page
+      ),
+    }));
+  };
+
+  const deleteServicePageSection = (pageIndex: number, sectionIndex: number) => {
+    setDraftCms((prev) => ({
+      ...prev,
+      servicePages: (prev.servicePages ?? []).map((page, i) =>
+        i === pageIndex
+          ? { ...page, sections: (page.sections ?? []).filter((_, j) => j !== sectionIndex) }
+          : page
+      ),
+    }));
+  };
+
   const addService = () => {
     setDraftCms((prev) => ({ ...prev, services: [...prev.services, emptyService] }));
   };
@@ -261,6 +374,18 @@ export default function AdminEditor() {
   const getServiceSlug = (service: Service) =>
     service.title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
+  const getUniqueServicePageSlug = (title: string) => {
+    const base = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "service-page";
+    const existing = new Set((draftCms.servicePages ?? []).map((page) => page.slug));
+    let slug = base;
+    let count = 2;
+    while (existing.has(slug)) {
+      slug = `${base}-${count}`;
+      count += 1;
+    }
+    return slug;
+  };
+
   const renderServiceDetailsEditor = (service: Service, serviceIndex: number, inputClassName: string) => (
     <div className="space-y-3 rounded border border-slate-800 bg-slate-900/50 p-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -306,6 +431,45 @@ export default function AdminEditor() {
                 placeholder="Block description"
                 className={`${inputClassName} min-h-[80px]`}
               />
+              <div className="grid gap-2">
+                <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  Optional linked page
+                </label>
+                <div className="grid gap-2 sm:grid-cols-[1fr_auto]">
+                  <select
+                    value={detail.linkPageSlug ?? ""}
+                    onChange={(e) => updateServiceDetail(serviceIndex, detailIndex, { linkPageSlug: e.target.value })}
+                    className={inputClassName}
+                  >
+                    <option value="">No linked page</option>
+                    {(draftCms.servicePages ?? []).map((page) => (
+                      <option key={page.slug} value={page.slug}>
+                        {page.title || page.slug || "Untitled page"}
+                      </option>
+                    ))}
+                  </select>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="text-white"
+                    onClick={() => {
+                      const slug = getUniqueServicePageSlug(detail.title || service.title || "service-page");
+                      addServicePage({
+                        slug,
+                        title: detail.title || "New service page",
+                        description: detail.description,
+                        content: detail.description,
+                      });
+                      updateServiceDetail(serviceIndex, detailIndex, { linkPageSlug: slug });
+                      setPreviewPage("servicePage");
+                      setPreviewSlug(slug);
+                    }}
+                  >
+                    Create page
+                  </Button>
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -315,9 +479,170 @@ export default function AdminEditor() {
     </div>
   );
 
+  const renderServicePagesEditor = () => (
+    <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h2 className="text-xl font-serif">Service linked pages</h2>
+          <p className="text-sm text-slate-400">Create editable pages that service page blocks can link to.</p>
+        </div>
+        <Button type="button" onClick={() => addServicePage()} className="bg-teal hover:bg-teal/90">
+          Add service page
+        </Button>
+      </div>
+
+      <div className="space-y-4">
+        {(draftCms.servicePages ?? []).map((page, pageIndex) => (
+          <div key={`${page.slug}-${pageIndex}`} className="rounded border border-slate-800 bg-slate-950 p-4 space-y-3">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h3 className="font-semibold">{page.title || page.slug || `Service page ${pageIndex + 1}`}</h3>
+                <p className="text-xs text-slate-500">/services/&lt;service&gt;/{page.slug || "slug"}</p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="text-white"
+                  onClick={() => {
+                    setPreviewPage("servicePage");
+                    setPreviewSlug(page.slug);
+                  }}
+                >
+                  Preview
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="text-white"
+                  onClick={() => deleteServicePage(pageIndex)}
+                >
+                  Delete
+                </Button>
+              </div>
+            </div>
+            <input
+              value={page.slug}
+              onChange={(e) => updateServicePage(pageIndex, { slug: e.target.value })}
+              placeholder="Slug"
+              className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+            />
+            <input
+              value={page.title}
+              onChange={(e) => updateServicePage(pageIndex, { title: e.target.value })}
+              placeholder="Title"
+              className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+            />
+            <textarea
+              value={page.description}
+              onChange={(e) => updateServicePage(pageIndex, { description: e.target.value })}
+              placeholder="Description"
+              className="w-full px-3 py-2 bg-slate-900 border border-slate-700 min-h-[80px]"
+            />
+            <input
+              value={page.heroImageUrl ?? ""}
+              onChange={(e) => updateServicePage(pageIndex, { heroImageUrl: e.target.value })}
+              placeholder="Hero image URL"
+              className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+            />
+            <textarea
+              value={page.content ?? ""}
+              onChange={(e) => updateServicePage(pageIndex, { content: e.target.value })}
+              placeholder="Intro content"
+              className="w-full px-3 py-2 bg-slate-900 border border-slate-700 min-h-[100px]"
+            />
+
+            <div className="space-y-3 rounded border border-slate-800 bg-slate-900/50 p-4">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h4 className="font-semibold">Page sections</h4>
+                  <p className="text-xs text-slate-400">Add images and choose where each image sits on the page.</p>
+                </div>
+                <Button
+                  type="button"
+                  size="sm"
+                  className="bg-teal hover:bg-teal/90"
+                  onClick={() => addServicePageSection(pageIndex)}
+                >
+                  Add section
+                </Button>
+              </div>
+
+              {(page.sections ?? []).length > 0 ? (
+                <div className="space-y-3">
+                  {(page.sections ?? []).map((section, sectionIndex) => (
+                    <div key={`${section.title}-${sectionIndex}`} className="rounded border border-slate-800 bg-slate-950 p-3 space-y-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-sm font-semibold text-slate-200">Section {sectionIndex + 1}</p>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          className="text-white"
+                          onClick={() => deleteServicePageSection(pageIndex, sectionIndex)}
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                      <input
+                        value={section.title}
+                        onChange={(e) => updateServicePageSection(pageIndex, sectionIndex, { title: e.target.value })}
+                        placeholder="Section title"
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+                      />
+                      <textarea
+                        value={section.description}
+                        onChange={(e) => updateServicePageSection(pageIndex, sectionIndex, { description: e.target.value })}
+                        placeholder="Section description"
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700 min-h-[90px]"
+                      />
+                      <input
+                        value={section.imageUrl ?? ""}
+                        onChange={(e) => updateServicePageSection(pageIndex, sectionIndex, { imageUrl: e.target.value })}
+                        placeholder="Image URL"
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+                      />
+                      <input
+                        value={section.imageAlt ?? ""}
+                        onChange={(e) => updateServicePageSection(pageIndex, sectionIndex, { imageAlt: e.target.value })}
+                        placeholder="Image alt text"
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+                      />
+                      <select
+                        value={section.imagePosition ?? "full"}
+                        onChange={(e) =>
+                          updateServicePageSection(pageIndex, sectionIndex, {
+                            imagePosition: e.target.value as ServicePageSection["imagePosition"],
+                          })
+                        }
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+                      >
+                        <option value="full">Image above text</option>
+                        <option value="left">Image left</option>
+                        <option value="right">Image right</option>
+                      </select>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-slate-400">No sections yet.</p>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+
   useEffect(() => {
     if (previewPage === "service" && !previewSlug && draftCms.services.length > 0) {
       setPreviewSlug(getServiceSlug(draftCms.services[0]));
+    }
+
+    if (previewPage === "servicePage" && !previewSlug && (draftCms.servicePages ?? []).length > 0) {
+      setPreviewSlug((draftCms.servicePages ?? [])[0]?.slug ?? "");
     }
 
     if (previewPage === "article" && !previewSlug && draftCms.articles.length > 0) {
@@ -341,6 +666,8 @@ export default function AdminEditor() {
         return <Articles previewCms={draftCms} key="articles" />;
       case "service":
         return <ServiceDetail previewCms={draftCms} previewSlug={previewSlug} key={`service-${previewSlug}`} />;
+      case "servicePage":
+        return <ServicePageDetail previewCms={draftCms} previewSlug={previewSlug} key={`service-page-${previewSlug}`} />;
       case "article":
         return <ArticleDetail previewCms={draftCms} previewSlug={previewSlug} key={`article-${previewSlug}`} />;
       case "custom":
@@ -523,6 +850,138 @@ export default function AdminEditor() {
                         onClick={() => deleteService(index)}
                       >
                         Delete service
+                      </Button>
+                    </div>
+                  );
+                })}
+              </section>
+            )}
+
+            {previewPage === "servicePage" && previewSlug && (
+              <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
+                <h2 className="text-xl font-serif">Edit Linked Service Page</h2>
+                {(draftCms.servicePages ?? []).map((page, pageIndex) => {
+                  if (page.slug !== previewSlug) return null;
+                  return (
+                    <div key={`${page.slug}-${pageIndex}`} className="space-y-3">
+                      <input
+                        value={page.slug}
+                        onChange={(e) => {
+                          updateServicePage(pageIndex, { slug: e.target.value });
+                          setPreviewSlug(e.target.value);
+                        }}
+                        placeholder="Slug"
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700"
+                      />
+                      <input
+                        value={page.title}
+                        onChange={(e) => updateServicePage(pageIndex, { title: e.target.value })}
+                        placeholder="Title"
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700"
+                      />
+                      <textarea
+                        value={page.description}
+                        onChange={(e) => updateServicePage(pageIndex, { description: e.target.value })}
+                        placeholder="Description"
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700 min-h-[80px]"
+                      />
+                      <input
+                        value={page.heroImageUrl ?? ""}
+                        onChange={(e) => updateServicePage(pageIndex, { heroImageUrl: e.target.value })}
+                        placeholder="Hero image URL"
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700"
+                      />
+                      <textarea
+                        value={page.content ?? ""}
+                        onChange={(e) => updateServicePage(pageIndex, { content: e.target.value })}
+                        placeholder="Intro content"
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700 min-h-[100px]"
+                      />
+
+                      <div className="space-y-3 rounded border border-slate-800 bg-slate-900/50 p-4">
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                          <div>
+                            <h4 className="font-semibold">Page sections</h4>
+                            <p className="text-xs text-slate-400">Add titles, text, images, and image placement for this page.</p>
+                          </div>
+                          <Button
+                            type="button"
+                            size="sm"
+                            className="bg-teal hover:bg-teal/90"
+                            onClick={() => addServicePageSection(pageIndex)}
+                          >
+                            Add section
+                          </Button>
+                        </div>
+
+                        {(page.sections ?? []).length > 0 ? (
+                          <div className="space-y-3">
+                            {(page.sections ?? []).map((section, sectionIndex) => (
+                              <div key={`${section.title}-${sectionIndex}`} className="rounded border border-slate-800 bg-slate-950 p-3 space-y-3">
+                                <div className="flex items-center justify-between gap-3">
+                                  <p className="text-sm font-semibold text-slate-200">Section {sectionIndex + 1}</p>
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-white"
+                                    onClick={() => deleteServicePageSection(pageIndex, sectionIndex)}
+                                  >
+                                    Remove
+                                  </Button>
+                                </div>
+                                <input
+                                  value={section.title}
+                                  onChange={(e) => updateServicePageSection(pageIndex, sectionIndex, { title: e.target.value })}
+                                  placeholder="Section title"
+                                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+                                />
+                                <textarea
+                                  value={section.description}
+                                  onChange={(e) => updateServicePageSection(pageIndex, sectionIndex, { description: e.target.value })}
+                                  placeholder="Section description"
+                                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700 min-h-[90px]"
+                                />
+                                <input
+                                  value={section.imageUrl ?? ""}
+                                  onChange={(e) => updateServicePageSection(pageIndex, sectionIndex, { imageUrl: e.target.value })}
+                                  placeholder="Image URL"
+                                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+                                />
+                                <input
+                                  value={section.imageAlt ?? ""}
+                                  onChange={(e) => updateServicePageSection(pageIndex, sectionIndex, { imageAlt: e.target.value })}
+                                  placeholder="Image alt text"
+                                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+                                />
+                                <select
+                                  value={section.imagePosition ?? "full"}
+                                  onChange={(e) =>
+                                    updateServicePageSection(pageIndex, sectionIndex, {
+                                      imagePosition: e.target.value as ServicePageSection["imagePosition"],
+                                    })
+                                  }
+                                  className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+                                >
+                                  <option value="full">Image above text</option>
+                                  <option value="left">Image left</option>
+                                  <option value="right">Image right</option>
+                                </select>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-sm text-slate-400">No sections yet.</p>
+                        )}
+                      </div>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        className="text-white"
+                        onClick={() => deleteServicePage(pageIndex)}
+                      >
+                        Delete linked page
                       </Button>
                     </div>
                   );
@@ -774,6 +1233,8 @@ export default function AdminEditor() {
               </Button>
             </section>
 
+            {renderServicePagesEditor()}
+
             <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
               <h2 className="text-xl font-serif">Articles</h2>
               <p className="text-sm text-slate-400">Add article pages that appear in the Resources section and create detail pages automatically.</p>
@@ -946,7 +1407,7 @@ export default function AdminEditor() {
               <div className="space-y-5 rounded-md border border-slate-200 bg-slate-50 p-4">
                 <div>
                   <h3 className="text-lg font-semibold text-slate-950">Choose a page to preview</h3>
-                  <p className="text-sm text-slate-600">Switch between the homepage, About, Resources, service pages, articles, or custom pages.</p>
+                  <p className="text-sm text-slate-600">Switch between the homepage, About, Resources, service pages, linked service pages, articles, or custom pages.</p>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <label className="block">
@@ -954,7 +1415,7 @@ export default function AdminEditor() {
                     <select
                       value={previewPage}
                       onChange={(event) => {
-                        const next = event.target.value as "home" | "about" | "articles" | "service" | "article" | "custom";
+                        const next = event.target.value as PreviewPage;
                         setPreviewPage(next);
                         setPreviewSlug("");
                       }}
@@ -964,12 +1425,13 @@ export default function AdminEditor() {
                       <option value="about">About</option>
                       <option value="articles">Resources</option>
                       <option value="service">Service detail</option>
+                      <option value="servicePage">Service linked page</option>
                       <option value="article">Article detail</option>
                       <option value="custom">Custom page</option>
                     </select>
                   </label>
 
-                  {(previewPage === "service" || previewPage === "article" || previewPage === "custom") && (
+                  {(previewPage === "service" || previewPage === "servicePage" || previewPage === "article" || previewPage === "custom") && (
                     <label className="block">
                       <span className="text-sm text-slate-700">Preview selection</span>
                       <select
@@ -997,6 +1459,17 @@ export default function AdminEditor() {
                             ))
                           ) : (
                             <option value="">No articles available</option>
+                          )
+                        )}
+                        {previewPage === "servicePage" && (
+                          (draftCms.servicePages ?? []).length > 0 ? (
+                            (draftCms.servicePages ?? []).map((page) => (
+                              <option key={page.slug} value={page.slug}>
+                                {page.title || page.slug || "Untitled service page"}
+                              </option>
+                            ))
+                          ) : (
+                            <option value="">No service linked pages available</option>
                           )
                         )}
                         {previewPage === "custom" && (

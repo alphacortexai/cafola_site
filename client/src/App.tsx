@@ -11,6 +11,7 @@ import AboutUs from "./pages/AboutUs";
 import Articles from "./pages/Articles";
 import ArticleDetail from "./pages/ArticleDetail";
 import CustomPage from "./pages/CustomPage";
+import ServicePageDetail from "./pages/ServicePageDetail";
 
 const Admin = lazy(() => import("./pages/Admin"));
 const AdminEditor = lazy(() => import("./pages/AdminEditor"));
@@ -20,6 +21,9 @@ function Router() {
     <Switch>
       <Route path="/">
         <Home />
+      </Route>
+      <Route path="/services/:serviceSlug/:pageSlug">
+        <ServicePageDetail />
       </Route>
       <Route path="/services/:slug">
         <ServiceDetail />

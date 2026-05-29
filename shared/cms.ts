@@ -8,6 +8,7 @@ export type Testimonial = {
 export type ServiceDetailItem = {
   title: string;
   description: string;
+  linkPageSlug?: string;
 };
 
 export type Service = {
@@ -16,6 +17,23 @@ export type Service = {
   icon: string;
   longDescription: string;
   details?: ServiceDetailItem[];
+};
+
+export type ServicePageSection = {
+  title: string;
+  description: string;
+  imageUrl?: string;
+  imageAlt?: string;
+  imagePosition?: "full" | "left" | "right";
+};
+
+export type ServicePage = {
+  slug: string;
+  title: string;
+  description: string;
+  heroImageUrl?: string;
+  content?: string;
+  sections: ServicePageSection[];
 };
 
 export type Article = {
@@ -57,6 +75,7 @@ export type SiteContent = {
   servicesHeading: string;
   servicesIntro: string;
   services: Service[];
+  servicePages: ServicePage[];
   storyHeading: string;
   storyParagraphs: string[];
   caregiversHeading: string;
@@ -155,6 +174,7 @@ export const defaultSiteContent: SiteContent = {
       ]
     },
   ],
+  servicePages: [],
   storyHeading: "Our Story",
   storyParagraphs: [
     "Home is where routines feel familiar and life feels grounded. CAFOLA was built to protect that feeling for older adults and families navigating change.",

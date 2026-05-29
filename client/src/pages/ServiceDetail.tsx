@@ -159,17 +159,30 @@ Talk to us: ${formData.talkToUs.trim()}` : ""}`,
                   <>
                     <h2 className="text-3xl md:text-4xl font-serif mb-8 text-navy">What We Offer</h2>
                     <div className="grid grid-cols-2 gap-4 md:gap-8">
-                      {service.details.map((detail, i) => (
-                        <div key={i} className="bg-white p-6 shadow-sm hover:shadow-md transition-shadow text-center">
-                          <div className="flex flex-col items-center gap-3 mb-3">
-                            <CheckCircle2 className="w-5 h-5 text-orange flex-shrink-0" />
-                            <h3 className="text-xl font-serif text-navy">{detail.title}</h3>
+                      {service.details.map((detail, i) => {
+                        const linkedPage = detail.linkPageSlug
+                          ? (cms.servicePages ?? []).find((page) => page.slug === detail.linkPageSlug)
+                          : null;
+                        return (
+                          <div key={i} className="bg-white p-6 shadow-sm hover:shadow-md transition-shadow text-center">
+                            <div className="flex flex-col items-center gap-3 mb-3">
+                              <CheckCircle2 className="w-5 h-5 text-orange flex-shrink-0" />
+                              <h3 className="text-xl font-serif text-navy">{detail.title}</h3>
+                            </div>
+                            <p className="text-gray-600 text-sm leading-relaxed">
+                              {detail.description}
+                            </p>
+                            {linkedPage ? (
+                              <Link
+                                href={`/services/${slug}/${linkedPage.slug}`}
+                                className="mt-5 inline-flex items-center gap-2 text-teal font-bold text-xs uppercase tracking-widest no-underline hover:underline"
+                              >
+                                Learn more <ChevronRight className="w-4 h-4" />
+                              </Link>
+                            ) : null}
                           </div>
-                          <p className="text-gray-600 text-sm leading-relaxed">
-                            {detail.description}
-                          </p>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </>
                 )}
