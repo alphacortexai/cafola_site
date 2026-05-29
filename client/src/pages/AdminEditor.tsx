@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { type ChangeEvent, type FormEvent, useEffect, useMemo, useState } from "react";
+import { type ChangeEvent, type FormEvent, type ReactNode, useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
 import { defaultSiteContent, type Article, type CustomPage as CustomPageType, type MediaAsset, type Service, type ServiceDetailItem, type ServicePage, type ServicePageSection, type SiteContent } from "@shared/cms";
 import { getLoginConfigIssue } from "@/const";
@@ -66,6 +66,29 @@ const emptyServicePage: ServicePage = {
 };
 
 type PreviewPage = "home" | "about" | "articles" | "service" | "servicePage" | "article" | "custom";
+
+type EditorSectionProps = {
+  title: string;
+  description?: string;
+  children: ReactNode;
+};
+
+function EditorSection({ title, description, children }: EditorSectionProps) {
+  return (
+    <details className="bg-slate-900 border border-slate-800 p-6">
+      <summary className="cursor-pointer list-none">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-serif">{title}</h2>
+            {description ? <p className="text-sm text-slate-400">{description}</p> : null}
+          </div>
+          <span className="mt-1 text-sm text-slate-400">Open</span>
+        </div>
+      </summary>
+      <div className="mt-4 space-y-4">{children}</div>
+    </details>
+  );
+}
 
 export default function AdminEditor() {
   const [user, setUser] = useState<User | null>(null);
@@ -432,7 +455,9 @@ export default function AdminEditor() {
     onSelect: (asset: MediaAsset) => void
   ) => (
     <div className="rounded border border-slate-800 bg-slate-950/80 p-3 space-y-3">
-      <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Choose from media library</p>
+      <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+        Choose from media library
+      </p>
       {(draftCms.mediaLibrary ?? []).length > 0 ? (
         <div className="grid grid-cols-2 gap-2">
           {(draftCms.mediaLibrary ?? []).map((asset) => (
@@ -462,11 +487,10 @@ export default function AdminEditor() {
   );
 
   const renderMediaLibraryEditor = () => (
-    <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
-      <div>
-        <h2 className="text-xl font-serif">Media</h2>
-        <p className="text-sm text-slate-400">Upload images or videos once, then choose them while editing page media.</p>
-      </div>
+    <EditorSection
+      title="Media"
+      description="Upload images or videos once, then choose them while editing page media."
+    >
       <input
         type="file"
         accept="image/*,video/*"
@@ -500,7 +524,7 @@ export default function AdminEditor() {
           ))}
         </div>
       ) : null}
-    </section>
+    </EditorSection>
   );
 
   const renderServiceDetailsEditor = (service: Service, serviceIndex: number, inputClassName: string) => (
@@ -525,7 +549,9 @@ export default function AdminEditor() {
           {(service.details ?? []).map((detail, detailIndex) => (
             <div key={`${detail.title}-${detailIndex}`} className="rounded border border-slate-800 bg-slate-950 p-3 space-y-3">
               <div className="flex items-center justify-between gap-3">
-                <p className="text-sm font-semibold text-slate-200">Block {detailIndex + 1}</p>
+                <p className="text-sm font-semibold text-slate-200">
+                  {detail.title || `Block ${detailIndex + 1}`}
+                </p>
                 <Button
                   type="button"
                   size="sm"
@@ -597,12 +623,11 @@ export default function AdminEditor() {
   );
 
   const renderServicePagesEditor = () => (
-    <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
+    <EditorSection
+      title="Service linked pages"
+      description="Create editable pages that service page blocks can link to."
+    >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h2 className="text-xl font-serif">Service linked pages</h2>
-          <p className="text-sm text-slate-400">Create editable pages that service page blocks can link to.</p>
-        </div>
         <Button type="button" onClick={() => addServicePage()} className="bg-teal hover:bg-teal/90">
           Add service page
         </Button>
@@ -703,7 +728,9 @@ export default function AdminEditor() {
                   {(page.sections ?? []).map((section, sectionIndex) => (
                     <div key={`${section.title}-${sectionIndex}`} className="rounded border border-slate-800 bg-slate-950 p-3 space-y-3">
                       <div className="flex items-center justify-between gap-3">
-                        <p className="text-sm font-semibold text-slate-200">Section {sectionIndex + 1}</p>
+                        <p className="text-sm font-semibold text-slate-200">
+                          {section.title || `Section ${sectionIndex + 1}`}
+                        </p>
                         <Button
                           type="button"
                           size="sm"
@@ -776,7 +803,7 @@ export default function AdminEditor() {
           </div>
         ))}
       </div>
-    </section>
+    </EditorSection>
   );
 
   useEffect(() => {
@@ -905,7 +932,7 @@ export default function AdminEditor() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 space-y-8">
+      <main className="container mx-auto px-4 py-6 space-y-6">
         <section className="bg-slate-900 border border-slate-800 p-6">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
@@ -925,12 +952,11 @@ export default function AdminEditor() {
         </section>
 
         <div className="grid gap-8 xl:grid-cols-[420px_minmax(0,1fr)]">
-          <div className="space-y-6">
+          <div className="space-y-6 xl:max-h-[calc(100vh-160px)] xl:overflow-y-auto xl:pr-2">
             {renderMediaLibraryEditor()}
 
             {previewPage === "about" && (
-              <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
-                <h2 className="text-xl font-serif">Edit About Us</h2>
+              <EditorSection title="Edit About Us">
                 <div className="grid gap-3">
                   <textarea
                     value={draftCms.aboutUs.headline}
@@ -945,12 +971,11 @@ export default function AdminEditor() {
                     className="w-full px-3 py-2 bg-slate-950 border border-slate-700 min-h-[100px]"
                   />
                 </div>
-              </section>
+              </EditorSection>
             )}
 
             {previewPage === "service" && previewSlug && (
-              <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
-                <h2 className="text-xl font-serif">Edit Service</h2>
+              <EditorSection title="Edit Service">
                 {draftCms.services.map((service, index) => {
                   if (getServiceSlug(service) !== previewSlug) return null;
                   return (
@@ -999,12 +1024,11 @@ export default function AdminEditor() {
                     </div>
                   );
                 })}
-              </section>
+              </EditorSection>
             )}
 
             {previewPage === "servicePage" && previewSlug && (
-              <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
-                <h2 className="text-xl font-serif">Edit Linked Service Page</h2>
+              <EditorSection title="Edit Linked Service Page">
                 {(draftCms.servicePages ?? []).map((page, pageIndex) => {
                   if (page.slug !== previewSlug) return null;
                   return (
@@ -1075,7 +1099,9 @@ export default function AdminEditor() {
                             {(page.sections ?? []).map((section, sectionIndex) => (
                               <div key={`${section.title}-${sectionIndex}`} className="rounded border border-slate-800 bg-slate-950 p-3 space-y-3">
                                 <div className="flex items-center justify-between gap-3">
-                                  <p className="text-sm font-semibold text-slate-200">Section {sectionIndex + 1}</p>
+                                  <p className="text-sm font-semibold text-slate-200">
+                                    {section.title || `Section ${sectionIndex + 1}`}
+                                  </p>
                                   <Button
                                     type="button"
                                     size="sm"
@@ -1157,12 +1183,11 @@ export default function AdminEditor() {
                     </div>
                   );
                 })}
-              </section>
+              </EditorSection>
             )}
 
             {previewPage === "article" && previewSlug && (
-              <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
-                <h2 className="text-xl font-serif">Edit Article</h2>
+              <EditorSection title="Edit Article">
                 {draftCms.articles.map((article, index) => {
                   if (article.slug !== previewSlug) return null;
                   return (
@@ -1209,12 +1234,11 @@ export default function AdminEditor() {
                     </div>
                   );
                 })}
-              </section>
+              </EditorSection>
             )}
 
             {previewPage === "custom" && previewSlug && (
-              <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
-                <h2 className="text-xl font-serif">Edit Custom Page</h2>
+              <EditorSection title="Edit Custom Page">
                 {draftCms.customPages.map((page, index) => {
                   if (page.slug !== previewSlug) return null;
                   return (
@@ -1255,13 +1279,12 @@ export default function AdminEditor() {
                     </div>
                   );
                 })}
-              </section>
+              </EditorSection>
             )}
 
             {(previewPage === "home" || previewPage === "articles") && (
               <div className="space-y-6">
-                <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
-                  <h2 className="text-xl font-serif">Site settings</h2>
+                <EditorSection title="Site settings">
               <div className="grid gap-3">
                 <input
                   value={draftCms.brandName}
@@ -1300,10 +1323,9 @@ export default function AdminEditor() {
                   className="w-full px-3 py-2 bg-slate-950 border border-slate-700 min-h-[80px]"
                 />
               </div>
-            </section>
+            </EditorSection>
 
-            <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
-                <h2 className="text-xl font-serif">Navigation links</h2>
+            <EditorSection title="Navigation links">
               <div className="space-y-2">
                 {draftCms.navItems.map((item, index) => (
                   <div key={`${item}-${index}`} className="flex items-center gap-3">
@@ -1347,11 +1369,12 @@ export default function AdminEditor() {
                   Add
                 </Button>
               </div>
-            </section>
+            </EditorSection>
 
-            <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
-              <h2 className="text-xl font-serif">Services</h2>
-              <p className="text-sm text-slate-400">Add, edit, or remove service cards. New services generate detail pages automatically.</p>
+            <EditorSection
+              title="Services"
+              description="Add, edit, or remove service cards. New services generate detail pages automatically."
+            >
               <div className="space-y-4">
                 {draftCms.services.map((service, index) => (
                   <div key={`${service.title}-${index}`} className="rounded border border-slate-800 bg-slate-950 p-4 space-y-3">
@@ -1402,13 +1425,14 @@ export default function AdminEditor() {
               <Button type="button" onClick={addService} className="bg-teal hover:bg-teal/90">
                 Add service card
               </Button>
-            </section>
+            </EditorSection>
 
             {renderServicePagesEditor()}
 
-            <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
-              <h2 className="text-xl font-serif">Articles</h2>
-              <p className="text-sm text-slate-400">Add article pages that appear in the Resources section and create detail pages automatically.</p>
+            <EditorSection
+              title="Articles"
+              description="Add article pages that appear in the Resources section and create detail pages automatically."
+            >
               <div className="space-y-4">
                 {draftCms.articles.map((article, index) => (
                   <div key={`${article.slug}-${index}`} className="rounded border border-slate-800 bg-slate-950 p-4 space-y-3">
@@ -1454,10 +1478,9 @@ export default function AdminEditor() {
               <Button type="button" onClick={addArticle} className="bg-teal hover:bg-teal/90">
                 Add article page
               </Button>
-            </section>
+            </EditorSection>
 
-            <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
-              <h2 className="text-xl font-serif">Footer & About</h2>
+            <EditorSection title="Footer & About">
               <div className="grid gap-3">
                 <textarea
                   value={draftCms.aboutUs.headline}
@@ -1558,12 +1581,12 @@ export default function AdminEditor() {
                   ))}
                 </div>
               </div>
-            </section>
+            </EditorSection>
           </div>
       )}
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-6 xl:max-h-[calc(100vh-160px)] xl:overflow-y-auto xl:pr-2">
             <section className="bg-white border border-slate-200 p-6 rounded-md overflow-hidden space-y-6">
               <div className="mb-4 flex items-center justify-between gap-4">
                 <div>
