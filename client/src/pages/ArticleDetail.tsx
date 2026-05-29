@@ -4,11 +4,21 @@ import { Link, useRoute } from "wouter";
 
 const FALLBACK_IMAGE = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/nXeqdbNLjMDKrnNe.jpg";
 
-export default function ArticleDetail() {
+type ArticleDetailProps = {
+  previewCms?: SiteContent;
+  previewSlug?: string;
+};
+
+export default function ArticleDetail({ previewCms, previewSlug }: ArticleDetailProps) {
   const [, params] = useRoute("/articles/:slug");
-  const [cms, setCms] = useState<SiteContent>(defaultSiteContent);
+  const [cms, setCms] = useState<SiteContent>(previewCms ?? defaultSiteContent);
 
   useEffect(() => {
+    if (previewCms) {
+      setCms(previewCms);
+      return;
+    }
+
     const loadCms = async () => {
       try {
         const response = await fetch("/api/cms");
@@ -21,12 +31,13 @@ export default function ArticleDetail() {
     };
 
     void loadCms();
-  }, []);
+  }, [previewCms]);
 
   const article = useMemo(() => {
-    if (!params?.slug) return null;
-    return cms.articles.find((item) => item.slug === params.slug) ?? null;
-  }, [cms.articles, params?.slug]);
+    const slug = previewSlug ?? params?.slug;
+    if (!slug) return null;
+    return cms.articles.find((item) => item.slug === slug) ?? null;
+  }, [cms.articles, params?.slug, previewSlug]);
 
   if (!article) {
     return (

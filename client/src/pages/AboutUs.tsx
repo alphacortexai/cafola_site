@@ -3,8 +3,23 @@ import { defaultSiteContent, type SiteContent } from "@shared/cms";
 import { ChevronRight, Phone, MapPin, Users, Award, Heart } from "lucide-react";
 import { Link } from "wouter";
 
-export default function AboutUs() {
-  const [cms, setCms] = useState<SiteContent>(defaultSiteContent);
+type AboutUsProps = {
+  previewCms?: SiteContent;
+};
+
+const getNavHref = (item: string, cms: SiteContent) => {
+  if (item === "Services") return "/#services";
+  if (item === "Resources") return "/articles";
+  if (item === "About Us") return "/about";
+  if (item === "Careers") return "/#careers";
+  if (item === "Contact") return "/#contact";
+  const custom = cms.customPages.find((page) => page.title === item);
+  if (custom) return `/pages/${custom.slug}`;
+  return "#";
+};
+
+export default function AboutUs({ previewCms }: AboutUsProps) {
+  const [cms, setCms] = useState<SiteContent>(previewCms ?? defaultSiteContent);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -14,6 +29,11 @@ export default function AboutUs() {
   const [formStatus, setFormStatus] = useState<string>("");
 
   useEffect(() => {
+    if (previewCms) {
+      setCms(previewCms);
+      return;
+    }
+
     const loadCms = async () => {
       try {
         const response = await fetch("/api/cms");
@@ -25,7 +45,7 @@ export default function AboutUs() {
       }
     };
     void loadCms();
-  }, []);
+  }, [previewCms]);
 
   const submitContact = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -63,7 +83,7 @@ export default function AboutUs() {
 
           <nav className="hidden lg:flex gap-8 items-center">
             {cms.navItems.map((item) => (
-              <a key={item} href={item === "Services" ? "/#services" : "#"} className="text-gray-700 font-sans font-bold hover:text-teal no-underline text-sm uppercase tracking-wide">{item}</a>
+              <a key={item} href={getNavHref(item, cms)} className="text-gray-700 font-sans font-bold hover:text-teal no-underline text-sm uppercase tracking-wide">{item}</a>
             ))}
           </nav>
 

@@ -14,6 +14,17 @@ type HomeProps = {
   previewCms?: SiteContent;
 };
 
+const getNavHref = (item: string, cms: SiteContent) => {
+  if (item === "Services") return "#services";
+  if (item === "Resources") return "/articles";
+  if (item === "About Us") return "/about";
+  if (item === "Careers") return "#";
+  if (item === "Contact") return "#contact";
+  const custom = cms.customPages.find((page) => page.title === item);
+  if (custom) return `/pages/${custom.slug}`;
+  return "#";
+};
+
 export default function Home({ previewCms }: HomeProps) {
   const truncateWords = (text: string, maxWords: number) => {
     const words = text.trim().split(/\s+/);
@@ -167,21 +178,15 @@ export default function Home({ previewCms }: HomeProps) {
           </div>
 
           <nav className="hidden lg:flex gap-8 items-center">
-            {cms.navItems.map(item => {
-              let href = "#";
-              if (item === "Services") href = "#services";
-              if (item === "About Us") href = "/about";
-              if (item === "Resources") href = "/articles";
-              return (
-                <a
-                  key={item}
-                  href={href}
-                  className="text-gray-700 font-sans font-bold hover:text-teal no-underline text-sm uppercase tracking-wide"
-                >
-                  {item}
-                </a>
-              );
-            })}
+            {cms.navItems.map(item => (
+              <a
+                key={item}
+                href={getNavHref(item, cms)}
+                className="text-gray-700 font-sans font-bold hover:text-teal no-underline text-sm uppercase tracking-wide"
+              >
+                {item}
+              </a>
+            ))}
           </nav>
 
           <div className="flex flex-col items-end gap-1">

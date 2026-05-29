@@ -26,11 +26,14 @@ function getFirebaseConfig(): FirebaseConfig | null {
   const projectId =
     process.env.FIREBASE_PROJECT_ID ?? process.env.VITE_FIREBASE_PROJECT_ID;
 
-  if (!apiKey || !projectId) {
+  const cleanApiKey = typeof apiKey === "string" ? apiKey.trim() : apiKey;
+  const cleanProjectId = typeof projectId === "string" ? projectId.trim() : projectId;
+
+  if (!cleanApiKey || !cleanProjectId) {
     return null;
   }
 
-  return { apiKey, projectId };
+  return { apiKey: cleanApiKey, projectId: cleanProjectId };
 }
 
 function toFirestoreValue(value: unknown): FirestoreValue {
@@ -110,6 +113,17 @@ export async function readFirestoreDocument<T>(
   return fromFirestoreValue({ mapValue: { fields: body.fields } }) as T;
 }
 
+async function patchFirestoreDocument(
+  url: string,
+  fields: Record<string, FirestoreValue>
+): Promise<Response> {
+  return fetch(url, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ fields }),
+  });
+}
+
 export async function writeFirestoreDocument(
   path: string,
   payload: unknown
@@ -120,13 +134,19 @@ export async function writeFirestoreDocument(
   const map = toFirestoreValue(payload);
   const fields = "mapValue" in map ? map.mapValue.fields : {};
 
-  const response = await fetch(url, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ fields }),
-  });
+  let response = await patchFirestoreDocument(url, fields);
+  if (response.ok) {
+    return true;
+  }
 
-  return response.ok;
+  // If the document doesn't exist yet, create it explicitly.
+  if (response.status === 404) {
+    const createUrl = `${url}?currentDocument.exists=false`;
+    response = await patchFirestoreDocument(createUrl, fields);
+    return response.ok;
+  }
+
+  return false;
 }
 
 export async function createFirestoreDocument(

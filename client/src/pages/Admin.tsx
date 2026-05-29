@@ -427,6 +427,11 @@ export default function Admin() {
           <p className="text-sm text-slate-400">
             If ADMIN_TOKEN is configured on the server, enter it here.
           </p>
+          <div className="mt-4">
+            <Link href="/admin/editor">
+              <Button className="bg-teal hover:bg-teal/90">Open full site editor</Button>
+            </Link>
+          </div>
         </section>
 
         <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">

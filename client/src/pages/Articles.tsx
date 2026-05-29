@@ -2,10 +2,30 @@ import { defaultSiteContent, type SiteContent } from "@shared/cms";
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 
-export default function Articles() {
-  const [cms, setCms] = useState<SiteContent>(defaultSiteContent);
+type ArticlesProps = {
+  previewCms?: SiteContent;
+};
+
+const getNavHref = (item: string, cms: SiteContent) => {
+  if (item === "Services") return "/#services";
+  if (item === "Resources") return "/articles";
+  if (item === "About Us") return "/about";
+  if (item === "Careers") return "/#careers";
+  if (item === "Contact") return "/#contact";
+  const custom = cms.customPages.find((page) => page.title === item);
+  if (custom) return `/pages/${custom.slug}`;
+  return "/";
+};
+
+export default function Articles({ previewCms }: ArticlesProps) {
+  const [cms, setCms] = useState<SiteContent>(previewCms ?? defaultSiteContent);
 
   useEffect(() => {
+    if (previewCms) {
+      setCms(previewCms);
+      return;
+    }
+
     const loadCms = async () => {
       try {
         const response = await fetch("/api/cms");
@@ -18,7 +38,7 @@ export default function Articles() {
     };
 
     void loadCms();
-  }, []);
+  }, [previewCms]);
 
   return (
     <div className="min-h-screen bg-white">

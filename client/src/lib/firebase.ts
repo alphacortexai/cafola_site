@@ -19,17 +19,17 @@ const normalizeStorageBucket = (bucket?: string) => {
 };
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY?.trim(),
   authDomain:
-    import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ||
-    `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com`,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    import.meta.env.VITE_FIREBASE_AUTH_DOMAIN?.trim() ||
+    `${import.meta.env.VITE_FIREBASE_PROJECT_ID?.trim()}.firebaseapp.com`,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID?.trim(),
   storageBucket: normalizeStorageBucket(
-    import.meta.env.VITE_FIREBASE_STORAGE_BUCKET ||
-      `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebasestorage.app`,
+    import.meta.env.VITE_FIREBASE_STORAGE_BUCKET?.trim() ||
+      `${import.meta.env.VITE_FIREBASE_PROJECT_ID?.trim()}.firebasestorage.app`,
   ),
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID?.trim(),
+  appId: import.meta.env.VITE_FIREBASE_APP_ID?.trim(),
 };
 
 let auth: ReturnType<typeof getAuth> | null = null;

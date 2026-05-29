@@ -4,12 +4,33 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { defaultSiteContent, type SiteContent } from "../shared/cms";
 import { mkdir, readFile, writeFile } from "fs/promises";
+import { existsSync, readFileSync } from "fs";
 import {
   createFirestoreDocument,
   listFirestoreCollection,
   readFirestoreDocument,
   writeFirestoreDocument,
 } from "./firebase";
+
+function loadDotenvFile() {
+  const envPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", ".env");
+  if (!existsSync(envPath)) return;
+
+  const contents = readFileSync(envPath, "utf-8");
+  for (const line of contents.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const equalsIndex = trimmed.indexOf("=");
+    if (equalsIndex === -1) continue;
+    const key = trimmed.slice(0, equalsIndex).trim();
+    const value = trimmed.slice(equalsIndex + 1).trim();
+    if (!process.env[key]) {
+      process.env[key] = value;
+    }
+  }
+}
+
+loadDotenvFile();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -139,6 +160,14 @@ async function startServer() {
 
   app.use(express.json({ limit: "1mb" }));
 
+  app.get("/api/health", (_req, res) => {
+    res.json({ ok: true, env: {
+      FIREBASE_API_KEY: Boolean(process.env.FIREBASE_API_KEY),
+      FIREBASE_PROJECT_ID: Boolean(process.env.FIREBASE_PROJECT_ID),
+      PORT: process.env.PORT || "3001",
+    } });
+  });
+
   app.get("/api/cms", async (_req, res) => {
     const content = await readCmsContent();
     res.json(content);
@@ -206,7 +235,7 @@ async function startServer() {
     res.sendFile(path.join(staticPath, "index.html"));
   });
 
-  const port = process.env.PORT || 3000;
+  const port = process.env.PORT || 3001;
 
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);

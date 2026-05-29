@@ -10,17 +10,37 @@ import ServiceDetail from "./pages/ServiceDetail";
 import AboutUs from "./pages/AboutUs";
 import Articles from "./pages/Articles";
 import ArticleDetail from "./pages/ArticleDetail";
+import CustomPage from "./pages/CustomPage";
 
 const Admin = lazy(() => import("./pages/Admin"));
+const AdminEditor = lazy(() => import("./pages/AdminEditor"));
 
 function Router() {
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/services/:slug"} component={ServiceDetail} />
-      <Route path={"/about"} component={AboutUs} />
-      <Route path={"/articles"} component={Articles} />
-      <Route path={"/articles/:slug"} component={ArticleDetail} />
+      <Route path="/">
+        <Home />
+      </Route>
+      <Route path="/services/:slug">
+        <ServiceDetail />
+      </Route>
+      <Route path="/about">
+        <AboutUs />
+      </Route>
+      <Route path="/articles">
+        <Articles />
+      </Route>
+      <Route path="/articles/:slug">
+        <ArticleDetail />
+      </Route>
+      <Route path="/pages/:slug">
+        <CustomPage />
+      </Route>
+      <Route path="/admin/editor">
+        <Suspense fallback={<div className="min-h-screen grid place-items-center">Loading editor...</div>}>
+          <AdminEditor />
+        </Suspense>
+      </Route>
       <Route path={"/admin"}>
         <Suspense fallback={<div className="min-h-screen grid place-items-center">Loading admin...</div>}>
           <Admin />

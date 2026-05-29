@@ -28,6 +28,13 @@ export type Article = {
   featured?: boolean;
 };
 
+export type CustomPage = {
+  slug: string;
+  title: string;
+  description: string;
+  content: string;
+};
+
 export type AboutUsContent = {
   headline: string;
   description: string;
@@ -61,6 +68,7 @@ export type SiteContent = {
   footerAddress: string[];
   footerLinks: string[];
   testimonials: Testimonial[];
+  customPages: CustomPage[];
 };
 
 export const defaultSiteContent: SiteContent = {
@@ -203,6 +211,7 @@ export const defaultSiteContent: SiteContent = {
   newsletterHeading: "Get CAFOLA care insights in your inbox",
   footerAddress: ["6700 Mercy Rd", "Ste 400", "Omaha, NE 68106"],
   footerLinks: ["Find Care", "Find Jobs", "Contact Us", "FAQ"],
+  customPages: [],
   testimonials: [
     {
       quote: "CAFOLA gave our family peace of mind and helped my mother stay safely in her own home.",

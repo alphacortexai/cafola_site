@@ -3,10 +3,26 @@ import { useRoute, Link } from "wouter";
 import { defaultSiteContent, type SiteContent } from "@shared/cms";
 import { ChevronRight, Phone, MapPin, CheckCircle2 } from "lucide-react";
 
-export default function ServiceDetail() {
+type ServiceDetailProps = {
+  previewCms?: SiteContent;
+  previewSlug?: string;
+};
+
+const getNavHref = (item: string, cms: SiteContent) => {
+  if (item === "Services") return "/#services";
+  if (item === "Resources") return "/articles";
+  if (item === "About Us") return "/about";
+  if (item === "Careers") return "/#careers";
+  if (item === "Contact") return "/#contact";
+  const custom = cms.customPages.find((page) => page.title === item);
+  if (custom) return `/pages/${custom.slug}`;
+  return "#";
+};
+
+export default function ServiceDetail({ previewCms, previewSlug }: ServiceDetailProps) {
   const [, params] = useRoute("/services/:slug");
-  const slug = params?.slug;
-  const [cms, setCms] = useState<SiteContent>(defaultSiteContent);
+  const slug = previewSlug ?? params?.slug;
+  const [cms, setCms] = useState<SiteContent>(previewCms ?? defaultSiteContent);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -17,6 +33,11 @@ export default function ServiceDetail() {
   const [formStatus, setFormStatus] = useState<string>("");
 
   useEffect(() => {
+    if (previewCms) {
+      setCms(previewCms);
+      return;
+    }
+
     const loadCms = async () => {
       try {
         const response = await fetch("/api/cms");
@@ -28,7 +49,7 @@ export default function ServiceDetail() {
       }
     };
     void loadCms();
-  }, []);
+  }, [previewCms]);
 
   const submitContact = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -91,7 +112,7 @@ Talk to us: ${formData.talkToUs.trim()}` : ""}`,
 
           <nav className="hidden md:flex gap-8 items-center">
             {cms.navItems.map((item) => (
-              <a key={item} href={item === "Services" ? "/#services" : "#"} className="text-gray-700 font-sans font-bold hover:text-teal no-underline text-sm uppercase tracking-wide">{item}</a>
+              <a key={item} href={getNavHref(item, cms)} className="text-gray-700 font-sans font-bold hover:text-teal no-underline text-sm uppercase tracking-wide">{item}</a>
             ))}
           </nav>
 
