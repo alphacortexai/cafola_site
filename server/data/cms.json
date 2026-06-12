@@ -191,6 +191,7 @@
     "CAFOLA caregivers are selected for compassion, trained for excellence, and matched to each client's needs.",
     "If you're driven by purpose and want a meaningful career in home care, we'd love to meet you."
   ],
+  "caregiversButtonText": "Meet Our Caregivers",
   "aboutUs": {
     "headline": "CAFOLA is a recovery care center /residential care home providing continuity of professional nursing care to individuals who no longer need hospital admission.",
     "description": "There is nothing more comforting than knowing that your loved one or relative is in safe hands. We know that some medical conditions need extended care, the reason CAFOLA is here to ensure continuity of care. This significantly reduce hospital overstay, improve psychological comfort and enhance our resident's independence. This help family to find time for other activities.",
@@ -205,6 +206,7 @@
     ]
   },
   "resourcesHeading": "Latest Resources for Families",
+  "resourcesIntro": "Expert advice and practical tips for navigating the aging journey.",
   "articles": [
     {
       "slug": "how-to-build-a-safer-home-for-aging-in-place",

@@ -57,6 +57,12 @@ export type Article = {
   featured?: boolean;
 };
 
+export type HomeImages = {
+  hero: string;
+  story: string;
+  caregivers: string[];
+};
+
 export type CustomPage = {
   slug: string;
   title: string;
@@ -83,6 +89,7 @@ export type SiteContent = {
   phone: string;
   heroHeading: string;
   heroSubheading: string;
+  homeImages: HomeImages;
   servicesHeading: string;
   servicesIntro: string;
   services: Service[];
@@ -91,8 +98,10 @@ export type SiteContent = {
   storyParagraphs: string[];
   caregiversHeading: string;
   caregiversCopy: string[];
+  caregiversButtonText: string;
   aboutUs: AboutUsContent;
   resourcesHeading: string;
+  resourcesIntro: string;
   articles: Article[];
   newsletterHeading: string;
   footerAddress: string[];
@@ -110,6 +119,15 @@ export const defaultSiteContent: SiteContent = {
   phone: "(+256) 782-512-703",
   heroHeading: "CAFOLA",
   heroSubheading: "Personalized care that helps families thrive at home.",
+  homeImages: {
+    hero: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/wsYsqfTvfhPHNFhG.png",
+    story: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/WUcgTLPCbgcQqrTu.jpg",
+    caregivers: [
+      "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/JAwcPqUJQKQRINak.jpg",
+      "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/qkdIlIAqtIkSDlts.jpg",
+      "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/rPgteKUGGaMkPUpt.jpg",
+    ],
+  },
   servicesHeading: "What CAFOLA Can Do for You",
   servicesIntro:
     "From post-hospital recovery to specialized long-term support, our care team provides professional nursing and compassionate assistance.",
@@ -198,6 +216,7 @@ export const defaultSiteContent: SiteContent = {
     "CAFOLA caregivers are selected for compassion, trained for excellence, and matched to each client's needs.",
     "If you're driven by purpose and want a meaningful career in home care, we'd love to meet you.",
   ],
+  caregiversButtonText: "Meet Our Caregivers",
   aboutUs: {
     headline: "CAFOLA is a recovery care center /residential care home providing continuity of professional nursing care to individuals who no longer need hospital admission.",
     description: "There is nothing more comforting than knowing that your loved one or relative is in safe hands. We know that some medical conditions need extended care, the reason CAFOLA is here to ensure continuity of care. This significantly reduce hospital overstay, improve psychological comfort and enhance our resident's independence. This help family to find time for other activities.",
@@ -209,6 +228,8 @@ export const defaultSiteContent: SiteContent = {
     locations: ["Off Mawanda road, Kololo", "Bukoto"]
   },
   resourcesHeading: "Latest Resources for Families",
+  resourcesIntro:
+    "Expert advice and practical tips for navigating the aging journey.",
   articles: [
     {
       slug: "how-to-build-a-safer-home-for-aging-in-place",

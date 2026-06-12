@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { type ChangeEvent, type FormEvent, type ReactNode, useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
-import { defaultSiteContent, type Article, type CustomPage as CustomPageType, type MediaAsset, type Service, type ServiceDetailItem, type ServicePage, type ServicePageSection, type SiteContent } from "@shared/cms";
+import { defaultSiteContent, type Article, type CustomPage as CustomPageType, type HomeImages, type MediaAsset, type Service, type ServiceDetailItem, type ServicePage, type ServicePageSection, type SiteContent } from "@shared/cms";
 import { getLoginConfigIssue } from "@/const";
 import { signInWithGoogle, logout, onAuthStateChanged, firebaseInitError, uploadMediaAsset, type User } from "@/lib/firebase";
 import Home from "./Home";
@@ -180,6 +180,31 @@ export default function AdminEditor() {
 
   const updateDraft = <K extends keyof SiteContent>(key: K, value: SiteContent[K]) => {
     setDraftCms((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const updateHomeImage = <K extends keyof HomeImages>(key: K, value: HomeImages[K]) => {
+    setDraftCms((prev) => ({
+      ...prev,
+      homeImages: { ...(prev.homeImages ?? defaultSiteContent.homeImages), [key]: value },
+    }));
+  };
+
+  const updateCaregiverImage = (index: number, value: string) => {
+    setDraftCms((prev) => {
+      const caregivers = [...(prev.homeImages?.caregivers ?? defaultSiteContent.homeImages.caregivers)];
+      caregivers[index] = value;
+      return {
+        ...prev,
+        homeImages: { ...(prev.homeImages ?? defaultSiteContent.homeImages), caregivers },
+      };
+    });
+  };
+
+  const updateCaregiverCopy = (index: number, value: string) => {
+    setDraftCms((prev) => ({
+      ...prev,
+      caregiversCopy: prev.caregiversCopy.map((line, i) => (i === index ? value : line)),
+    }));
   };
 
   const addMediaAsset = (asset: MediaAsset) => {
@@ -485,6 +510,40 @@ export default function AdminEditor() {
       )}
     </div>
   );
+
+  const renderImagePicker = (
+    selectedUrl: string | undefined,
+    onSelect: (asset: MediaAsset) => void
+  ) => {
+    const imageAssets = (draftCms.mediaLibrary ?? []).filter((asset) => asset.type === "image");
+
+    return (
+      <div className="rounded border border-slate-800 bg-slate-950/80 p-3 space-y-3">
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+          Choose image from media library
+        </p>
+        {imageAssets.length > 0 ? (
+          <div className="grid grid-cols-2 gap-2">
+            {imageAssets.map((asset) => (
+              <button
+                key={asset.id}
+                type="button"
+                onClick={() => onSelect(asset)}
+                className={`overflow-hidden rounded border text-left transition ${
+                  selectedUrl === asset.url ? "border-teal bg-teal/10" : "border-slate-800 bg-slate-900 hover:border-slate-600"
+                }`}
+              >
+                <img src={asset.url} alt={asset.name} className="h-20 w-full object-cover" loading="lazy" />
+                <span className="block truncate px-2 py-2 text-xs text-slate-300">{asset.name}</span>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-slate-400">Upload images in the Media section to make them available here.</p>
+        )}
+      </div>
+    );
+  };
 
   const renderMediaLibraryEditor = () => (
     <EditorSection
@@ -952,7 +1011,7 @@ export default function AdminEditor() {
         </section>
 
         <div className="grid gap-8 xl:grid-cols-[420px_minmax(0,1fr)]">
-          <div className="space-y-6 xl:max-h-[calc(100vh-160px)] xl:overflow-y-auto xl:pr-2">
+          <div className="space-y-6">
             {renderMediaLibraryEditor()}
 
             {previewPage === "about" && (
@@ -1210,6 +1269,13 @@ export default function AdminEditor() {
                         placeholder="Section"
                         className="w-full px-3 py-2 bg-slate-950 border border-slate-700"
                       />
+                      <input
+                        value={article.imageUrl ?? ""}
+                        onChange={(e) => updateArticle(index, { imageUrl: e.target.value })}
+                        placeholder="Image URL"
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700"
+                      />
+                      {renderImagePicker(article.imageUrl, (asset) => updateArticle(index, { imageUrl: asset.url }))}
                       <textarea
                         value={article.description}
                         onChange={(e) => updateArticle(index, { description: e.target.value })}
@@ -1322,6 +1388,98 @@ export default function AdminEditor() {
                   placeholder="Services intro"
                   className="w-full px-3 py-2 bg-slate-950 border border-slate-700 min-h-[80px]"
                 />
+                <div className="space-y-3 rounded border border-slate-800 bg-slate-950 p-4">
+                  <h3 className="font-semibold">Caregivers section</h3>
+                  <input
+                    value={draftCms.caregiversHeading}
+                    onChange={(e) => updateDraft("caregiversHeading", e.target.value)}
+                    placeholder="Caregivers heading"
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+                  />
+                  {draftCms.caregiversCopy.map((line, index) => (
+                    <div key={`caregiver-copy-${index}`} className="flex items-start gap-3">
+                      <textarea
+                        value={line}
+                        onChange={(e) => updateCaregiverCopy(index, e.target.value)}
+                        placeholder={`Caregivers copy ${index + 1}`}
+                        className="min-h-[80px] flex-1 px-3 py-2 bg-slate-900 border border-slate-700"
+                      />
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        className="text-white"
+                        onClick={() =>
+                          updateDraft(
+                            "caregiversCopy",
+                            draftCms.caregiversCopy.filter((_, i) => i !== index)
+                          )
+                        }
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  ))}
+                  <div className="flex flex-wrap gap-3">
+                    <Button
+                      type="button"
+                      size="sm"
+                      className="bg-teal hover:bg-teal/90"
+                      onClick={() => updateDraft("caregiversCopy", [...draftCms.caregiversCopy, ""])}
+                    >
+                      Add copy line
+                    </Button>
+                  </div>
+                  <input
+                    value={draftCms.caregiversButtonText}
+                    onChange={(e) => updateDraft("caregiversButtonText", e.target.value)}
+                    placeholder="Caregivers button text"
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+                  />
+                </div>
+                <div className="space-y-3 rounded border border-slate-800 bg-slate-950 p-4">
+                  <h3 className="font-semibold">Resources section</h3>
+                  <input
+                    value={draftCms.resourcesHeading}
+                    onChange={(e) => updateDraft("resourcesHeading", e.target.value)}
+                    placeholder="Resources heading"
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+                  />
+                  <textarea
+                    value={draftCms.resourcesIntro}
+                    onChange={(e) => updateDraft("resourcesIntro", e.target.value)}
+                    placeholder="Resources intro"
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-700 min-h-[80px]"
+                  />
+                </div>
+                <div className="space-y-3 rounded border border-slate-800 bg-slate-950 p-4">
+                  <h3 className="font-semibold">Homepage images</h3>
+                  <input
+                    value={draftCms.homeImages?.hero ?? ""}
+                    onChange={(e) => updateHomeImage("hero", e.target.value)}
+                    placeholder="Hero image URL"
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+                  />
+                  {renderImagePicker(draftCms.homeImages?.hero, (asset) => updateHomeImage("hero", asset.url))}
+                  <input
+                    value={draftCms.homeImages?.story ?? ""}
+                    onChange={(e) => updateHomeImage("story", e.target.value)}
+                    placeholder="Story image URL"
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+                  />
+                  {renderImagePicker(draftCms.homeImages?.story, (asset) => updateHomeImage("story", asset.url))}
+                  {(draftCms.homeImages?.caregivers ?? defaultSiteContent.homeImages.caregivers).map((url, index) => (
+                    <div key={`caregiver-image-${index}`} className="space-y-2 rounded border border-slate-800 bg-slate-900/50 p-3">
+                      <input
+                        value={url}
+                        onChange={(e) => updateCaregiverImage(index, e.target.value)}
+                        placeholder={`Caregiver image ${index + 1} URL`}
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+                      />
+                      {renderImagePicker(url, (asset) => updateCaregiverImage(index, asset.url))}
+                    </div>
+                  ))}
+                </div>
               </div>
             </EditorSection>
 
@@ -1466,12 +1624,33 @@ export default function AdminEditor() {
                       placeholder="Section"
                       className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
                     />
+                    <input
+                      value={article.imageUrl ?? ""}
+                      onChange={(e) => updateArticle(index, { imageUrl: e.target.value })}
+                      placeholder="Image URL"
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+                    />
+                    {renderImagePicker(article.imageUrl, (asset) => updateArticle(index, { imageUrl: asset.url }))}
                     <textarea
                       value={article.description}
                       onChange={(e) => updateArticle(index, { description: e.target.value })}
                       placeholder="Description"
                       className="w-full px-3 py-2 bg-slate-900 border border-slate-700 min-h-[80px]"
                     />
+                    <textarea
+                      value={article.content ?? ""}
+                      onChange={(e) => updateArticle(index, { content: e.target.value })}
+                      placeholder="Article page content"
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-700 min-h-[120px]"
+                    />
+                    <label className="flex items-center gap-2 text-sm text-slate-300">
+                      <input
+                        type="checkbox"
+                        checked={Boolean(article.featured)}
+                        onChange={(e) => updateArticle(index, { featured: e.target.checked })}
+                      />
+                      Featured article
+                    </label>
                   </div>
                 ))}
               </div>

@@ -14,6 +14,13 @@ type HomeProps = {
   previewCms?: SiteContent;
 };
 
+const DEFAULT_ARTICLE_IMAGES = [
+  "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/nXeqdbNLjMDKrnNe.jpg",
+  "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/RlyEdRBUevkWVZSQ.jpg",
+  "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/ONOUdGEpIDXDmimL.jpg",
+  "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/nXeqdbNLjMDKrnNe.jpg",
+];
+
 const getNavHref = (item: string, cms: SiteContent) => {
   if (item === "Services") return "#services";
   if (item === "Resources") return "/articles";
@@ -207,8 +214,7 @@ export default function Home({ previewCms }: HomeProps) {
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage:
-              'url("https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/wsYsqfTvfhPHNFhG.png")',
+            backgroundImage: `url("${cms.homeImages?.hero ?? defaultSiteContent.homeImages.hero}")`,
           }}
         />
         <div className="absolute inset-0 bg-navy/40" />
@@ -404,8 +410,7 @@ export default function Home({ previewCms }: HomeProps) {
             <div
               className="aspect-[4/3] bg-cover bg-center shadow-2xl"
               style={{
-                backgroundImage:
-                  'url("https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/WUcgTLPCbgcQqrTu.jpg")',
+                backgroundImage: `url("${cms.homeImages?.story ?? defaultSiteContent.homeImages.story}")`,
               }}
             />
             <div className="absolute -bottom-8 -left-8 bg-orange p-8 text-white hidden md:block shadow-xl">
@@ -422,18 +427,13 @@ export default function Home({ previewCms }: HomeProps) {
       <section className="py-20 md:py-32 bg-white">
         <div className="container text-center">
           <h2 className="text-4xl md:text-5xl font-serif mb-8 text-navy">
-            Our Nationally Recognized Caregivers
+            {cms.caregiversHeading}
           </h2>
           <p className="text-gray-600 max-w-3xl mx-auto text-lg mb-12">
-            Each year, we honor caregivers who go above and beyond to provide
-            exceptional care and support to our clients and their families.
+            {cms.caregiversCopy.join(" ")}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            {[
-              "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/JAwcPqUJQKQRINak.jpg",
-              "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/qkdIlIAqtIkSDlts.jpg",
-              "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/rPgteKUGGaMkPUpt.jpg",
-            ].map((url, i) => (
+            {(cms.homeImages?.caregivers ?? defaultSiteContent.homeImages.caregivers).map((url, i) => (
               <div
                 key={i}
                 className="bg-gray-50 aspect-square overflow-hidden border border-gray-100 shadow-md"
@@ -447,7 +447,7 @@ export default function Home({ previewCms }: HomeProps) {
             ))}
           </div>
           <button className="bg-teal text-white px-10 py-4 font-bold uppercase tracking-widest hover:bg-teal-dark transition-colors">
-            Meet Our Caregivers
+            {cms.caregiversButtonText}
           </button>
         </div>
       </section>
@@ -461,8 +461,7 @@ export default function Home({ previewCms }: HomeProps) {
                 {cms.resourcesHeading}
               </h2>
               <p className="text-gray-600 text-lg">
-                Expert advice and practical tips for navigating the aging
-                journey.
+                {cms.resourcesIntro}
               </p>
             </div>
             <Link
@@ -484,12 +483,8 @@ export default function Home({ previewCms }: HomeProps) {
                 >
                   <img
                     src={
-                      [
-                        "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/nXeqdbNLjMDKrnNe.jpg",
-                        "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/RlyEdRBUevkWVZSQ.jpg",
-                        "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/ONOUdGEpIDXDmimL.jpg",
-                        "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/nXeqdbNLjMDKrnNe.jpg",
-                      ][idx]
+                      article.imageUrl ??
+                      DEFAULT_ARTICLE_IMAGES[idx % DEFAULT_ARTICLE_IMAGES.length]
                     }
                     alt={article.title}
                     className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"

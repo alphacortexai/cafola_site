@@ -6,6 +6,13 @@ type ArticlesProps = {
   previewCms?: SiteContent;
 };
 
+const DEFAULT_ARTICLE_IMAGES = [
+  "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/nXeqdbNLjMDKrnNe.jpg",
+  "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/RlyEdRBUevkWVZSQ.jpg",
+  "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/ONOUdGEpIDXDmimL.jpg",
+  "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/nXeqdbNLjMDKrnNe.jpg",
+];
+
 const getNavHref = (item: string, cms: SiteContent) => {
   if (item === "Services") return "/#services";
   if (item === "Resources") return "/articles";
@@ -65,14 +72,12 @@ export default function Articles({ previewCms }: ArticlesProps) {
               key={`${article.title}-${index}`}
               className="border border-gray-200 p-6 bg-white"
             >
-              {article.imageUrl ? (
-                <img
-                  src={article.imageUrl}
-                  alt={article.title}
-                  className="w-full aspect-[16/9] object-cover mb-4"
-                  loading="lazy"
-                />
-              ) : null}
+              <img
+                src={article.imageUrl ?? DEFAULT_ARTICLE_IMAGES[index % DEFAULT_ARTICLE_IMAGES.length]}
+                alt={article.title}
+                className="w-full aspect-[16/9] object-cover mb-4"
+                loading="lazy"
+              />
               {article.featured ? (
                 <p className="text-xs font-bold uppercase tracking-wider text-orange mb-3">
                   Featured
