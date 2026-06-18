@@ -27,10 +27,10 @@ export function BrandLogo({ cms, compact = false }: { cms: SiteContent; compact?
         <img
           src={logoUrl}
           alt={`${cms.brandName} logo`}
-          className={`${compact ? "h-9 w-9 md:h-11 md:w-11" : "h-10 w-10 md:h-14 md:w-14"} shrink-0 object-contain`}
+          className={`${compact ? "h-9 w-9 md:h-11 md:w-11" : "h-9 w-9 sm:h-10 sm:w-10 md:h-14 md:w-14"} shrink-0 object-contain`}
         />
       ) : null}
-      <span className="text-2xl md:text-3xl font-serif font-bold text-teal">{cms.brandName}</span>
+      <span className="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-teal">{cms.brandName}</span>
     </Link>
   );
 }
@@ -47,7 +47,7 @@ export default function SiteHeader({ cms, showTopBar = false }: SiteHeaderProps)
         </div>
       ) : null}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm">
-        <div className="container mx-auto px-4 py-3 md:py-4 flex items-center justify-between gap-4">
+        <div className="container mx-auto px-3 sm:px-4 py-3 md:py-4 flex items-center justify-between gap-2 sm:gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <BrandLogo cms={cms} />
             <div className="text-[10px] md:text-xs text-gray-600 leading-tight hidden sm:block uppercase tracking-wider font-bold">
@@ -63,9 +63,13 @@ export default function SiteHeader({ cms, showTopBar = false }: SiteHeaderProps)
             ))}
           </nav>
 
-          <a href={`tel:${cms.phone}`} className="font-bold text-xs md:text-base flex items-center gap-2 no-underline text-teal shrink-0">
-            <Phone className="w-4 h-4" />
-            <span className="hidden sm:inline">{cms.phone}</span>
+          <a
+            href={`tel:${cms.phone}`}
+            className="font-bold text-[10px] sm:text-xs md:text-base flex items-center gap-1 sm:gap-2 no-underline text-navy hover:text-teal shrink-0"
+            aria-label={`Call ${cms.phone}`}
+          >
+            <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange shrink-0" />
+            <span className="leading-none whitespace-nowrap">{cms.phone}</span>
           </a>
         </div>
       </header>
