@@ -245,6 +245,40 @@ export default function AdminEditor() {
     }
   };
 
+  const onLogoSelected = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setStatus("Please choose an image file for the company logo.");
+      event.currentTarget.value = "";
+      return;
+    }
+
+    setUploadingMedia(true);
+    setStatus(`Uploading company logo ${file.name}...`);
+    try {
+      const url = await uploadMediaAsset(file);
+      addMediaAsset({
+        id: `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`,
+        name: file.name,
+        url,
+        type: "image",
+        contentType: file.type,
+        uploadedAt: new Date().toISOString(),
+      });
+      updateDraft("logoUrl", url);
+      setStatus("Uploaded company logo. Publish changes to apply it site-wide.");
+    } catch (error) {
+      console.error("Logo upload failed", error);
+      const message = error instanceof Error ? error.message : "Logo upload failed.";
+      setStatus(message);
+    } finally {
+      setUploadingMedia(false);
+      event.currentTarget.value = "";
+    }
+  };
+
   const updateAboutUs = <K extends keyof SiteContent["aboutUs"]>(key: K, value: SiteContent["aboutUs"][K]) => {
     setDraftCms((prev) => ({ ...prev, aboutUs: { ...prev.aboutUs, [key]: value } }));
   };
@@ -1364,6 +1398,29 @@ export default function AdminEditor() {
                   placeholder="Company descriptor"
                   className="w-full px-3 py-2 bg-slate-950 border border-slate-700"
                 />
+                <div className="space-y-3 rounded border border-slate-800 bg-slate-950 p-4">
+                  <div>
+                    <h3 className="font-semibold">Company logo</h3>
+                    <p className="text-sm text-slate-400">Upload or choose the logo used in the fixed navigation bar and brand areas.</p>
+                  </div>
+                  {draftCms.logoUrl ? (
+                    <img src={draftCms.logoUrl} alt="Current company logo" className="h-20 w-20 rounded bg-white object-contain p-2" />
+                  ) : null}
+                  <input
+                    value={draftCms.logoUrl ?? ""}
+                    onChange={(e) => updateDraft("logoUrl", e.target.value)}
+                    placeholder="Logo image URL"
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+                  />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={onLogoSelected}
+                    disabled={uploadingMedia}
+                    className="w-full text-sm file:mr-4 file:border-0 file:bg-teal file:px-4 file:py-2 file:text-white"
+                  />
+                  {renderImagePicker(draftCms.logoUrl, (asset) => updateDraft("logoUrl", asset.url))}
+                </div>
                 <input
                   value={draftCms.phone}
                   onChange={(e) => updateDraft("phone", e.target.value)}

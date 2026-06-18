@@ -9,6 +9,7 @@ import {
 import { type FormEvent, useEffect, useState } from "react";
 import { defaultSiteContent, type SiteContent } from "@shared/cms";
 import { Link } from "wouter";
+import SiteHeader from "@/components/SiteHeader";
 
 type HomeProps = {
   previewCms?: SiteContent;
@@ -157,57 +158,7 @@ export default function Home({ previewCms }: HomeProps) {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Top Bar */}
-      <div className="bg-navy text-white py-2 hidden md:block">
-        <div className="container flex justify-end gap-6 text-xs font-sans">
-          <a href="#" className="hover:text-orange no-underline">
-            Medical & Community Partners
-          </a>
-          <a href="#" className="hover:text-orange no-underline">
-            Franchise Opportunities
-          </a>
-        </div>
-      </div>
-
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Link
-              href="/"
-              className="text-2xl md:text-3xl font-serif font-bold no-underline"
-              style={{ color: "#007e8a" }}
-            >
-              {cms.brandName}
-            </Link>
-            <div className="text-[10px] md:text-xs text-gray-600 leading-tight hidden sm:block uppercase tracking-wider font-bold">
-              {cms.companyDescriptor}
-            </div>
-          </div>
-
-          <nav className="hidden lg:flex gap-8 items-center">
-            {cms.navItems.map(item => (
-              <a
-                key={item}
-                href={getNavHref(item, cms)}
-                className="text-gray-700 font-sans font-bold hover:text-teal no-underline text-sm uppercase tracking-wide"
-              >
-                {item}
-              </a>
-            ))}
-          </nav>
-
-          <div className="flex flex-col items-end gap-1">
-            <a
-              href={`tel:${cms.phone}`}
-              className="font-bold text-sm md:text-base flex items-center gap-2 no-underline"
-              style={{ color: "#007e8a" }}
-            >
-              <Phone className="w-4 h-4" />
-              {cms.phone}
-            </a>
-          </div>
-        </div>
-      </header>
+      <SiteHeader cms={cms} showTopBar />
 
       {/* Hero Section */}
       <section className="relative h-[500px] md:h-[600px] overflow-hidden">

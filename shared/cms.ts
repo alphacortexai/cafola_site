@@ -83,6 +83,7 @@ export type AboutUsContent = {
 
 export type SiteContent = {
   brandName: string;
+  logoUrl?: string;
   tagline: string;
   companyDescriptor: string;
   navItems: string[];
@@ -113,6 +114,7 @@ export type SiteContent = {
 
 export const defaultSiteContent: SiteContent = {
   brandName: "CAFOLA",
+  logoUrl: "",
   tagline: "Compassionate support for living well at home.",
   companyDescriptor: "In-Home Care & Assistance",
   navItems: ["Services", "Resources", "About Us", "Careers", "Contact"],

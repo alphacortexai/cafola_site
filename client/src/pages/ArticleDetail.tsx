@@ -1,4 +1,5 @@
 import { defaultSiteContent, type SiteContent } from "@shared/cms";
+import SiteHeader from "@/components/SiteHeader";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useRoute } from "wouter";
 
@@ -52,12 +53,8 @@ export default function ArticleDetail({ previewCms, previewSlug }: ArticleDetail
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="border-b border-gray-200 bg-white">
-        <div className="container mx-auto px-4 py-6 flex items-center justify-between">
-          <Link href="/" className="text-3xl font-serif font-bold text-teal no-underline">{cms.brandName}</Link>
-          <Link href="/articles" className="text-sm font-bold uppercase tracking-wider text-navy no-underline hover:underline">All Articles</Link>
-        </div>
-      </header>
+      <SiteHeader cms={cms} />
+
       <main className="container mx-auto px-4 py-12 max-w-4xl">
         <p className="text-xs uppercase tracking-wider text-orange font-bold mb-3">{article.section ?? "Resources"}</p>
         <h1 className="text-4xl font-serif text-navy mb-4">{article.title}</h1>
