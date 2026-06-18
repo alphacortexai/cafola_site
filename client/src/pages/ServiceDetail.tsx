@@ -1,6 +1,7 @@
 import { type FormEvent, useEffect, useState } from "react";
 import { useRoute, Link } from "wouter";
 import { defaultSiteContent, type SiteContent } from "@shared/cms";
+import SiteHeader from "@/components/SiteHeader";
 import { ChevronRight, Phone, MapPin, CheckCircle2 } from "lucide-react";
 
 type ServiceDetailProps = {
@@ -103,27 +104,7 @@ Talk to us: ${formData.talkToUs.trim()}` : ""}`,
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <a href="/" className="text-2xl font-serif font-bold no-underline hover:no-underline" style={{ color: "#007e8a" }}>{cms.brandName}</a>
-            <div className="text-xs text-gray-600 hidden sm:block uppercase tracking-wider font-bold">{cms.companyDescriptor}</div>
-          </div>
-
-          <nav className="hidden md:flex gap-8 items-center">
-            {cms.navItems.map((item) => (
-              <a key={item} href={getNavHref(item, cms)} className="text-gray-700 font-sans font-bold hover:text-teal no-underline text-sm uppercase tracking-wide">{item}</a>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-4">
-            <a href={`tel:${cms.phone}`} className="font-bold text-sm no-underline hover:underline flex items-center gap-2" style={{ color: "#007e8a" }}>
-              <Phone className="w-4 h-4" />
-              {cms.phone}
-            </a>
-          </div>
-        </div>
-      </header>
+      <SiteHeader cms={cms} />
 
       <main>
         {/* Hero Section */}

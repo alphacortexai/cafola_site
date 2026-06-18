@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useRoute } from "wouter";
 import { defaultSiteContent, type ServicePage, type ServicePageSection, type SiteContent } from "@shared/cms";
+import SiteHeader from "@/components/SiteHeader";
 import { ChevronRight, Phone } from "lucide-react";
 
 type ServicePageDetailProps = {
@@ -124,27 +125,7 @@ export default function ServicePageDetail({ previewCms, previewSlug }: ServicePa
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Link href="/" className="text-2xl font-serif font-bold no-underline" style={{ color: "#007e8a" }}>
-              {cms.brandName}
-            </Link>
-            <div className="text-xs text-gray-600 hidden sm:block uppercase tracking-wider font-bold">{cms.companyDescriptor}</div>
-          </div>
-          <nav className="hidden md:flex gap-8 items-center">
-            {cms.navItems.map((item) => (
-              <a key={item} href={getNavHref(item, cms)} className="text-gray-700 font-sans font-bold hover:text-teal no-underline text-sm uppercase tracking-wide">
-                {item}
-              </a>
-            ))}
-          </nav>
-          <a href={`tel:${cms.phone}`} className="font-bold text-sm no-underline hover:underline flex items-center gap-2" style={{ color: "#007e8a" }}>
-            <Phone className="w-4 h-4" />
-            {cms.phone}
-          </a>
-        </div>
-      </header>
+      <SiteHeader cms={cms} />
 
       <main>
         <section className="bg-navy py-16 md:py-24 text-white">
