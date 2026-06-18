@@ -6,7 +6,7 @@ export const getLoginConfigIssue = () => {
   const appId = import.meta.env.VITE_FIREBASE_APP_ID;
 
   if (!apiKey || !projectId || !appId) {
-    return "Missing Firebase configuration (API Key, Project ID, or App ID).";
+    return "- Missing Firebase configuration (API Key, Project ID, or App ID).";
   }
 
   return null;
