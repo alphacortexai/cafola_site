@@ -241,7 +241,7 @@ export default function Home({ previewCms }: HomeProps) {
                 href="/about"
                 className="inline-block border-2 border-teal text-teal px-10 py-4 font-bold uppercase tracking-widest hover:bg-teal hover:text-white transition-all duration-300 no-underline"
               >
-                Learn More About Us
+                Learn more about us
               </Link>
             </div>
             <div className="order-1 lg:order-2">
@@ -354,7 +354,7 @@ export default function Home({ previewCms }: HomeProps) {
               ))}
             </div>
             <button className="mt-10 border-2 border-teal text-teal px-10 py-4 font-bold uppercase tracking-widest hover:bg-teal hover:text-white transition-all duration-300">
-              Learn More
+              Learn more
             </button>
           </div>
           <div className="order-1 lg:order-2 relative">

@@ -42,7 +42,7 @@ Carousel/slider with customer testimonials:
 - Headline: "Our Story"
 - Body text explaining the company's mission and values
 - Background image: caregiver and senior client outdoors
-- "Learn More" button
+- "Learn more" button
 
 ### 7. Caregivers Section
 - Headline: "Our Nationally Recognized Caregivers"

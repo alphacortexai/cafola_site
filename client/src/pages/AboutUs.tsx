@@ -170,7 +170,7 @@ export default function AboutUs({ previewCms }: AboutUsProps) {
 
               {/* Call to Action */}
               <div className="bg-navy text-white p-8 mt-12">
-                <h3 className="text-2xl font-serif mb-4">Ready to Learn More?</h3>
+                <h3 className="text-2xl font-serif mb-4">Ready to learn more?</h3>
                 <p className="text-gray-300 mb-6">
                   Contact us today to discuss how {cms.brandName} can provide the care and support your loved one deserves.
                 </p>
