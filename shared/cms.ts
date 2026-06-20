@@ -123,7 +123,8 @@ export const defaultSiteContent: SiteContent = {
   heroSubheading: "Personalized care that helps families thrive at home.",
   homeImages: {
     hero: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/wsYsqfTvfhPHNFhG.png",
-    story: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/WUcgTLPCbgcQqrTu.jpg",
+    story:
+      "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/WUcgTLPCbgcQqrTu.jpg",
     caregivers: [
       "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/JAwcPqUJQKQRINak.jpg",
       "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/qkdIlIAqtIkSDlts.jpg",
@@ -138,72 +139,201 @@ export const defaultSiteContent: SiteContent = {
       title: "Post-Hospital Recovery",
       description: "Skilled nursing for safer post-hospital recovery.",
       icon: "🏥",
-      longDescription: "Many patients are discharged from hospitals but still need skilled nursing care. Our services are tailored to support residents in our recovery center / residential care centers following acute hospital admission. CAFOLA work to ensure continuity of care structured to facilitate complication prevention, avoid re-admission and complete healing.",
+      longDescription:
+        "Many patients are discharged from hospitals but still need skilled nursing care. Our services are tailored to support residents in our recovery center / residential care centers following acute hospital admission. CAFOLA work to ensure continuity of care structured to facilitate complication prevention, avoid re-admission and complete healing.",
       details: [
-        { title: "Vital Signs Monitoring", description: "Closely observing and managing blood pressure, blood oxygen, respiratory rate, temperatures and heart rate." },
-        { title: "Wound Care", description: "Expert management of wounds and sores, including professional cleaning and dressing." },
-        { title: "Medication Management", description: "Helping and guiding residents in the administration of their prescribed medicines." },
-        { title: "24/7 Nursing Care", description: "Qualified nurses providing round-the-clock support including pressure point care, feeding (NG tube), and hygiene." },
-        { title: "Catheter and Stoma Care", description: "Daily cleaning, bag changes, and monitoring for infections or complications." },
-        { title: "Emotional Support", description: "Companionship and comfort for residents and families through the journey of distress." },
-        { title: "GP Visits", description: "In-house general practitioner visits to observe and monitor health conditions." }
-      ]
+        {
+          title: "Vital Signs Monitoring",
+          description:
+            "Closely observing and managing blood pressure, blood oxygen, respiratory rate, temperatures and heart rate.",
+        },
+        {
+          title: "Wound Care",
+          description:
+            "Expert management of wounds and sores, including professional cleaning and dressing.",
+        },
+        {
+          title: "Medication Management",
+          description:
+            "Helping and guiding residents in the administration of their prescribed medicines.",
+        },
+        {
+          title: "24/7 Nursing Care",
+          description:
+            "Qualified nurses providing round-the-clock support including pressure point care, feeding (NG tube), and hygiene.",
+        },
+        {
+          title: "Catheter and Stoma Care",
+          description:
+            "Daily cleaning, bag changes, and monitoring for infections or complications.",
+        },
+        {
+          title: "Emotional Support",
+          description:
+            "Companionship and comfort for residents and families through the journey of distress.",
+        },
+        {
+          title: "GP Visits",
+          description:
+            "In-house general practitioner visits to observe and monitor health conditions.",
+        },
+      ],
     },
     {
       title: "Stroke Recovery & Rehab",
       description: "Personalized stroke rehab with one-on-one nursing care.",
       icon: "🧠",
-      longDescription: "When a serious or chronic health issue affects someone you love, it seems overwhelming. Fortunately we are here to provide one on one professional nursing care and attention while outside the hospital, in a comfortable recovery center. We personalize care plan for our residents recovering from stroke.",
+      longDescription:
+        "When a serious or chronic health issue affects someone you love, it seems overwhelming. Fortunately we are here to provide one on one professional nursing care and attention while outside the hospital, in a comfortable recovery center. We personalize care plan for our residents recovering from stroke.",
       details: [
-        { title: "Therapy & Rehab", description: "Speech and language therapy, mobility training, and occupational therapy." },
-        { title: "Specialized Care", description: "Feeding (Oral/NG), hygiene, grooming, and toileting/bowl programs." },
-        { title: "Clinical Support", description: "Suction, pressure sore management, and medication administration." },
-        { title: "Physiotherapy", description: "Professional physiotherapy based on need and physician's recommendation." }
-      ]
+        {
+          title: "Therapy & Rehab",
+          description:
+            "Speech and language therapy, mobility training, and occupational therapy.",
+        },
+        {
+          title: "Specialized Care",
+          description:
+            "Feeding (Oral/NG), hygiene, grooming, and toileting/bowl programs.",
+        },
+        {
+          title: "Clinical Support",
+          description:
+            "Suction, pressure sore management, and medication administration.",
+        },
+        {
+          title: "Physiotherapy",
+          description:
+            "Professional physiotherapy based on need and physician's recommendation.",
+        },
+      ],
     },
     {
       title: "Long-Term Care",
       description: "24/7 support for chronic conditions and daily living.",
       icon: "⏳",
-      longDescription: "CAFOLA is here to work with family in providing round the clock support for individuals needing assistance with daily living activities, health monitoring, psychological comfort, and professional nursing care.",
+      longDescription:
+        "CAFOLA is here to work with family in providing round the clock support for individuals needing assistance with daily living activities, health monitoring, psychological comfort, and professional nursing care.",
       details: [
-        { title: "Diabetes Management", description: "Blood glucose monitoring, medication timing, diabetic diet, and neuropathy prevention." },
-        { title: "Hypertension Care", description: "Blood pressure monitoring, medication adherence, and lifestyle modification support." },
-        { title: "Cancer Support", description: "Symptom management, psychosocial support, and infection prevention (neutropenic precautions)." },
-        { title: "Pain & Fatigue", description: "Pain assessment and management, energy conservation, and light exercise promotion." },
-        { title: "Gastrointestinal Care", description: "Managing nausea/vomiting, promoting nutritious diets, and managing digestive issues." },
-        { title: "Psychological Support", description: "Counseling and spiritual support to help residents and families cope with anxiety and depression." }
-      ]
+        {
+          title: "Diabetes Management",
+          description:
+            "Blood glucose monitoring, medication timing, diabetic diet, and neuropathy prevention.",
+        },
+        {
+          title: "Hypertension Care",
+          description:
+            "Blood pressure monitoring, medication adherence, and lifestyle modification support.",
+        },
+        {
+          title: "Cancer Support",
+          description:
+            "Symptom management, psychosocial support, and infection prevention (neutropenic precautions).",
+        },
+        {
+          title: "Pain & Fatigue",
+          description:
+            "Pain assessment and management, energy conservation, and light exercise promotion.",
+        },
+        {
+          title: "Gastrointestinal Care",
+          description:
+            "Managing nausea/vomiting, promoting nutritious diets, and managing digestive issues.",
+        },
+        {
+          title: "Psychological Support",
+          description:
+            "Counseling and spiritual support to help residents and families cope with anxiety and depression.",
+        },
+      ],
     },
     {
       title: "Specialty Care",
       description: "Specialty care for dementia, geriatrics, and therapies.",
       icon: "✨",
-      longDescription: "At CAFOLA, we believe that care should be designed towards each person's unique needs. That's the exact reason you should rely on people with the skills.",
+      longDescription:
+        "At CAFOLA, we believe that care should be designed towards each person's unique needs. That's the exact reason you should rely on people with the skills.",
       details: [
-        { title: "Dementia & Memory Care", description: "Helping loved ones live a quality and independent life despite cognitive changes." },
-        { title: "Speech & Physiotherapy", description: "Verified professional therapists planning sessions to improve communication and body functioning." },
-        { title: "Psychotherapy", description: "Specialized support from psychologists for various psychological concerns." },
-        { title: "Geriatry", description: "Addressing unique needs of older residents: mobility, safety, nutrition, and family ties." },
-        { title: "Orthopedic & Disability", description: "Promoting independence, dignity, and self-worth through daily living support." },
-        { title: "Medical Daycare", description: "Helping mothers with baby feeding, care, hygiene routines, and medication." },
-        { title: "Home Visits", description: "Planned or full-time (24/7) care in the comfort of our client's own homes." }
-      ]
+        {
+          title: "Dementia & Memory Care",
+          description:
+            "Helping loved ones live a quality and independent life despite cognitive changes.",
+        },
+        {
+          title: "Speech & Physiotherapy",
+          description:
+            "Verified professional therapists planning sessions to improve communication and body functioning.",
+        },
+        {
+          title: "Psychotherapy",
+          description:
+            "Specialized support from psychologists for various psychological concerns.",
+        },
+        {
+          title: "Geriatry",
+          description:
+            "Addressing unique needs of older residents: mobility, safety, nutrition, and family ties.",
+        },
+        {
+          title: "Orthopedic & Disability",
+          description:
+            "Promoting independence, dignity, and self-worth through daily living support.",
+        },
+        {
+          title: "Medical Daycare",
+          description:
+            "Helping mothers with baby feeding, care, hygiene routines, and medication.",
+        },
+        {
+          title: "Home Visits",
+          description:
+            "Planned or full-time (24/7) care in the comfort of our client's own homes.",
+        },
+      ],
     },
     {
       title: "Our Story",
       description: "From bedside nursing to trusted recovery homes...",
       icon: "📖",
-      longDescription: "CAFOLA is a recovery care center /residential care home providing continuity of professional nursing care to individuals who no longer need hospital admission.",
+      longDescription:
+        "CAFOLA is a recovery care center /residential care home providing continuity of professional nursing care to individuals who no longer need hospital admission.",
       details: [
-        { title: "Experience", description: "With 10 years of experience providing bedside and home nursing care services, we now operate recovery center and residential care offering safe and premium living with hospital-level 24/7 nursing support to our residents." },
-        { title: "Why Families Choose CAFOLA", description: "There is nothing more comforting than knowing that your loved one or relative is in safe hands. We know that some medical conditions need extended care, the reason CAFOLA is here to ensure continuity of care. This significantly reduce hospital overstay, improve psychological comfort and enhance our resident's independence. This help family to find time for other activities." },
-        { title: "Scope of Service", description: "Whether your loved one need basic or skilled, short- or long-term care, CAFOLA is the right fit for you. We personalize every care and support plan in collaborations with your physician and hospital to help you live the life you deserve." },
-        { title: "Our Staff", description: "Our staff are not only qualified but are also passionate, dependable and trustworthy individuals who respect privacy, personal dignity and maintain confidentiality with professionalism." },
-        { title: "Culture & Family Connections", description: "As our principal has always been, maintaining culture and family connections, we design your routines around your choices so you can stay connected to the people and places you love. Our resident's choice to have a loved one or member of the family to stay around is welcomed." },
-        { title: "Best-Fit Matching", description: "In the strive to improve comfort, we pair our residents with the most fit staff to serve the best. Talk to us if you need a Hindi, Chinese, Arabic or Swahili speaker." },
-        { title: "Locations", description: "CAFOLA operates residential care homes / recovery centers in three locations: Off Mawanda road, Kololo and Bukoto." }
-      ]
+        {
+          title: "Experience",
+          description:
+            "With 10 years of experience providing bedside and home nursing care services, we now operate recovery center and residential care offering safe and premium living with hospital-level 24/7 nursing support to our residents.",
+        },
+        {
+          title: "Why Families Choose CAFOLA",
+          description:
+            "There is nothing more comforting than knowing that your loved one or relative is in safe hands. We know that some medical conditions need extended care, the reason CAFOLA is here to ensure continuity of care. This significantly reduce hospital overstay, improve psychological comfort and enhance our resident's independence. This help family to find time for other activities.",
+        },
+        {
+          title: "Scope of Service",
+          description:
+            "Whether your loved one need basic or skilled, short- or long-term care, CAFOLA is the right fit for you. We personalize every care and support plan in collaborations with your physician and hospital to help you live the life you deserve.",
+        },
+        {
+          title: "Our Staff",
+          description:
+            "Our staff are not only qualified but are also passionate, dependable and trustworthy individuals who respect privacy, personal dignity and maintain confidentiality with professionalism.",
+        },
+        {
+          title: "Culture & Family Connections",
+          description:
+            "As our principal has always been, maintaining culture and family connections, we design your routines around your choices so you can stay connected to the people and places you love. Our resident's choice to have a loved one or member of the family to stay around is welcomed.",
+        },
+        {
+          title: "Best-Fit Matching",
+          description:
+            "In the strive to improve comfort, we pair our residents with the most fit staff to serve the best. Talk to us if you need a Hindi, Chinese, Arabic or Swahili speaker.",
+        },
+        {
+          title: "Locations",
+          description:
+            "CAFOLA operates residential care homes / recovery centers in three locations: Off Mawanda road, Kololo and Bukoto.",
+        },
+      ],
     },
   ],
   servicePages: [],
@@ -220,14 +350,21 @@ export const defaultSiteContent: SiteContent = {
   ],
   caregiversButtonText: "Meet Our Caregivers",
   aboutUs: {
-    headline: "CAFOLA is a recovery care center /residential care home providing continuity of professional nursing care to individuals who no longer need hospital admission.",
-    description: "There is nothing more comforting than knowing that your loved one or relative is in safe hands. We know that some medical conditions need extended care, the reason CAFOLA is here to ensure continuity of care. This significantly reduce hospital overstay, improve psychological comfort and enhance our resident's independence. This help family to find time for other activities.",
-    experience: "With 10 years of experience providing bedside and home nursing care services, we now operate recovery center and residential care offering safe and premium living with hospital-level 24/7 nursing support to our residents.",
-    scopeOfService: "Whether your loved one need basic or skilled, short- or long-term care, CAFOLA is the right fit for you. We personalize every care and support plan in collaborations with your physician and hospital to help you live the life you deserve.",
-    staffDescription: "Our staff are not only qualified but are also passionate, dependable and trustworthy individuals who respect privacy, personal dignity and maintain confidentiality with professionalism.",
-    cultureAndFamily: "As our principal has always been, maintaining culture and family connections, we design your routines around your choices so you can stay connected to the people and places you love. Our resident's choice to have a loved one or member of the family to stay around is welcomed.",
-    staffMatching: "In the strive to improve comfort, we pair our residents with the most fit staff to serve the best. Talk to us if you need a Hindi, Chinese, Arabic or Swahili speaker.",
-    locations: ["Off Mawanda road, Kololo", "Bukoto"]
+    headline:
+      "CAFOLA is a residential recovery center, providing premium living with continuity of professional nursing care to individuals who no longer need hospital admission.",
+    description:
+      "From 2015, CAFOLA has provided bedside and home nursing care services to hundreds of families and individuals. We've worked with national and international institutions in provision of nursing care to their staff. CAFOLA now operates residential recovery centers ensuring safety, comfort and premium living with professional 24/7 nursing support to residents.",
+    experience:
+      "With 10 years of experience providing bedside and home nursing care services, we now operate residential recovery centers providing premium living with hospital-level 24/7 nursing support.",
+    scopeOfService:
+      "Whether you or your loved one need basic or skilled, short- or long-term care, CAFOLA is the right fit. We personalize every care and support plan in collaborations with your physician and hospital to help you live the life you deserve.",
+    staffDescription:
+      "Our staff are not only qualified but are also passionate, dependable and trustworthy individuals who respect privacy, personal dignity and maintain confidentiality with professionalism.",
+    cultureAndFamily:
+      "As our principal has always been, maintaining culture and family ties, we design your routines around your choices so you can stay connected to the people and places you love. Our resident's choice to have a loved one or member of the family to stay closer is welcomed.",
+    staffMatching:
+      "In the strive to improve comfort, we pair our residents with the most fit staff to serve the best. Talk to us if you need a Hindi, Chinese, Arabic or Swahili speaker.",
+    locations: ["Off Mawanda road, Kololo", "Bukoto"],
   },
   resourcesHeading: "Latest Resources for Families",
   resourcesIntro:
@@ -236,31 +373,39 @@ export const defaultSiteContent: SiteContent = {
     {
       slug: "how-to-build-a-safer-home-for-aging-in-place",
       title: "How to Build a Safer Home for Aging in Place",
-      description: "Simple room-by-room updates that improve safety, comfort, and independence.",
+      description:
+        "Simple room-by-room updates that improve safety, comfort, and independence.",
       section: "Home Safety",
-      content: "Creating a safer home starts with lighting, clear pathways, and bathroom support tools such as grab bars and non-slip mats. Review each room for fall risks and make small updates that preserve independence.",
+      content:
+        "Creating a safer home starts with lighting, clear pathways, and bathroom support tools such as grab bars and non-slip mats. Review each room for fall risks and make small updates that preserve independence.",
       featured: true,
     },
     {
       slug: "early-signs-that-extra-daily-support-may-help",
       title: "Early Signs That Extra Daily Support May Help",
-      description: "Learn practical indicators and how to start a conversation with empathy.",
+      description:
+        "Learn practical indicators and how to start a conversation with empathy.",
       section: "Care Planning",
-      content: "Watch for missed medications, increasing fatigue, social withdrawal, or skipped meals. Start conversations with empathy, focusing on goals and quality of life instead of limitations.",
+      content:
+        "Watch for missed medications, increasing fatigue, social withdrawal, or skipped meals. Start conversations with empathy, focusing on goals and quality of life instead of limitations.",
     },
     {
       slug: "nutrition-tips-for-older-adults-at-home",
       title: "Nutrition Tips for Older Adults at Home",
-      description: "Keep meals balanced, accessible, and enjoyable with these caregiver-backed ideas.",
+      description:
+        "Keep meals balanced, accessible, and enjoyable with these caregiver-backed ideas.",
       section: "Nutrition",
-      content: "Prioritize protein, fiber, hydration, and colorful produce. Keep healthy snacks visible and easy to prepare. Use meal routines and shared mealtimes to support appetite and consistency.",
+      content:
+        "Prioritize protein, fiber, hydration, and colorful produce. Keep healthy snacks visible and easy to prepare. Use meal routines and shared mealtimes to support appetite and consistency.",
     },
     {
       slug: "how-respite-care-supports-family-caregivers",
       title: "How Respite Care Supports Family Caregivers",
-      description: "Why short breaks can prevent burnout and improve long-term care outcomes.",
+      description:
+        "Why short breaks can prevent burnout and improve long-term care outcomes.",
       section: "Family Caregiving",
-      content: "Respite care provides temporary support so family caregivers can rest, work, and attend to personal needs. Planned breaks reduce stress and improve long-term care sustainability.",
+      content:
+        "Respite care provides temporary support so family caregivers can rest, work, and attend to personal needs. Planned breaks reduce stress and improve long-term care sustainability.",
     },
   ],
   newsletterHeading: "Get CAFOLA care insights in your inbox",
@@ -270,7 +415,8 @@ export const defaultSiteContent: SiteContent = {
   mediaLibrary: [],
   testimonials: [
     {
-      quote: "CAFOLA gave our family peace of mind and helped my mother stay safely in her own home.",
+      quote:
+        "CAFOLA gave our family peace of mind and helped my mother stay safely in her own home.",
       author: "Norma",
       role: "Client",
       location: "Norfolk, Nebraska",

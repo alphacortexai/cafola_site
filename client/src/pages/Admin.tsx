@@ -1,9 +1,22 @@
 import { Button } from "@/components/ui/button";
-import { type ChangeEvent, type FormEvent, useEffect, useMemo, useState } from "react";
+import {
+  type ChangeEvent,
+  type FormEvent,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { defaultSiteContent, type SiteContent } from "@shared/cms";
 import { Link } from "wouter";
 import { getLoginConfigIssue } from "@/const";
-import { signInWithGoogle, logout, onAuthStateChanged, firebaseInitError, uploadArticleImage, type User } from "@/lib/firebase";
+import {
+  signInWithGoogle,
+  logout,
+  onAuthStateChanged,
+  firebaseInitError,
+  uploadArticleImage,
+  type User,
+} from "@/lib/firebase";
 import type { Article } from "@shared/cms";
 
 type ContactSubmission = {
@@ -21,7 +34,9 @@ function CmsPreview({ cms }: { cms: SiteContent }) {
     <div className="rounded border border-slate-800 bg-slate-950 p-5">
       <div className="space-y-5">
         <div className="space-y-2">
-          <p className="text-xs uppercase tracking-widest text-slate-400">Preview</p>
+          <p className="text-xs uppercase tracking-widest text-slate-400">
+            Preview
+          </p>
           <h3 className="text-2xl font-serif text-white">{cms.brandName}</h3>
           <p className="text-slate-400">{cms.companyDescriptor}</p>
           <p className="text-slate-50 text-lg">{cms.heroSubheading}</p>
@@ -30,8 +45,11 @@ function CmsPreview({ cms }: { cms: SiteContent }) {
         <div className="space-y-3">
           <h4 className="text-lg font-semibold text-white">Services</h4>
           <div className="grid gap-3 md:grid-cols-2">
-            {cms.services.slice(0, 4).map((service) => (
-              <div key={service.title} className="rounded border border-slate-800 bg-slate-900 p-4">
+            {cms.services.slice(0, 4).map(service => (
+              <div
+                key={service.title}
+                className="rounded border border-slate-800 bg-slate-900 p-4"
+              >
                 <div className="text-3xl mb-2">{service.icon}</div>
                 <h5 className="font-semibold text-white">{service.title}</h5>
                 <p className="text-slate-400 text-sm">{service.description}</p>
@@ -49,8 +67,11 @@ function CmsPreview({ cms }: { cms: SiteContent }) {
         <div className="space-y-2">
           <h4 className="text-lg font-semibold text-white">Articles</h4>
           <ul className="space-y-2">
-            {cms.articles.slice(0, 3).map((article) => (
-              <li key={article.slug} className="rounded border border-slate-800 bg-slate-900 p-3">
+            {cms.articles.slice(0, 3).map(article => (
+              <li
+                key={article.slug}
+                className="rounded border border-slate-800 bg-slate-900 p-3"
+              >
                 <p className="font-semibold text-white">{article.title}</p>
                 <p className="text-slate-400 text-sm">{article.description}</p>
               </li>
@@ -60,8 +81,12 @@ function CmsPreview({ cms }: { cms: SiteContent }) {
 
         <div className="space-y-2">
           <h4 className="text-lg font-semibold text-white">Footer</h4>
-          <p className="text-slate-400 text-sm">{cms.footerAddress.join(" • ")}</p>
-          <p className="text-slate-500 text-sm">{cms.footerLinks.join(" • ")}</p>
+          <p className="text-slate-400 text-sm">
+            {cms.footerAddress.join(" • ")}
+          </p>
+          <p className="text-slate-500 text-sm">
+            {cms.footerLinks.join(" • ")}
+          </p>
         </div>
       </div>
     </div>
@@ -87,10 +112,24 @@ export default function Admin() {
   const [rawArticles, setRawArticles] = useState(
     JSON.stringify(defaultSiteContent.articles, null, 2)
   );
-  const [articlesDraft, setArticlesDraft] = useState<SiteContent["articles"]>(defaultSiteContent.articles);
-  const [articleForm, setArticleForm] = useState<Article>({ slug: "", title: "", description: "", content: "", section: "", imageUrl: "", featured: false });
+  const [articlesDraft, setArticlesDraft] = useState<SiteContent["articles"]>(
+    defaultSiteContent.articles
+  );
+  const [articleForm, setArticleForm] = useState<Article>({
+    slug: "",
+    title: "",
+    description: "",
+    content: "",
+    section: "",
+    imageUrl: "",
+    featured: false,
+  });
   const [editingSlug, setEditingSlug] = useState<string | null>(null);
   const [articlesStatus, setArticlesStatus] = useState("Articles ready");
+  const [aboutDraft, setAboutDraft] = useState<SiteContent["aboutUs"]>(
+    defaultSiteContent.aboutUs
+  );
+  const [aboutStatus, setAboutStatus] = useState("About page ready");
   const [uploadingArticleImage, setUploadingArticleImage] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const loginConfigIssue = getLoginConfigIssue() ?? firebaseInitError;
@@ -114,7 +153,7 @@ export default function Admin() {
   }, [activeToken]);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged((currentUser) => {
+    const unsubscribe = onAuthStateChanged(currentUser => {
       setUser(currentUser);
       setLoading(false);
     });
@@ -134,7 +173,9 @@ export default function Admin() {
         );
         return;
       }
-      setLoginError("Google sign-in failed. Check Firebase auth settings and try again.");
+      setLoginError(
+        "Google sign-in failed. Check Firebase auth settings and try again."
+      );
     }
   };
 
@@ -156,6 +197,7 @@ export default function Admin() {
       setRawCms(JSON.stringify(payload, null, 2));
       setRawArticles(JSON.stringify(payload.articles, null, 2));
       setArticlesDraft(payload.articles);
+      setAboutDraft(payload.aboutUs);
       setCmsStatus("CMS loaded");
     } catch {
       setCmsStatus("Using default CMS content");
@@ -261,18 +303,71 @@ export default function Admin() {
     }
   };
 
+  const updateAboutField = (
+    field: keyof SiteContent["aboutUs"],
+    value: string
+  ) => {
+    setAboutDraft(prev => ({ ...prev, [field]: value }));
+  };
+
+  const updateAboutLocations = (value: string) => {
+    setAboutDraft(prev => ({
+      ...prev,
+      locations: value
+        .split("\n")
+        .map(location => location.trim())
+        .filter(Boolean),
+    }));
+  };
+
+  const saveAboutPage = async () => {
+    try {
+      const nextCms = { ...cms, aboutUs: aboutDraft };
+      const response = await fetch("/api/cms", {
+        method: "PUT",
+        headers,
+        body: JSON.stringify(nextCms),
+      });
+      if (!response.ok) throw new Error("Failed to save about page");
+
+      setCms(nextCms);
+      setDraftCms(nextCms);
+      setRawCms(JSON.stringify(nextCms, null, 2));
+      setAboutStatus("About page saved");
+    } catch {
+      setAboutStatus("About page save failed");
+    }
+  };
+
+  const resetAboutPage = () => {
+    setAboutDraft(cms.aboutUs);
+    setAboutStatus("About page editor reset");
+  };
+
   const resetArticleForm = () => {
     setEditingSlug(null);
-    setArticleForm({ slug: "", title: "", description: "", content: "", section: "", imageUrl: "", featured: false });
+    setArticleForm({
+      slug: "",
+      title: "",
+      description: "",
+      content: "",
+      section: "",
+      imageUrl: "",
+      featured: false,
+    });
   };
 
   const upsertArticle = () => {
-    if (!articleForm.slug.trim() || !articleForm.title.trim() || !articleForm.description.trim()) {
+    if (
+      !articleForm.slug.trim() ||
+      !articleForm.title.trim() ||
+      !articleForm.description.trim()
+    ) {
       setArticlesStatus("Slug, title, and description are required");
       return;
     }
     const draft = [...articlesDraft];
-    const idx = draft.findIndex((a) => a.slug === editingSlug);
+    const idx = draft.findIndex(a => a.slug === editingSlug);
     if (idx >= 0) {
       draft[idx] = articleForm;
       setArticlesStatus("Article updated in draft");
@@ -291,14 +386,16 @@ export default function Admin() {
   };
 
   const deleteArticle = (slug: string) => {
-    const draft = articlesDraft.filter((a) => a.slug !== slug);
+    const draft = articlesDraft.filter(a => a.slug !== slug);
     setArticlesDraft(draft);
     setRawArticles(JSON.stringify(draft, null, 2));
     if (editingSlug === slug) resetArticleForm();
     setArticlesStatus("Article removed from draft");
   };
 
-  const onArticleImageSelected = async (event: ChangeEvent<HTMLInputElement>) => {
+  const onArticleImageSelected = async (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
     setUploadingArticleImage(true);
@@ -306,11 +403,13 @@ export default function Admin() {
 
     try {
       const uploadedUrl = await uploadArticleImage(file, articleForm.slug);
-      setArticleForm((prev) => ({ ...prev, imageUrl: uploadedUrl }));
+      setArticleForm(prev => ({ ...prev, imageUrl: uploadedUrl }));
       setArticlesStatus("Article image uploaded");
     } catch (error) {
       console.error("Article image upload failed", error);
-      setArticlesStatus("Failed to upload image. Check Firebase storage settings.");
+      setArticlesStatus(
+        "Failed to upload image. Check Firebase storage settings."
+      );
     } finally {
       setUploadingArticleImage(false);
       event.target.value = "";
@@ -351,7 +450,10 @@ export default function Admin() {
             </p>
             <div className="flex flex-wrap gap-3">
               {!loginConfigIssue ? (
-                <Button onClick={handleLogin} className="bg-orange hover:bg-orange/90">
+                <Button
+                  onClick={handleLogin}
+                  className="bg-orange hover:bg-orange/90"
+                >
                   Sign in with Gmail
                 </Button>
               ) : (
@@ -366,11 +468,20 @@ export default function Admin() {
                   <div className="text-xs text-red-200 p-4 bg-red-900/20 border border-red-900/50">
                     <p className="font-bold mb-2">Configuration Issue:</p>
                     <p>{loginConfigIssue}</p>
-                    <p className="mt-2">Please ensure the following environment variables are set in Vercel:</p>
+                    <p className="mt-2">
+                      Please ensure the following environment variables are set
+                      in Vercel:
+                    </p>
                     <ul className="list-disc pl-5 mt-1 space-y-1">
-                      <li><code>VITE_FIREBASE_API_KEY</code></li>
-                      <li><code>VITE_FIREBASE_PROJECT_ID</code></li>
-                      <li><code>VITE_FIREBASE_APP_ID</code></li>
+                      <li>
+                        <code>VITE_FIREBASE_API_KEY</code>
+                      </li>
+                      <li>
+                        <code>VITE_FIREBASE_PROJECT_ID</code>
+                      </li>
+                      <li>
+                        <code>VITE_FIREBASE_APP_ID</code>
+                      </li>
                     </ul>
                   </div>
                 </div>
@@ -398,8 +509,15 @@ export default function Admin() {
             <h1 className="text-2xl font-serif">Admin Console</h1>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-slate-400 hidden md:inline">{user.email}</span>
-            <Button variant="outline" size="sm" onClick={handleLogout} className="text-white border-slate-700">
+            <span className="text-sm text-slate-400 hidden md:inline">
+              {user.email}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleLogout}
+              className="text-white border-slate-700"
+            >
               Sign out
             </Button>
             <Link href="/" className="text-teal no-underline hover:underline">
@@ -429,8 +547,130 @@ export default function Admin() {
           </p>
           <div className="mt-4">
             <Link href="/admin/editor">
-              <Button className="bg-teal hover:bg-teal/90">Open full site editor</Button>
+              <Button className="bg-teal hover:bg-teal/90">
+                Open full site editor
+              </Button>
             </Link>
+          </div>
+        </section>
+
+        <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
+            <div>
+              <h2 className="text-xl font-serif">About page CMS section</h2>
+              <p className="text-sm text-slate-400 mt-1">
+                Edit the real full About CAFOLA page content without changing
+                raw JSON.
+              </p>
+            </div>
+            <p className="text-sm text-slate-400">Status: {aboutStatus}</p>
+          </div>
+
+          <div className="grid gap-4">
+            <label className="space-y-2">
+              <span className="block text-sm font-semibold text-slate-300">
+                Hero headline
+              </span>
+              <textarea
+                value={aboutDraft.headline}
+                onChange={e => updateAboutField("headline", e.target.value)}
+                className="w-full min-h-[90px] px-3 py-2 bg-slate-950 border border-slate-700"
+              />
+            </label>
+            <label className="space-y-2">
+              <span className="block text-sm font-semibold text-slate-300">
+                Opening description
+              </span>
+              <textarea
+                value={aboutDraft.description}
+                onChange={e => updateAboutField("description", e.target.value)}
+                className="w-full min-h-[120px] px-3 py-2 bg-slate-950 border border-slate-700"
+              />
+            </label>
+            <label className="space-y-2">
+              <span className="block text-sm font-semibold text-slate-300">
+                Our Experience
+              </span>
+              <textarea
+                value={aboutDraft.experience}
+                onChange={e => updateAboutField("experience", e.target.value)}
+                className="w-full min-h-[100px] px-3 py-2 bg-slate-950 border border-slate-700"
+              />
+            </label>
+            <label className="space-y-2">
+              <span className="block text-sm font-semibold text-slate-300">
+                Scope of Service
+              </span>
+              <textarea
+                value={aboutDraft.scopeOfService}
+                onChange={e =>
+                  updateAboutField("scopeOfService", e.target.value)
+                }
+                className="w-full min-h-[100px] px-3 py-2 bg-slate-950 border border-slate-700"
+              />
+            </label>
+            <label className="space-y-2">
+              <span className="block text-sm font-semibold text-slate-300">
+                Our Staff
+              </span>
+              <textarea
+                value={aboutDraft.staffDescription}
+                onChange={e =>
+                  updateAboutField("staffDescription", e.target.value)
+                }
+                className="w-full min-h-[100px] px-3 py-2 bg-slate-950 border border-slate-700"
+              />
+            </label>
+            <label className="space-y-2">
+              <span className="block text-sm font-semibold text-slate-300">
+                Culture & Family Connections
+              </span>
+              <textarea
+                value={aboutDraft.cultureAndFamily}
+                onChange={e =>
+                  updateAboutField("cultureAndFamily", e.target.value)
+                }
+                className="w-full min-h-[100px] px-3 py-2 bg-slate-950 border border-slate-700"
+              />
+            </label>
+            <label className="space-y-2">
+              <span className="block text-sm font-semibold text-slate-300">
+                Staff matching / language support
+              </span>
+              <textarea
+                value={aboutDraft.staffMatching}
+                onChange={e =>
+                  updateAboutField("staffMatching", e.target.value)
+                }
+                className="w-full min-h-[90px] px-3 py-2 bg-slate-950 border border-slate-700"
+              />
+            </label>
+            <label className="space-y-2">
+              <span className="block text-sm font-semibold text-slate-300">
+                Locations (one per line)
+              </span>
+              <textarea
+                value={aboutDraft.locations.join("\n")}
+                onChange={e => updateAboutLocations(e.target.value)}
+                className="w-full min-h-[90px] px-3 py-2 bg-slate-950 border border-slate-700"
+              />
+            </label>
+          </div>
+
+          <div className="flex gap-3">
+            <Button
+              onClick={saveAboutPage}
+              className="bg-orange hover:bg-orange/90"
+            >
+              Save About Page
+            </Button>
+            <Button
+              variant="outline"
+              className="text-white"
+              onClick={resetAboutPage}
+            >
+              Reset about editor
+            </Button>
           </div>
         </section>
 
@@ -440,46 +680,133 @@ export default function Admin() {
             <p className="text-sm text-slate-400">Status: {articlesStatus}</p>
           </div>
           <p className="text-sm text-slate-400">
-            Create, edit, delete, and publish articles. Click Save Articles to publish.
+            Create, edit, delete, and publish articles. Click Save Articles to
+            publish.
           </p>
           <div className="grid md:grid-cols-2 gap-3">
-            <input value={articleForm.slug} onChange={(e) => setArticleForm((p) => ({ ...p, slug: e.target.value }))} placeholder="slug" className="px-3 py-2 bg-slate-950 border border-slate-700" />
-            <input value={articleForm.section ?? ""} onChange={(e) => setArticleForm((p) => ({ ...p, section: e.target.value }))} placeholder="section" className="px-3 py-2 bg-slate-950 border border-slate-700" />
-            <input value={articleForm.title} onChange={(e) => setArticleForm((p) => ({ ...p, title: e.target.value }))} placeholder="title" className="px-3 py-2 bg-slate-950 border border-slate-700 md:col-span-2" />
-            <input value={articleForm.imageUrl ?? ""} onChange={(e) => setArticleForm((p) => ({ ...p, imageUrl: e.target.value }))} placeholder="image url" className="px-3 py-2 bg-slate-950 border border-slate-700 md:col-span-2" />
+            <input
+              value={articleForm.slug}
+              onChange={e =>
+                setArticleForm(p => ({ ...p, slug: e.target.value }))
+              }
+              placeholder="slug"
+              className="px-3 py-2 bg-slate-950 border border-slate-700"
+            />
+            <input
+              value={articleForm.section ?? ""}
+              onChange={e =>
+                setArticleForm(p => ({ ...p, section: e.target.value }))
+              }
+              placeholder="section"
+              className="px-3 py-2 bg-slate-950 border border-slate-700"
+            />
+            <input
+              value={articleForm.title}
+              onChange={e =>
+                setArticleForm(p => ({ ...p, title: e.target.value }))
+              }
+              placeholder="title"
+              className="px-3 py-2 bg-slate-950 border border-slate-700 md:col-span-2"
+            />
+            <input
+              value={articleForm.imageUrl ?? ""}
+              onChange={e =>
+                setArticleForm(p => ({ ...p, imageUrl: e.target.value }))
+              }
+              placeholder="image url"
+              className="px-3 py-2 bg-slate-950 border border-slate-700 md:col-span-2"
+            />
             <label className="md:col-span-2 text-sm text-slate-300 space-y-2">
               <span className="block">Or upload image to Firebase Storage</span>
-              <input type="file" accept="image/*" onChange={(e) => void onArticleImageSelected(e)} disabled={uploadingArticleImage} className="w-full px-3 py-2 bg-slate-950 border border-slate-700" />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={e => void onArticleImageSelected(e)}
+                disabled={uploadingArticleImage}
+                className="w-full px-3 py-2 bg-slate-950 border border-slate-700"
+              />
             </label>
-            <textarea value={articleForm.description} onChange={(e) => setArticleForm((p) => ({ ...p, description: e.target.value }))} placeholder="description" className="px-3 py-2 bg-slate-950 border border-slate-700 md:col-span-2 min-h-[80px]" />
-            <textarea value={articleForm.content ?? ""} onChange={(e) => setArticleForm((p) => ({ ...p, content: e.target.value }))} placeholder="full content" className="px-3 py-2 bg-slate-950 border border-slate-700 md:col-span-2 min-h-[120px]" />
+            <textarea
+              value={articleForm.description}
+              onChange={e =>
+                setArticleForm(p => ({ ...p, description: e.target.value }))
+              }
+              placeholder="description"
+              className="px-3 py-2 bg-slate-950 border border-slate-700 md:col-span-2 min-h-[80px]"
+            />
+            <textarea
+              value={articleForm.content ?? ""}
+              onChange={e =>
+                setArticleForm(p => ({ ...p, content: e.target.value }))
+              }
+              placeholder="full content"
+              className="px-3 py-2 bg-slate-950 border border-slate-700 md:col-span-2 min-h-[120px]"
+            />
           </div>
           <div className="flex gap-3">
-            <Button type="button" onClick={upsertArticle} className="bg-teal hover:bg-teal/90">{editingSlug ? "Update Draft" : "Add Draft"}</Button>
-            <Button type="button" variant="outline" className="text-white" onClick={resetArticleForm}>Clear</Button>
+            <Button
+              type="button"
+              onClick={upsertArticle}
+              className="bg-teal hover:bg-teal/90"
+            >
+              {editingSlug ? "Update Draft" : "Add Draft"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="text-white"
+              onClick={resetArticleForm}
+            >
+              Clear
+            </Button>
           </div>
           <div className="space-y-2">
-            {articlesDraft.map((article) => (
-              <div key={article.slug} className="border border-slate-800 p-3 flex items-start justify-between gap-3">
+            {articlesDraft.map(article => (
+              <div
+                key={article.slug}
+                className="border border-slate-800 p-3 flex items-start justify-between gap-3"
+              >
                 <div>
                   <p className="font-semibold">{article.title}</p>
-                  <p className="text-xs text-slate-400">/{article.slug} • {article.section ?? "General"}</p>
+                  <p className="text-xs text-slate-400">
+                    /{article.slug} • {article.section ?? "General"}
+                  </p>
                 </div>
                 <div className="flex gap-2">
-                  <Button type="button" size="sm" variant="outline" className="text-white" onClick={() => editArticle(article)}>Edit</Button>
-                  <Button type="button" size="sm" onClick={() => deleteArticle(article.slug)} className="bg-red-600 hover:bg-red-700">Delete</Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="text-white"
+                    onClick={() => editArticle(article)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => deleteArticle(article.slug)}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
+                    Delete
+                  </Button>
                 </div>
               </div>
             ))}
           </div>
           <div className="flex gap-3">
-            <Button onClick={saveArticles} className="bg-orange hover:bg-orange/90">
+            <Button
+              onClick={saveArticles}
+              className="bg-orange hover:bg-orange/90"
+            >
               Save Articles
             </Button>
             <Button
               variant="outline"
               className="text-white"
-              onClick={() => setRawArticles(JSON.stringify(cms.articles, null, 2))}
+              onClick={() =>
+                setRawArticles(JSON.stringify(cms.articles, null, 2))
+              }
             >
               Reset articles editor
             </Button>
@@ -513,7 +840,9 @@ export default function Admin() {
         <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
           <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
             <h2 className="text-xl font-serif">Live CMS preview</h2>
-            <p className="text-sm text-slate-400">Preview updates in real time from the JSON editor</p>
+            <p className="text-sm text-slate-400">
+              Preview updates in real time from the JSON editor
+            </p>
           </div>
           {previewError ? (
             <div className="rounded border border-red-700 bg-red-900/20 p-4 text-sm text-red-200">
