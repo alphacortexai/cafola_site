@@ -2,13 +2,7 @@
   "brandName": "CAFOLA",
   "tagline": "Compassionate support for living well at home.",
   "companyDescriptor": "In-Home Care & Assistance",
-  "navItems": [
-    "Services",
-    "Resources",
-    "About Us",
-    "Careers",
-    "Contact"
-  ],
+  "navItems": ["Services", "Resources", "About Us", "Careers", "Contact"],
   "phone": "(+256) 782-512-703",
   "heroHeading": "CAFOLA",
   "heroSubheading": "Personalized care that helps families thrive at home.",
@@ -193,17 +187,14 @@
   ],
   "caregiversButtonText": "Meet Our Caregivers",
   "aboutUs": {
-    "headline": "CAFOLA is a recovery care center /residential care home providing continuity of professional nursing care to individuals who no longer need hospital admission.",
-    "description": "There is nothing more comforting than knowing that your loved one or relative is in safe hands. We know that some medical conditions need extended care, the reason CAFOLA is here to ensure continuity of care. This significantly reduce hospital overstay, improve psychological comfort and enhance our resident's independence. This help family to find time for other activities.",
-    "experience": "With 10 years of experience providing bedside and home nursing care services, we now operate recovery center and residential care offering safe and premium living with hospital-level 24/7 nursing support to our residents.",
-    "scopeOfService": "Whether your loved one need basic or skilled, short- or long-term care, CAFOLA is the right fit for you. We personalize every care and support plan in collaborations with your physician and hospital to help you live the life you deserve.",
+    "headline": "CAFOLA is a residential recovery center, providing premium living with continuity of professional nursing care to individuals who no longer need hospital admission.",
+    "description": "From 2015, CAFOLA has provided bedside and home nursing care services to hundreds of families and individuals. We've worked with national and international institutions in provision of nursing care to their staff. CAFOLA now operates residential recovery centers ensuring safety, comfort and premium living with professional 24/7 nursing support to residents.",
+    "experience": "With 10 years of experience providing bedside and home nursing care services, we now operate residential recovery centers providing premium living with hospital-level 24/7 nursing support.",
+    "scopeOfService": "Whether you or your loved one need basic or skilled, short- or long-term care, CAFOLA is the right fit. We personalize every care and support plan in collaborations with your physician and hospital to help you live the life you deserve.",
     "staffDescription": "Our staff are not only qualified but are also passionate, dependable and trustworthy individuals who respect privacy, personal dignity and maintain confidentiality with professionalism.",
-    "cultureAndFamily": "As our principal has always been, maintaining culture and family connections, we design your routines around your choices so you can stay connected to the people and places you love. Our resident's choice to have a loved one or member of the family to stay around is welcomed.",
+    "cultureAndFamily": "As our principal has always been, maintaining culture and family ties, we design your routines around your choices so you can stay connected to the people and places you love. Our resident's choice to have a loved one or member of the family to stay closer is welcomed.",
     "staffMatching": "In the strive to improve comfort, we pair our residents with the most fit staff to serve the best. Talk to us if you need a Hindi, Chinese, Arabic or Swahili speaker.",
-    "locations": [
-      "Off Mawanda road, Kololo",
-      "Bukoto"
-    ]
+    "locations": ["Off Mawanda road, Kololo", "Bukoto"]
   },
   "resourcesHeading": "Latest Resources for Families",
   "resourcesIntro": "Expert advice and practical tips for navigating the aging journey.",
@@ -239,17 +230,8 @@
     }
   ],
   "newsletterHeading": "Get CAFOLA care insights in your inbox",
-  "footerAddress": [
-    "6700 Mercy Rd",
-    "Ste 400",
-    "Omaha, NE 68106"
-  ],
-  "footerLinks": [
-    "Find Care",
-    "Find Jobs",
-    "Contact Us",
-    "FAQ"
-  ],
+  "footerAddress": ["6700 Mercy Rd", "Ste 400", "Omaha, NE 68106"],
+  "footerLinks": ["Find Care", "Find Jobs", "Contact Us", "FAQ"],
   "customPages": [],
   "testimonials": [
     {
