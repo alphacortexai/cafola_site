@@ -9,6 +9,7 @@ export type ServiceDetailItem = {
   title: string;
   description: string;
   linkPageSlug?: string;
+  inlineLinkedPage?: boolean;
 };
 
 export type Service = {
