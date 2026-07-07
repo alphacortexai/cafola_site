@@ -34,6 +34,7 @@ const emptyServiceDetail: ServiceDetailItem = {
   title: "",
   description: "",
   linkPageSlug: "",
+  inlineLinkedPage: false,
 };
 
 const emptyArticle: Article = {
@@ -667,6 +668,18 @@ export default function AdminEditor() {
                 placeholder="Block description"
                 className={`${inputClassName} min-h-[80px]`}
               />
+              <label className="flex items-start gap-3 rounded border border-slate-800 bg-slate-900/70 p-3 text-sm text-slate-300">
+                <input
+                  type="checkbox"
+                  checked={Boolean(detail.inlineLinkedPage)}
+                  onChange={(e) => updateServiceDetail(serviceIndex, detailIndex, { inlineLinkedPage: e.target.checked })}
+                  className="mt-1"
+                />
+                <span>
+                  <span className="block font-semibold text-slate-100">Show linked page content inline</span>
+                  <span className="block text-xs text-slate-400">When enabled, the linked page details display before “What We Offer” instead of this block appearing as a card.</span>
+                </span>
+              </label>
               <div className="grid gap-2">
                 <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                   Optional linked page

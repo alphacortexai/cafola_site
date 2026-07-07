@@ -1,6 +1,6 @@
 import { type FormEvent, useEffect, useState } from "react";
 import { useRoute, Link } from "wouter";
-import { defaultSiteContent, type SiteContent } from "@shared/cms";
+import { defaultSiteContent, type ServicePage, type ServicePageSection, type SiteContent } from "@shared/cms";
 import SiteHeader from "@/components/SiteHeader";
 import { ChevronRight, Phone, MapPin, CheckCircle2 } from "lucide-react";
 
@@ -8,6 +8,72 @@ type ServiceDetailProps = {
   previewCms?: SiteContent;
   previewSlug?: string;
 };
+
+
+function SectionMedia({ section }: { section: ServicePageSection }) {
+  if (!section.imageUrl) return null;
+
+  if (section.mediaType === "video") {
+    return <video src={section.imageUrl} className="w-full aspect-[16/10] object-cover" controls />;
+  }
+
+  return (
+    <img
+      src={section.imageUrl}
+      alt={section.imageAlt || section.title}
+      className="w-full aspect-[16/10] object-cover"
+      loading="lazy"
+    />
+  );
+}
+
+function InlinePageSection({ section }: { section: ServicePageSection }) {
+  const position = section.imagePosition ?? "full";
+
+  if (position === "left" || position === "right") {
+    return (
+      <section className="grid gap-8 md:grid-cols-2 md:items-center">
+        <div className={position === "right" ? "md:order-2" : undefined}>
+          <SectionMedia section={section} />
+        </div>
+        <div className="space-y-4">
+          <h3 className="text-2xl md:text-3xl font-serif text-navy">{section.title}</h3>
+          <p className="text-gray-700 leading-8 whitespace-pre-line">{section.description}</p>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="space-y-5">
+      <SectionMedia section={section} />
+      <div className="max-w-3xl">
+        <h3 className="text-2xl md:text-3xl font-serif text-navy">{section.title}</h3>
+        <p className="mt-4 text-gray-700 leading-8 whitespace-pre-line">{section.description}</p>
+      </div>
+    </section>
+  );
+}
+
+function InlineServicePage({ page }: { page: ServicePage }) {
+  return (
+    <section className="mb-14 rounded-sm border border-gray-100 bg-gray-50 p-6 md:p-8">
+      <div className="mb-8 max-w-4xl">
+        <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange">Service details</p>
+        <h2 className="text-3xl md:text-4xl font-serif text-navy">{page.title}</h2>
+        {page.description ? <p className="mt-4 text-lg leading-8 text-gray-700">{page.description}</p> : null}
+        {page.content ? <p className="mt-6 text-gray-700 leading-8 whitespace-pre-line">{page.content}</p> : null}
+      </div>
+      {(page.sections ?? []).length > 0 ? (
+        <div className="space-y-12">
+          {(page.sections ?? []).map((section, index) => (
+            <InlinePageSection key={`${section.title}-${index}`} section={section} />
+          ))}
+        </div>
+      ) : null}
+    </section>
+  );
+}
 
 const getNavHref = (item: string, cms: SiteContent) => {
   if (item === "Services") return "/#services";
@@ -90,6 +156,13 @@ Talk to us: ${formData.talkToUs.trim()}` : ""}`,
   const service = cms.services.find(
     (s) => s.title.toLowerCase().replace(/[^a-z0-9]+/g, "-") === slug
   );
+  const inlineServicePages = (service?.details ?? [])
+    .filter((detail) => detail.inlineLinkedPage && detail.linkPageSlug)
+    .map((detail) => (cms.servicePages ?? []).find((page) => page.slug === detail.linkPageSlug))
+    .filter((page): page is ServicePage => Boolean(page));
+  const visibleDetails = (service?.details ?? []).filter(
+    (detail) => !(detail.inlineLinkedPage && detail.linkPageSlug)
+  );
 
   if (!service) {
     return (
@@ -136,11 +209,15 @@ Talk to us: ${formData.talkToUs.trim()}` : ""}`,
                   </p>
                 </div>
                 
-                {service.details && service.details.length > 0 && (
+                {inlineServicePages.map((page) => (
+                  <InlineServicePage key={page.slug} page={page} />
+                ))}
+
+                {visibleDetails.length > 0 && (
                   <>
                     <h2 className="text-3xl md:text-4xl font-serif mb-8 text-navy">What We Offer</h2>
                     <div className="grid grid-cols-2 gap-4 md:gap-8">
-                      {service.details.map((detail, i) => {
+                      {visibleDetails.map((detail, i) => {
                         const linkedPage = detail.linkPageSlug
                           ? (cms.servicePages ?? []).find((page) => page.slug === detail.linkPageSlug)
                           : null;
