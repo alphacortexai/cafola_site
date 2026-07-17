@@ -38,7 +38,7 @@ function InlinePageSection({ section }: { section: ServicePageSection }) {
         </div>
         <div className="space-y-4">
           <h3 className="text-2xl md:text-3xl font-serif text-navy">{section.title}</h3>
-          <p className="text-gray-700 leading-8 whitespace-pre-line">{section.description}</p>
+          <p className="description-text text-gray-700 whitespace-pre-line">{section.description}</p>
         </div>
       </section>
     );
@@ -49,7 +49,7 @@ function InlinePageSection({ section }: { section: ServicePageSection }) {
       <SectionMedia section={section} />
       <div className="max-w-3xl">
         <h3 className="text-2xl md:text-3xl font-serif text-navy">{section.title}</h3>
-        <p className="mt-4 text-gray-700 leading-8 whitespace-pre-line">{section.description}</p>
+        <p className="mt-4 description-text text-gray-700 whitespace-pre-line">{section.description}</p>
       </div>
     </section>
   );
@@ -61,8 +61,8 @@ function InlineServicePage({ page }: { page: ServicePage }) {
       <div className="mb-8 max-w-4xl">
         <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange">Service details</p>
         <h2 className="text-3xl md:text-4xl font-serif text-navy">{page.title}</h2>
-        {page.description ? <p className="mt-4 text-lg leading-8 text-gray-700">{page.description}</p> : null}
-        {page.content ? <p className="mt-6 text-gray-700 leading-8 whitespace-pre-line">{page.content}</p> : null}
+        {page.description ? <p className="mt-4 description-text text-gray-700">{page.description}</p> : null}
+        {page.content ? <p className="mt-6 description-text text-gray-700 whitespace-pre-line">{page.content}</p> : null}
       </div>
       {(page.sections ?? []).length > 0 ? (
         <div className="space-y-12">
@@ -204,7 +204,7 @@ Talk to us: ${formData.talkToUs.trim()}` : ""}`,
             <div className="lg:col-span-2">
               <div className="prose prose-lg max-w-none text-gray-700 font-sans space-y-8">
                 <div className="bg-gray-50 p-8 border-l-4 border-teal mb-12">
-                  <p className="text-xl leading-relaxed text-navy font-serif italic">
+                  <p className="description-text text-navy">
                     {service.longDescription}
                   </p>
                 </div>
@@ -227,7 +227,7 @@ Talk to us: ${formData.talkToUs.trim()}` : ""}`,
                               <CheckCircle2 className="w-5 h-5 text-orange flex-shrink-0" />
                               <h3 className="text-xl font-serif text-navy">{detail.title}</h3>
                             </div>
-                            <p className="text-gray-600 text-sm leading-relaxed">
+                            <p className="description-text text-gray-600">
                               {detail.description}
                             </p>
                             {linkedPage ? (
@@ -247,7 +247,7 @@ Talk to us: ${formData.talkToUs.trim()}` : ""}`,
 
                 <div className="mt-16 p-8 bg-navy text-white">
                   <h3 className="text-2xl font-serif mb-4">Our Commitment</h3>
-                  <p className="text-gray-300 leading-relaxed">
+                  <p className="description-text text-gray-300">
                     At {cms.brandName}, we focus on promoting independence, dignity, and self-worth. Our qualified team works to ensure continuity of care structured to facilitate complication prevention and complete healing.
                   </p>
                 </div>
@@ -348,7 +348,7 @@ Talk to us: ${formData.talkToUs.trim()}` : ""}`,
                   <div key={idx} className="bg-white p-8 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col">
                     <div className="text-4xl mb-6">{s.icon}</div>
                     <h3 className="text-xl font-serif mb-4 text-navy">{s.title}</h3>
-                    <p className="text-gray-600 text-sm mb-8 line-clamp-2 leading-relaxed">{s.description}</p>
+                    <p className="description-text text-gray-600 mb-8 line-clamp-2">{s.description}</p>
                     <Link 
                       href={`/services/${s.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} 
                       className="mt-auto text-teal font-bold text-xs uppercase tracking-widest hover:underline no-underline inline-flex items-center gap-2 cursor-pointer"

@@ -205,7 +205,7 @@ export default function Home({ previewCms }: HomeProps) {
                 <h3 className="text-xl font-serif mb-3 text-navy group-hover:text-teal transition-colors">
                   {service.title}
                 </h3>
-                <p className="text-gray-600 font-sans text-sm mb-5 flex-grow leading-relaxed text-center">
+                <p className="description-text text-gray-600 mb-5 flex-grow text-center">
                   {truncateWords(service.description, 8)}
                 </p>
                 <Link
@@ -231,10 +231,10 @@ export default function Home({ previewCms }: HomeProps) {
               <h2 className="text-4xl md:text-5xl font-serif mb-6 text-navy mt-2">
                 Professional Care with a Personal Touch
               </h2>
-              <p className="text-gray-700 font-sans text-lg leading-relaxed mb-6">
+              <p className="description-text text-gray-700 mb-6">
                 {cms.aboutUs.headline}
               </p>
-              <p className="text-gray-600 font-sans text-base leading-relaxed mb-8">
+              <p className="description-text text-gray-600 mb-8">
                 {cms.aboutUs.description}
               </p>
               <Link
@@ -347,7 +347,7 @@ export default function Home({ previewCms }: HomeProps) {
               {cms.storyParagraphs.map((paragraph, i) => (
                 <p
                   key={i}
-                  className="text-gray-700 font-sans text-lg leading-relaxed"
+                  className="description-text text-gray-700"
                 >
                   {paragraph}
                 </p>
@@ -380,7 +380,7 @@ export default function Home({ previewCms }: HomeProps) {
           <h2 className="text-4xl md:text-5xl font-serif mb-8 text-navy">
             {cms.caregiversHeading}
           </h2>
-          <p className="text-gray-600 max-w-3xl mx-auto text-lg mb-12">
+          <p className="description-text text-gray-600 max-w-3xl mx-auto mb-12">
             {cms.caregiversCopy.join(" ")}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
@@ -411,7 +411,7 @@ export default function Home({ previewCms }: HomeProps) {
               <h2 className="text-4xl md:text-5xl font-serif text-navy mb-4">
                 {cms.resourcesHeading}
               </h2>
-              <p className="text-gray-600 text-lg">
+              <p className="description-text text-gray-600">
                 {cms.resourcesIntro}
               </p>
             </div>
@@ -455,7 +455,7 @@ export default function Home({ previewCms }: HomeProps) {
                   >
                     {article.title}
                   </h3>
-                  <p className="text-gray-600 font-sans text-sm mb-8 line-clamp-3 leading-relaxed">
+                  <p className="description-text text-gray-600 mb-8 line-clamp-3">
                     {article.description}
                   </p>
                   <Link

@@ -101,7 +101,7 @@ export default function AboutUs({ previewCms }: AboutUsProps) {
             <div className="lg:col-span-2 space-y-12">
               {/* Overview */}
               <div className="bg-gray-50 p-8 border-l-4 border-teal">
-                <p className="text-lg text-navy font-serif italic leading-relaxed">
+                <p className="description-text text-navy">
                   {cms.aboutUs.description}
                 </p>
               </div>
@@ -112,7 +112,7 @@ export default function AboutUs({ previewCms }: AboutUsProps) {
                   <Award className="w-6 h-6 text-orange flex-shrink-0" />
                   <h2 className="text-3xl font-serif text-navy">Our Experience</h2>
                 </div>
-                <p className="text-gray-700 font-sans text-lg leading-relaxed">
+                <p className="description-text text-gray-700">
                   {cms.aboutUs.experience}
                 </p>
               </div>
@@ -123,7 +123,7 @@ export default function AboutUs({ previewCms }: AboutUsProps) {
                   <Heart className="w-6 h-6 text-orange flex-shrink-0" />
                   <h2 className="text-3xl font-serif text-navy">Scope of Service</h2>
                 </div>
-                <p className="text-gray-700 font-sans text-lg leading-relaxed">
+                <p className="description-text text-gray-700">
                   {cms.aboutUs.scopeOfService}
                 </p>
               </div>
@@ -134,7 +134,7 @@ export default function AboutUs({ previewCms }: AboutUsProps) {
                   <Users className="w-6 h-6 text-orange flex-shrink-0" />
                   <h2 className="text-3xl font-serif text-navy">Our Staff</h2>
                 </div>
-                <p className="text-gray-700 font-sans text-lg leading-relaxed mb-6">
+                <p className="description-text text-gray-700 mb-6">
                   {cms.aboutUs.staffDescription}
                 </p>
               </div>
@@ -142,10 +142,10 @@ export default function AboutUs({ previewCms }: AboutUsProps) {
               {/* Culture & Family */}
               <div className="bg-white border-l-4 border-orange p-8">
                 <h3 className="text-2xl font-serif text-navy mb-4">Culture & Family Connections</h3>
-                <p className="text-gray-700 font-sans text-lg leading-relaxed mb-4">
+                <p className="description-text text-gray-700 mb-4">
                   {cms.aboutUs.cultureAndFamily}
                 </p>
-                <p className="text-gray-700 font-sans text-lg leading-relaxed">
+                <p className="description-text text-gray-700">
                   {cms.aboutUs.staffMatching}
                 </p>
               </div>
@@ -171,7 +171,7 @@ export default function AboutUs({ previewCms }: AboutUsProps) {
               {/* Call to Action */}
               <div className="bg-navy text-white p-8 mt-12">
                 <h3 className="text-2xl font-serif mb-4">Ready to learn more?</h3>
-                <p className="text-gray-300 mb-6">
+                <p className="description-text text-gray-300 mb-6">
                   Contact us today to discuss how {cms.brandName} can provide the care and support your loved one deserves.
                 </p>
                 <a href={`tel:${cms.phone}`} className="inline-block bg-orange text-white px-10 py-4 font-bold uppercase tracking-widest hover:bg-orange/90 transition-all no-underline">
@@ -287,7 +287,7 @@ export default function AboutUs({ previewCms }: AboutUsProps) {
                   <div className="bg-white p-6 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 cursor-pointer h-full flex flex-col">
                     <div className="text-4xl mb-4">{service.icon}</div>
                     <h3 className="text-lg font-serif mb-3 text-navy hover:text-teal transition-colors">{service.title}</h3>
-                    <p className="text-gray-600 text-sm mb-6 line-clamp-2 leading-relaxed flex-grow">{service.description}</p>
+                    <p className="description-text text-gray-600 mb-6 line-clamp-2 flex-grow">{service.description}</p>
                     <span className="text-teal font-bold text-xs uppercase tracking-widest inline-flex items-center gap-2">
                       Learn more <ChevronRight className="w-4 h-4" />
                     </span>

@@ -58,7 +58,7 @@ function PageSection({ section }: { section: ServicePageSection }) {
         </div>
         <div className="space-y-4">
           <h2 className="text-3xl font-serif text-navy">{section.title}</h2>
-          <p className="text-gray-700 leading-8 whitespace-pre-line">{section.description}</p>
+          <p className="description-text text-gray-700 whitespace-pre-line">{section.description}</p>
         </div>
       </section>
     );
@@ -69,7 +69,7 @@ function PageSection({ section }: { section: ServicePageSection }) {
       <SectionMedia section={section} />
       <div className="max-w-3xl">
         <h2 className="text-3xl font-serif text-navy">{section.title}</h2>
-        <p className="mt-4 text-gray-700 leading-8 whitespace-pre-line">{section.description}</p>
+        <p className="mt-4 description-text text-gray-700 whitespace-pre-line">{section.description}</p>
       </div>
     </section>
   );
@@ -167,7 +167,7 @@ export default function ServicePageDetail({ previewCms, previewSlug }: ServicePa
             />
           )}
           {page.content ? (
-            <p className="text-lg text-gray-700 leading-8 whitespace-pre-line max-w-4xl">{page.content}</p>
+            <p className="description-text text-gray-700 whitespace-pre-line max-w-4xl">{page.content}</p>
           ) : null}
           <div className="mt-14 space-y-16">
             {(page.sections ?? []).map((section, index) => (
