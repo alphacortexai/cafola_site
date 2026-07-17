@@ -217,6 +217,10 @@
   .font-sans {
     font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   }
+
+  .description-text {
+    @apply font-sans text-base leading-relaxed;
+  }
   
   /* Color utilities for Cafola Uganda brand */
   .text-teal {

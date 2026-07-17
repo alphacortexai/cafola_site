@@ -67,9 +67,9 @@ export default function CustomPage({ previewCms, previewSlug }: CustomPageProps)
           <div>
             <p className="text-sm uppercase tracking-widest text-orange font-bold">{page.title}</p>
             <h1 className="text-4xl font-serif text-navy mt-4">{page.title}</h1>
-            <p className="mt-4 text-gray-600 text-lg">{page.description}</p>
+            <p className="mt-4 description-text text-gray-600">{page.description}</p>
           </div>
-          <div className="prose max-w-none text-gray-700 whitespace-pre-line">{page.content}</div>
+          <div className="prose max-w-none description-text text-gray-700 whitespace-pre-line">{page.content}</div>
         </div>
       </main>
     </div>

@@ -54,7 +54,7 @@ export default function Articles({ previewCms }: ArticlesProps) {
 
       <main className="container mx-auto px-4 py-12">
         <h1 className="text-4xl font-serif text-navy mb-4">Articles & Resources</h1>
-        <p className="text-gray-600 mb-10 max-w-3xl">
+        <p className="description-text text-gray-600 mb-10 max-w-3xl">
           Browse the latest articles from our care team. This content is managed in the Admin CMS Articles section.
         </p>
 
@@ -76,7 +76,7 @@ export default function Articles({ previewCms }: ArticlesProps) {
                 </p>
               ) : null}
               <h2 className="text-2xl font-serif text-navy mb-3">{article.title}</h2>
-              <p className="text-gray-600 leading-relaxed">{article.description}</p>
+              <p className="description-text text-gray-600">{article.description}</p>
               <Link href={`/articles/${article.slug}`} className="inline-block mt-4 text-teal font-bold uppercase text-xs tracking-wider no-underline hover:underline">
                 Read more
               </Link>
