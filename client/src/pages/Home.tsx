@@ -161,7 +161,7 @@ export default function Home({ previewCms }: HomeProps) {
       <SiteHeader cms={cms} showTopBar />
 
       {/* Hero Section */}
-      <section className="relative h-[500px] md:h-[600px] overflow-hidden">
+      <section className="relative -mt-[72px] h-[500px] overflow-hidden md:-mt-[104px] md:h-[600px]">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
@@ -212,7 +212,7 @@ export default function Home({ previewCms }: HomeProps) {
                   href={`/services/${service.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
                   className="font-bold text-sm tracking-wide text-teal hover:underline no-underline inline-flex items-center gap-2"
                 >
-                  Learn more <ChevronRight className="w-4 h-4" />
+                  Learn More <ChevronRight className="w-4 h-4" />
                 </Link>
               </div>
             ))}
@@ -239,9 +239,9 @@ export default function Home({ previewCms }: HomeProps) {
               </p>
               <Link
                 href="/about"
-                className="inline-block border-2 border-teal text-teal px-10 py-4 font-bold uppercase tracking-widest hover:bg-teal hover:text-white transition-all duration-300 no-underline"
+                className="inline-block border-2 border-teal text-teal px-10 py-4 font-bold tracking-wide hover:bg-teal hover:text-white transition-all duration-300 no-underline"
               >
-                Learn more about us
+                Learn More About Us
               </Link>
             </div>
             <div className="order-1 lg:order-2">
@@ -353,8 +353,8 @@ export default function Home({ previewCms }: HomeProps) {
                 </p>
               ))}
             </div>
-            <button className="mt-10 border-2 border-teal text-teal px-10 py-4 font-bold uppercase tracking-widest hover:bg-teal hover:text-white transition-all duration-300">
-              Learn more
+            <button className="mt-10 border-2 border-teal text-teal px-10 py-4 font-bold tracking-wide hover:bg-teal hover:text-white transition-all duration-300">
+              Learn More
             </button>
           </div>
           <div className="order-1 lg:order-2 relative">
