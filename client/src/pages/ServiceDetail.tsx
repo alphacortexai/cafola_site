@@ -203,6 +203,13 @@ Talk to us: ${formData.talkToUs.trim()}` : ""}`,
             {/* Main Content */}
             <div className="lg:col-span-2">
               <div className="prose prose-lg max-w-none text-gray-700 font-sans space-y-8">
+                {service.imageUrl ? (
+                  <img
+                    src={service.imageUrl}
+                    alt={service.imageAlt || service.title}
+                    className="mb-12 w-full aspect-[16/8] object-cover shadow-xl"
+                  />
+                ) : null}
                 <div className="bg-gray-50 p-8 border-l-4 border-teal mb-12">
                   <p className="description-text text-navy">
                     {service.longDescription}

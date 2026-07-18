@@ -26,6 +26,8 @@ const emptyService: Service = {
   title: "",
   description: "",
   icon: "",
+  imageUrl: "",
+  imageAlt: "",
   longDescription: "",
   details: [],
 };
@@ -453,6 +455,8 @@ export default function AdminEditor() {
       title: customPageTitleInput.trim(),
       slug: customPageSlugInput.trim(),
       description: customPageDescriptionInput.trim(),
+      imageUrl: "",
+      imageAlt: "",
       content: customPageContentInput.trim(),
     };
 
@@ -1076,6 +1080,19 @@ export default function AdminEditor() {
                     placeholder="About description"
                     className="w-full px-3 py-2 bg-slate-950 border border-slate-700 min-h-[100px]"
                   />
+                  <input
+                    value={draftCms.aboutUs.imageUrl ?? ""}
+                    onChange={(e) => updateAboutUs("imageUrl", e.target.value)}
+                    placeholder="About page image URL"
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700"
+                  />
+                  {renderImagePicker(draftCms.aboutUs.imageUrl, (asset) => updateAboutUs("imageUrl", asset.url))}
+                  <input
+                    value={draftCms.aboutUs.imageAlt ?? ""}
+                    onChange={(e) => updateAboutUs("imageAlt", e.target.value)}
+                    placeholder="About page image alt text"
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700"
+                  />
                 </div>
               </EditorSection>
             )}
@@ -1099,6 +1116,19 @@ export default function AdminEditor() {
                         value={service.icon}
                         onChange={(e) => updateService(index, { icon: e.target.value })}
                         placeholder="Icon"
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700"
+                      />
+                      <input
+                        value={service.imageUrl ?? ""}
+                        onChange={(e) => updateService(index, { imageUrl: e.target.value })}
+                        placeholder="Service detail image URL"
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700"
+                      />
+                      {renderImagePicker(service.imageUrl, (asset) => updateService(index, { imageUrl: asset.url }))}
+                      <input
+                        value={service.imageAlt ?? ""}
+                        onChange={(e) => updateService(index, { imageAlt: e.target.value })}
+                        placeholder="Service detail image alt text"
                         className="w-full px-3 py-2 bg-slate-950 border border-slate-700"
                       />
                       <textarea
@@ -1374,6 +1404,19 @@ export default function AdminEditor() {
                         placeholder="Description"
                         className="w-full px-3 py-2 bg-slate-950 border border-slate-700 min-h-[80px]"
                       />
+                      <input
+                        value={page.imageUrl ?? ""}
+                        onChange={(e) => updateCustomPage(index, { imageUrl: e.target.value })}
+                        placeholder="Page image URL"
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700"
+                      />
+                      {renderImagePicker(page.imageUrl, (asset) => updateCustomPage(index, { imageUrl: asset.url }))}
+                      <input
+                        value={page.imageAlt ?? ""}
+                        onChange={(e) => updateCustomPage(index, { imageAlt: e.target.value })}
+                        placeholder="Page image alt text"
+                        className="w-full px-3 py-2 bg-slate-950 border border-slate-700"
+                      />
                       <textarea
                         value={page.content}
                         onChange={(e) => updateCustomPage(index, { content: e.target.value })}
@@ -1628,6 +1671,19 @@ export default function AdminEditor() {
                       value={service.icon}
                       onChange={(e) => updateService(index, { icon: e.target.value })}
                       placeholder="Icon"
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+                    />
+                    <input
+                      value={service.imageUrl ?? ""}
+                      onChange={(e) => updateService(index, { imageUrl: e.target.value })}
+                      placeholder="Service detail image URL"
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
+                    />
+                    {renderImagePicker(service.imageUrl, (asset) => updateService(index, { imageUrl: asset.url }))}
+                    <input
+                      value={service.imageAlt ?? ""}
+                      onChange={(e) => updateService(index, { imageAlt: e.target.value })}
+                      placeholder="Service detail image alt text"
                       className="w-full px-3 py-2 bg-slate-900 border border-slate-700"
                     />
                     <textarea

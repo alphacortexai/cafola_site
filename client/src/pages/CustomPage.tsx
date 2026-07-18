@@ -69,6 +69,13 @@ export default function CustomPage({ previewCms, previewSlug }: CustomPageProps)
             <h1 className="text-4xl font-serif text-navy mt-4">{page.title}</h1>
             <p className="mt-4 description-text text-gray-600">{page.description}</p>
           </div>
+          {page.imageUrl ? (
+            <img
+              src={page.imageUrl}
+              alt={page.imageAlt || page.title}
+              className="w-full aspect-[16/8] object-cover shadow-xl"
+            />
+          ) : null}
           <div className="prose max-w-none description-text text-gray-700 whitespace-pre-line">{page.content}</div>
         </div>
       </main>
