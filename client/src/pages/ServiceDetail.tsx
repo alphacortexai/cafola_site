@@ -240,9 +240,9 @@ Talk to us: ${formData.talkToUs.trim()}` : ""}`,
                             {linkedPage ? (
                               <Link
                                 href={`/services/${slug}/${linkedPage.slug}`}
-                                className="mt-5 inline-flex items-center gap-2 text-teal font-bold text-xs uppercase tracking-widest no-underline hover:underline"
+                                className="mt-5 inline-flex items-center gap-2 text-teal font-bold text-sm tracking-wide no-underline hover:underline"
                               >
-                                Learn more <ChevronRight className="w-4 h-4" />
+                                Learn More <ChevronRight className="w-4 h-4" />
                               </Link>
                             ) : null}
                           </div>
@@ -358,9 +358,9 @@ Talk to us: ${formData.talkToUs.trim()}` : ""}`,
                     <p className="description-text text-gray-600 mb-8 line-clamp-2">{s.description}</p>
                     <Link 
                       href={`/services/${s.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} 
-                      className="mt-auto text-teal font-bold text-xs uppercase tracking-widest hover:underline no-underline inline-flex items-center gap-2 cursor-pointer"
+                      className="mt-auto text-teal font-bold text-sm tracking-wide hover:underline no-underline inline-flex items-center gap-2 cursor-pointer"
                     >
-                      Learn more <ChevronRight className="w-4 h-4" />
+                      Learn More <ChevronRight className="w-4 h-4" />
                     </Link>
                   </div>
                 ))}

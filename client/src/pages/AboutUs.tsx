@@ -296,8 +296,8 @@ export default function AboutUs({ previewCms }: AboutUsProps) {
                     <div className="text-4xl mb-4">{service.icon}</div>
                     <h3 className="text-lg font-serif mb-3 text-navy hover:text-teal transition-colors">{service.title}</h3>
                     <p className="description-text text-gray-600 mb-6 line-clamp-2 flex-grow">{service.description}</p>
-                    <span className="text-teal font-bold text-xs uppercase tracking-widest inline-flex items-center gap-2">
-                      Learn more <ChevronRight className="w-4 h-4" />
+                    <span className="text-teal font-bold text-sm tracking-wide inline-flex items-center gap-2">
+                      Learn More <ChevronRight className="w-4 h-4" />
                     </span>
                   </div>
                 </Link>
