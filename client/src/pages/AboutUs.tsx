@@ -99,6 +99,14 @@ export default function AboutUs({ previewCms }: AboutUsProps) {
           <div className="container grid grid-cols-1 lg:grid-cols-3 gap-16">
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-12">
+              {cms.aboutUs.imageUrl ? (
+                <img
+                  src={cms.aboutUs.imageUrl}
+                  alt={cms.aboutUs.imageAlt || `About ${cms.brandName}`}
+                  className="w-full aspect-[16/8] object-cover shadow-xl"
+                />
+              ) : null}
+
               {/* Overview */}
               <div className="bg-gray-50 p-8 border-l-4 border-teal">
                 <p className="description-text text-navy">

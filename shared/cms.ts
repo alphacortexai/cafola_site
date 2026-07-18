@@ -16,6 +16,8 @@ export type Service = {
   title: string;
   description: string;
   icon: string;
+  imageUrl?: string;
+  imageAlt?: string;
   longDescription: string;
   details?: ServiceDetailItem[];
 };
@@ -68,6 +70,8 @@ export type CustomPage = {
   slug: string;
   title: string;
   description: string;
+  imageUrl?: string;
+  imageAlt?: string;
   content: string;
 };
 
@@ -79,6 +83,8 @@ export type AboutUsContent = {
   staffDescription: string;
   cultureAndFamily: string;
   staffMatching: string;
+  imageUrl?: string;
+  imageAlt?: string;
   locations: string[];
 };
 
@@ -365,6 +371,9 @@ export const defaultSiteContent: SiteContent = {
       "As our principal has always been, maintaining culture and family ties, we design your routines around your choices so you can stay connected to the people and places you love. Our resident's choice to have a loved one or member of the family to stay closer is welcomed.",
     staffMatching:
       "In the strive to improve comfort, we pair our residents with the most fit staff to serve the best. Talk to us if you need a Hindi, Chinese, Arabic or Swahili speaker.",
+    imageUrl:
+      "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/WUcgTLPCbgcQqrTu.jpg",
+    imageAlt: "CAFOLA care team supporting a resident",
     locations: ["Off Mawanda road, Kololo", "Bukoto"],
   },
   resourcesHeading: "Latest Resources for Families",
