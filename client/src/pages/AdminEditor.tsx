@@ -2069,6 +2069,53 @@ export default function AdminEditor() {
                       className="w-full px-3 py-2 bg-slate-950 border border-slate-700 min-h-[80px]"
                     />
                     <div className="space-y-3 rounded border border-slate-800 bg-slate-950 p-4">
+                      <div>
+                        <h3 className="font-semibold">
+                          Home page section visibility
+                        </h3>
+                        <p className="text-sm text-slate-400">
+                          Choose whether these sections appear on the main home
+                          page.
+                        </p>
+                      </div>
+                      <label className="flex items-center justify-between gap-4 rounded border border-slate-800 bg-slate-900 px-3 py-2 text-sm">
+                        <span>Show Care Team section</span>
+                        <input
+                          type="checkbox"
+                          checked={
+                            draftCms.homeSectionVisibility?.careTeam ??
+                            defaultSiteContent.homeSectionVisibility.careTeam
+                          }
+                          onChange={e =>
+                            updateDraft("homeSectionVisibility", {
+                              ...defaultSiteContent.homeSectionVisibility,
+                              ...(draftCms.homeSectionVisibility ?? {}),
+                              careTeam: e.target.checked,
+                            })
+                          }
+                          className="h-5 w-5 accent-teal"
+                        />
+                      </label>
+                      <label className="flex items-center justify-between gap-4 rounded border border-slate-800 bg-slate-900 px-3 py-2 text-sm">
+                        <span>Show Article section</span>
+                        <input
+                          type="checkbox"
+                          checked={
+                            draftCms.homeSectionVisibility?.articles ??
+                            defaultSiteContent.homeSectionVisibility.articles
+                          }
+                          onChange={e =>
+                            updateDraft("homeSectionVisibility", {
+                              ...defaultSiteContent.homeSectionVisibility,
+                              ...(draftCms.homeSectionVisibility ?? {}),
+                              articles: e.target.checked,
+                            })
+                          }
+                          className="h-5 w-5 accent-teal"
+                        />
+                      </label>
+                    </div>
+                    <div className="space-y-3 rounded border border-slate-800 bg-slate-950 p-4">
                       <h3 className="font-semibold">Caregivers section</h3>
                       <input
                         value={draftCms.caregiversHeading}

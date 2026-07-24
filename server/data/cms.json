@@ -252,5 +252,9 @@
       "role": "Client's Family Member",
       "location": "Tulsa, Oklahoma"
     }
-  ]
+  ],
+  "homeSectionVisibility": {
+    "careTeam": true,
+    "articles": true
+  }
 }

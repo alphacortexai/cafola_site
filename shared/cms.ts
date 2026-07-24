@@ -88,6 +88,11 @@ export type AboutUsContent = {
   locations: string[];
 };
 
+export type HomeSectionVisibility = {
+  careTeam: boolean;
+  articles: boolean;
+};
+
 export type SiteContent = {
   brandName: string;
   logoUrl?: string;
@@ -98,6 +103,7 @@ export type SiteContent = {
   heroHeading: string;
   heroSubheading: string;
   homeImages: HomeImages;
+  homeSectionVisibility: HomeSectionVisibility;
   servicesHeading: string;
   servicesIntro: string;
   services: Service[];
@@ -137,6 +143,10 @@ export const defaultSiteContent: SiteContent = {
       "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/qkdIlIAqtIkSDlts.jpg",
       "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/rPgteKUGGaMkPUpt.jpg",
     ],
+  },
+  homeSectionVisibility: {
+    careTeam: true,
+    articles: true,
   },
   servicesHeading: "What CAFOLA Can Do for You",
   servicesIntro:
