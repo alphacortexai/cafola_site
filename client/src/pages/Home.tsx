@@ -28,7 +28,7 @@ const getNavHref = (item: string, cms: SiteContent) => {
   if (item === "About Us") return "/about";
   if (item === "Careers") return "#";
   if (item === "Contact") return "#contact";
-  const custom = cms.customPages.find((page) => page.title === item);
+  const custom = cms.customPages.find(page => page.title === item);
   if (custom) return `/pages/${custom.slug}`;
   return "#";
 };
@@ -57,6 +57,10 @@ export default function Home({ previewCms }: HomeProps) {
     talkToUs: "",
   });
   const [talkToUsStatus, setTalkToUsStatus] = useState("");
+  const homeSectionVisibility = {
+    ...defaultSiteContent.homeSectionVisibility,
+    ...(cms.homeSectionVisibility ?? {}),
+  };
 
   useEffect(() => {
     if (previewCms) {
@@ -345,10 +349,7 @@ export default function Home({ previewCms }: HomeProps) {
             </h2>
             <div className="space-y-6">
               {cms.storyParagraphs.map((paragraph, i) => (
-                <p
-                  key={i}
-                  className="description-text text-gray-700"
-                >
+                <p key={i} className="description-text text-gray-700">
                   {paragraph}
                 </p>
               ))}
@@ -375,101 +376,110 @@ export default function Home({ previewCms }: HomeProps) {
       </section>
 
       {/* Caregivers Section */}
-      <section className="py-20 md:py-32 bg-white">
-        <div className="container text-center">
-          <h2 className="text-4xl md:text-5xl font-serif mb-8 text-navy">
-            {cms.caregiversHeading}
-          </h2>
-          <p className="description-text text-gray-600 max-w-3xl mx-auto mb-12">
-            {cms.caregiversCopy.join(" ")}
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            {(cms.homeImages?.caregivers ?? defaultSiteContent.homeImages.caregivers).map((url, i) => (
-              <div
-                key={i}
-                className="bg-gray-50 aspect-square overflow-hidden border border-gray-100 shadow-md"
-              >
-                <img
-                  src={url}
-                  alt={`Caregiver ${i + 1}`}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-            ))}
-          </div>
-          <button className="bg-teal text-white px-10 py-4 font-bold uppercase tracking-widest hover:bg-teal-dark transition-colors">
-            {cms.caregiversButtonText}
-          </button>
-        </div>
-      </section>
-
-      {/* Resources Section */}
-      <section className="py-20 md:py-32 bg-white border-t border-gray-100">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
-            <div className="max-w-2xl">
-              <h2 className="text-4xl md:text-5xl font-serif text-navy mb-4">
-                {cms.resourcesHeading}
-              </h2>
-              <p className="description-text text-gray-600">
-                {cms.resourcesIntro}
-              </p>
-            </div>
-            <Link
-              href="/articles"
-              className="text-teal font-bold uppercase tracking-widest hover:underline no-underline flex items-center gap-2"
-            >
-              Latest articles <ChevronRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {cms.articles.map((article, idx) => (
-              <div
-                key={idx}
-                className={`group flex flex-col bg-white border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 ${article.featured ? "lg:col-span-2 lg:flex-row" : ""}`}
-              >
+      {homeSectionVisibility.careTeam ? (
+        <section className="py-20 md:py-32 bg-white">
+          <div className="container text-center">
+            <h2 className="text-4xl md:text-5xl font-serif mb-8 text-navy">
+              {cms.caregiversHeading}
+            </h2>
+            <p className="description-text text-gray-600 max-w-3xl mx-auto mb-12">
+              {cms.caregiversCopy.join(" ")}
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+              {(
+                cms.homeImages?.caregivers ??
+                defaultSiteContent.homeImages.caregivers
+              ).map((url, i) => (
                 <div
-                  className={`relative overflow-hidden ${article.featured ? "lg:w-1/2 aspect-video lg:aspect-auto" : "aspect-video"}`}
+                  key={i}
+                  className="bg-gray-50 aspect-square overflow-hidden border border-gray-100 shadow-md"
                 >
                   <img
-                    src={
-                      article.imageUrl ??
-                      DEFAULT_ARTICLE_IMAGES[idx % DEFAULT_ARTICLE_IMAGES.length]
-                    }
-                    alt={article.title}
-                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    src={url}
+                    alt={`Caregiver ${i + 1}`}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-br from-teal/20 to-navy/20 opacity-40" />
                 </div>
-                <div
-                  className={`p-8 flex flex-col ${article.featured ? "lg:w-1/2" : ""}`}
-                >
-                  {article.featured && (
-                    <span className="text-orange text-xs font-bold uppercase tracking-widest mb-4 block">
-                      Featured Article
-                    </span>
-                  )}
-                  <h3
-                    className={`font-serif text-navy mb-4 group-hover:text-teal transition-colors ${article.featured ? "text-3xl" : "text-xl"}`}
-                  >
-                    {article.title}
-                  </h3>
-                  <p className="description-text text-gray-600 mb-8 line-clamp-3">
-                    {article.description}
-                  </p>
-                  <Link
-                    href={`/articles/${article.slug}`}
-                    className="mt-auto text-teal font-bold text-sm uppercase tracking-widest hover:underline no-underline inline-flex items-center gap-2"
-                  >
-                    Read more <ChevronRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
+            <button className="bg-teal text-white px-10 py-4 font-bold uppercase tracking-widest hover:bg-teal-dark transition-colors">
+              {cms.caregiversButtonText}
+            </button>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
+
+      {/* Resources Section */}
+      {homeSectionVisibility.articles ? (
+        <section className="py-20 md:py-32 bg-white border-t border-gray-100">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
+              <div className="max-w-2xl">
+                <h2 className="text-4xl md:text-5xl font-serif text-navy mb-4">
+                  {cms.resourcesHeading}
+                </h2>
+                <p className="description-text text-gray-600">
+                  {cms.resourcesIntro}
+                </p>
+              </div>
+              <Link
+                href="/articles"
+                className="text-teal font-bold uppercase tracking-widest hover:underline no-underline flex items-center gap-2"
+              >
+                Latest articles <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+              {cms.articles.map((article, idx) => (
+                <div
+                  key={idx}
+                  className={`group flex flex-col bg-white border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 ${article.featured ? "lg:col-span-2 lg:flex-row" : ""}`}
+                >
+                  <div
+                    className={`relative overflow-hidden ${article.featured ? "lg:w-1/2 aspect-video lg:aspect-auto" : "aspect-video"}`}
+                  >
+                    <img
+                      src={
+                        article.imageUrl ??
+                        DEFAULT_ARTICLE_IMAGES[
+                          idx % DEFAULT_ARTICLE_IMAGES.length
+                        ]
+                      }
+                      alt={article.title}
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-br from-teal/20 to-navy/20 opacity-40" />
+                  </div>
+                  <div
+                    className={`p-8 flex flex-col ${article.featured ? "lg:w-1/2" : ""}`}
+                  >
+                    {article.featured && (
+                      <span className="text-orange text-xs font-bold uppercase tracking-widest mb-4 block">
+                        Featured Article
+                      </span>
+                    )}
+                    <h3
+                      className={`font-serif text-navy mb-4 group-hover:text-teal transition-colors ${article.featured ? "text-3xl" : "text-xl"}`}
+                    >
+                      {article.title}
+                    </h3>
+                    <p className="description-text text-gray-600 mb-8 line-clamp-3">
+                      {article.description}
+                    </p>
+                    <Link
+                      href={`/articles/${article.slug}`}
+                      className="mt-auto text-teal font-bold text-sm uppercase tracking-widest hover:underline no-underline inline-flex items-center gap-2"
+                    >
+                      Read more <ChevronRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       <section className="py-20 bg-white border-t border-gray-100">
         <div className="container mx-auto px-4 max-w-4xl">
@@ -480,32 +490,100 @@ export default function Home({ previewCms }: HomeProps) {
             <form className="space-y-6" onSubmit={submitTalkToUs}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-xs uppercase tracking-widest font-bold mb-2 text-gray-500">First name</label>
-                  <input required type="text" value={talkToUsData.firstName} onChange={event => setTalkToUsData(prev => ({ ...prev, firstName: event.target.value }))} className="w-full px-4 py-3 bg-white border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans" />
+                  <label className="block text-xs uppercase tracking-widest font-bold mb-2 text-gray-500">
+                    First name
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    value={talkToUsData.firstName}
+                    onChange={event =>
+                      setTalkToUsData(prev => ({
+                        ...prev,
+                        firstName: event.target.value,
+                      }))
+                    }
+                    className="w-full px-4 py-3 bg-white border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans"
+                  />
                 </div>
                 <div>
-                  <label className="block text-xs uppercase tracking-widest font-bold mb-2 text-gray-500">Last name</label>
-                  <input type="text" value={talkToUsData.lastName} onChange={event => setTalkToUsData(prev => ({ ...prev, lastName: event.target.value }))} className="w-full px-4 py-3 bg-white border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans" />
+                  <label className="block text-xs uppercase tracking-widest font-bold mb-2 text-gray-500">
+                    Last name
+                  </label>
+                  <input
+                    type="text"
+                    value={talkToUsData.lastName}
+                    onChange={event =>
+                      setTalkToUsData(prev => ({
+                        ...prev,
+                        lastName: event.target.value,
+                      }))
+                    }
+                    className="w-full px-4 py-3 bg-white border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans"
+                  />
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-xs uppercase tracking-widest font-bold mb-2 text-gray-500">Phone</label>
-                  <input type="tel" value={talkToUsData.phone} onChange={event => setTalkToUsData(prev => ({ ...prev, phone: event.target.value }))} className="w-full px-4 py-3 bg-white border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans" />
+                  <label className="block text-xs uppercase tracking-widest font-bold mb-2 text-gray-500">
+                    Phone
+                  </label>
+                  <input
+                    type="tel"
+                    value={talkToUsData.phone}
+                    onChange={event =>
+                      setTalkToUsData(prev => ({
+                        ...prev,
+                        phone: event.target.value,
+                      }))
+                    }
+                    className="w-full px-4 py-3 bg-white border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans"
+                  />
                 </div>
                 <div>
-                  <label className="block text-xs uppercase tracking-widest font-bold mb-2 text-gray-500">Email</label>
-                  <input required type="email" value={talkToUsData.email} onChange={event => setTalkToUsData(prev => ({ ...prev, email: event.target.value }))} className="w-full px-4 py-3 bg-white border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans" />
+                  <label className="block text-xs uppercase tracking-widest font-bold mb-2 text-gray-500">
+                    Email
+                  </label>
+                  <input
+                    required
+                    type="email"
+                    value={talkToUsData.email}
+                    onChange={event =>
+                      setTalkToUsData(prev => ({
+                        ...prev,
+                        email: event.target.value,
+                      }))
+                    }
+                    className="w-full px-4 py-3 bg-white border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans"
+                  />
                 </div>
               </div>
               <div>
-                <label className="block text-xs uppercase tracking-widest font-bold mb-2 text-gray-500">Talk to us</label>
-                <textarea rows={5} value={talkToUsData.talkToUs} onChange={event => setTalkToUsData(prev => ({ ...prev, talkToUs: event.target.value }))} className="w-full px-4 py-3 bg-white border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans" placeholder="Tell us about your care needs" />
+                <label className="block text-xs uppercase tracking-widest font-bold mb-2 text-gray-500">
+                  Talk to us
+                </label>
+                <textarea
+                  rows={5}
+                  value={talkToUsData.talkToUs}
+                  onChange={event =>
+                    setTalkToUsData(prev => ({
+                      ...prev,
+                      talkToUs: event.target.value,
+                    }))
+                  }
+                  className="w-full px-4 py-3 bg-white border border-gray-200 focus:border-teal outline-none transition-colors text-navy font-sans"
+                  placeholder="Tell us about your care needs"
+                />
               </div>
-              <button type="submit" className="w-full md:w-auto bg-orange text-white px-12 py-4 font-bold uppercase tracking-widest hover:bg-orange/90 transition-all shadow-lg">
+              <button
+                type="submit"
+                className="w-full md:w-auto bg-orange text-white px-12 py-4 font-bold uppercase tracking-widest hover:bg-orange/90 transition-all shadow-lg"
+              >
                 Submit request
               </button>
-              {talkToUsStatus && <p className="text-sm text-gray-600">{talkToUsStatus}</p>}
+              {talkToUsStatus && (
+                <p className="text-sm text-gray-600">{talkToUsStatus}</p>
+              )}
             </form>
           </div>
         </div>
