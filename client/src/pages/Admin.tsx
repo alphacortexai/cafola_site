@@ -17,7 +17,7 @@ import {
   uploadArticleImage,
   type User,
 } from "@/lib/firebase";
-import type { Article } from "@shared/cms";
+import type { Article, Testimonial } from "@shared/cms";
 
 type ContactSubmission = {
   firstName: string;
@@ -126,6 +126,27 @@ export default function Admin() {
   });
   const [editingSlug, setEditingSlug] = useState<string | null>(null);
   const [articlesStatus, setArticlesStatus] = useState("Articles ready");
+  const [reviewsDraft, setReviewsDraft] = useState<SiteContent["testimonials"]>(
+    defaultSiteContent.testimonials
+  );
+  const [reviewForm, setReviewForm] = useState<Testimonial>({
+    quote: "",
+    author: "",
+    role: "",
+    location: "",
+  });
+  const [editingReviewIndex, setEditingReviewIndex] = useState<number | null>(
+    null
+  );
+  const [reviewsStatus, setReviewsStatus] = useState("Reviews ready");
+  const [visibilityDraft, setVisibilityDraft] = useState<
+    SiteContent["homeSectionVisibility"]
+  >({
+    ...defaultSiteContent.homeSectionVisibility,
+  });
+  const [visibilityStatus, setVisibilityStatus] = useState(
+    "Homepage visibility ready"
+  );
   const [aboutDraft, setAboutDraft] = useState<SiteContent["aboutUs"]>(
     defaultSiteContent.aboutUs
   );
@@ -198,6 +219,11 @@ export default function Admin() {
       setRawArticles(JSON.stringify(payload.articles, null, 2));
       setArticlesDraft(payload.articles);
       setAboutDraft(payload.aboutUs);
+      setReviewsDraft(payload.testimonials);
+      setVisibilityDraft({
+        ...defaultSiteContent.homeSectionVisibility,
+        ...(payload.homeSectionVisibility ?? {}),
+      });
       setCmsStatus("CMS loaded");
     } catch {
       setCmsStatus("Using default CMS content");
@@ -342,6 +368,80 @@ export default function Admin() {
   const resetAboutPage = () => {
     setAboutDraft(cms.aboutUs);
     setAboutStatus("About page editor reset");
+  };
+
+  const saveHomepageVisibility = async () => {
+    try {
+      const nextCms = { ...cms, homeSectionVisibility: visibilityDraft };
+      const response = await fetch("/api/cms", {
+        method: "PUT",
+        headers,
+        body: JSON.stringify(nextCms),
+      });
+      if (!response.ok) throw new Error("Failed to save visibility");
+
+      setCms(nextCms);
+      setDraftCms(nextCms);
+      setRawCms(JSON.stringify(nextCms, null, 2));
+      setVisibilityStatus("Homepage visibility saved");
+    } catch {
+      setVisibilityStatus("Homepage visibility save failed");
+    }
+  };
+
+  const resetReviewForm = () => {
+    setEditingReviewIndex(null);
+    setReviewForm({ quote: "", author: "", role: "", location: "" });
+  };
+
+  const upsertReview = () => {
+    if (!reviewForm.quote.trim() || !reviewForm.author.trim()) {
+      setReviewsStatus("Review quote and author are required");
+      return;
+    }
+
+    const nextReviews = [...reviewsDraft];
+    if (editingReviewIndex === null) {
+      nextReviews.push(reviewForm);
+      setReviewsStatus("Review added to draft");
+    } else {
+      nextReviews[editingReviewIndex] = reviewForm;
+      setReviewsStatus("Review updated in draft");
+    }
+    setReviewsDraft(nextReviews);
+    resetReviewForm();
+  };
+
+  const editReview = (review: Testimonial, index: number) => {
+    setEditingReviewIndex(index);
+    setReviewForm(review);
+  };
+
+  const deleteReview = (index: number) => {
+    setReviewsDraft(prev =>
+      prev.filter((_, currentIndex) => currentIndex !== index)
+    );
+    if (editingReviewIndex === index) resetReviewForm();
+    setReviewsStatus("Review removed from draft");
+  };
+
+  const saveReviews = async () => {
+    try {
+      const nextCms = { ...cms, testimonials: reviewsDraft };
+      const response = await fetch("/api/cms", {
+        method: "PUT",
+        headers,
+        body: JSON.stringify(nextCms),
+      });
+      if (!response.ok) throw new Error("Failed to save reviews");
+
+      setCms(nextCms);
+      setDraftCms(nextCms);
+      setRawCms(JSON.stringify(nextCms, null, 2));
+      setReviewsStatus("Reviews saved");
+    } catch {
+      setReviewsStatus("Reviews save failed");
+    }
   };
 
   const resetArticleForm = () => {
@@ -551,6 +651,70 @@ export default function Admin() {
                 Open full site editor
               </Button>
             </Link>
+          </div>
+        </section>
+
+        <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
+            <div>
+              <h2 className="text-xl font-serif">Homepage visibility</h2>
+              <p className="text-sm text-slate-400 mt-1">
+                Turn homepage sections on or off without editing raw JSON.
+              </p>
+            </div>
+            <p className="text-sm text-slate-400">Status: {visibilityStatus}</p>
+          </div>
+          <div className="grid gap-3 md:grid-cols-3">
+            {[
+              ["careTeam", "Care team"],
+              ["articles", "Resources/articles"],
+              ["newsletter", "Get CAFOLA care insights in your inbox"],
+            ].map(([key, label]) => (
+              <label
+                key={key}
+                className="flex items-center justify-between gap-3 rounded border border-slate-800 bg-slate-950 p-4"
+              >
+                <span className="text-sm font-semibold text-slate-200">
+                  {label}
+                </span>
+                <input
+                  type="checkbox"
+                  checked={Boolean(
+                    visibilityDraft[
+                      key as keyof SiteContent["homeSectionVisibility"]
+                    ]
+                  )}
+                  onChange={event =>
+                    setVisibilityDraft(prev => ({
+                      ...prev,
+                      [key]: event.target.checked,
+                    }))
+                  }
+                  className="h-5 w-5 accent-orange"
+                />
+              </label>
+            ))}
+          </div>
+          <div className="flex gap-3">
+            <Button
+              onClick={saveHomepageVisibility}
+              className="bg-orange hover:bg-orange/90"
+            >
+              Save Homepage Visibility
+            </Button>
+            <Button
+              variant="outline"
+              className="text-white"
+              onClick={() => {
+                setVisibilityDraft({
+                  ...defaultSiteContent.homeSectionVisibility,
+                  ...(cms.homeSectionVisibility ?? {}),
+                });
+                setVisibilityStatus("Homepage visibility editor reset");
+              }}
+            >
+              Reset visibility editor
+            </Button>
           </div>
         </section>
 
@@ -809,6 +973,126 @@ export default function Admin() {
               }
             >
               Reset articles editor
+            </Button>
+          </div>
+        </section>
+
+        <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
+          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
+            <h2 className="text-xl font-serif">Reviews CMS section</h2>
+            <p className="text-sm text-slate-400">Status: {reviewsStatus}</p>
+          </div>
+          <p className="text-sm text-slate-400">
+            Add, edit, delete, and publish homepage reviews/testimonials.
+          </p>
+          <div className="grid gap-3 md:grid-cols-2">
+            <input
+              value={reviewForm.author}
+              onChange={e =>
+                setReviewForm(p => ({ ...p, author: e.target.value }))
+              }
+              placeholder="author"
+              className="px-3 py-2 bg-slate-950 border border-slate-700"
+            />
+            <input
+              value={reviewForm.role}
+              onChange={e =>
+                setReviewForm(p => ({ ...p, role: e.target.value }))
+              }
+              placeholder="role"
+              className="px-3 py-2 bg-slate-950 border border-slate-700"
+            />
+            <input
+              value={reviewForm.location}
+              onChange={e =>
+                setReviewForm(p => ({ ...p, location: e.target.value }))
+              }
+              placeholder="location"
+              className="px-3 py-2 bg-slate-950 border border-slate-700 md:col-span-2"
+            />
+            <textarea
+              value={reviewForm.quote}
+              onChange={e =>
+                setReviewForm(p => ({ ...p, quote: e.target.value }))
+              }
+              placeholder="review quote"
+              className="px-3 py-2 bg-slate-950 border border-slate-700 md:col-span-2 min-h-[100px]"
+            />
+          </div>
+          <div className="flex gap-3">
+            <Button
+              type="button"
+              onClick={upsertReview}
+              className="bg-teal hover:bg-teal/90"
+            >
+              {editingReviewIndex === null
+                ? "Add Draft Review"
+                : "Update Draft Review"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="text-white"
+              onClick={resetReviewForm}
+            >
+              Clear
+            </Button>
+          </div>
+          <div className="space-y-2">
+            {reviewsDraft.map((review, index) => (
+              <div
+                key={`${review.author}-${index}`}
+                className="border border-slate-800 p-3 flex items-start justify-between gap-3"
+              >
+                <div>
+                  <p className="font-semibold">{review.author}</p>
+                  <p className="text-xs text-slate-400">
+                    {review.role || "Reviewer"} •{" "}
+                    {review.location || "No location"}
+                  </p>
+                  <p className="text-sm text-slate-300 mt-2">
+                    “{review.quote}”
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="text-white"
+                    onClick={() => editReview(review, index)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => deleteReview(index)}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-3">
+            <Button
+              onClick={saveReviews}
+              className="bg-orange hover:bg-orange/90"
+            >
+              Save Reviews
+            </Button>
+            <Button
+              variant="outline"
+              className="text-white"
+              onClick={() => {
+                setReviewsDraft(cms.testimonials);
+                resetReviewForm();
+                setReviewsStatus("Reviews editor reset");
+              }}
+            >
+              Reset reviews editor
             </Button>
           </div>
         </section>

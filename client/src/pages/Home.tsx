@@ -116,10 +116,12 @@ export default function Home({ previewCms }: HomeProps) {
   };
 
   const nextTestimonial = () => {
+    if (!cms.testimonials.length) return;
     setCurrentTestimonial(prev => (prev + 1) % cms.testimonials.length);
   };
 
   const prevTestimonial = () => {
+    if (!cms.testimonials.length) return;
     setCurrentTestimonial(
       prev => (prev - 1 + cms.testimonials.length) % cms.testimonials.length
     );
@@ -292,51 +294,57 @@ export default function Home({ previewCms }: HomeProps) {
             Hear What Others Are Saying
           </h2>
 
-          <div className="max-w-4xl mx-auto relative">
-            <div className="bg-white p-10 md:p-20 shadow-xl border-t-8 border-orange">
-              <div className="flex gap-1 mb-8 justify-center">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-6 h-6 fill-orange text-orange" />
-                ))}
-              </div>
-              <p className="text-2xl md:text-3xl font-serif text-navy mb-10 italic text-center leading-relaxed">
-                "{cms.testimonials[currentTestimonial]?.quote}"
-              </p>
-              <div className="text-center">
-                <p className="font-serif font-bold text-xl text-navy">
-                  {cms.testimonials[currentTestimonial]?.author}
+          {cms.testimonials.length ? (
+            <div className="max-w-4xl mx-auto relative">
+              <div className="bg-white p-10 md:p-20 shadow-xl border-t-8 border-orange">
+                <div className="flex gap-1 mb-8 justify-center">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-6 h-6 fill-orange text-orange" />
+                  ))}
+                </div>
+                <p className="text-2xl md:text-3xl font-serif text-navy mb-10 italic text-center leading-relaxed">
+                  "{cms.testimonials[currentTestimonial]?.quote}"
                 </p>
-                <p className="text-gray-500 font-sans text-sm uppercase tracking-widest mt-2">
-                  {cms.testimonials[currentTestimonial]?.role} •{" "}
-                  {cms.testimonials[currentTestimonial]?.location}
-                </p>
+                <div className="text-center">
+                  <p className="font-serif font-bold text-xl text-navy">
+                    {cms.testimonials[currentTestimonial]?.author}
+                  </p>
+                  <p className="text-gray-500 font-sans text-sm uppercase tracking-widest mt-2">
+                    {cms.testimonials[currentTestimonial]?.role} •{" "}
+                    {cms.testimonials[currentTestimonial]?.location}
+                  </p>
+                </div>
               </div>
-            </div>
 
-            <div className="flex items-center justify-between mt-12">
-              <button
-                onClick={prevTestimonial}
-                className="bg-teal text-white p-4 hover:bg-teal-dark transition-colors shadow-lg"
-              >
-                <ChevronLeft className="w-6 h-6" />
-              </button>
-              <div className="flex gap-3">
-                {cms.testimonials.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setCurrentTestimonial(idx)}
-                    className={`w-3 h-3 rounded-full transition-all duration-300 ${idx === currentTestimonial ? "bg-teal w-8" : "bg-gray-300"}`}
-                  />
-                ))}
+              <div className="flex items-center justify-between mt-12">
+                <button
+                  onClick={prevTestimonial}
+                  className="bg-teal text-white p-4 hover:bg-teal-dark transition-colors shadow-lg"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <div className="flex gap-3">
+                  {cms.testimonials.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setCurrentTestimonial(idx)}
+                      className={`w-3 h-3 rounded-full transition-all duration-300 ${idx === currentTestimonial ? "bg-teal w-8" : "bg-gray-300"}`}
+                    />
+                  ))}
+                </div>
+                <button
+                  onClick={nextTestimonial}
+                  className="bg-teal text-white p-4 hover:bg-teal-dark transition-colors shadow-lg"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
               </div>
-              <button
-                onClick={nextTestimonial}
-                className="bg-teal text-white p-4 hover:bg-teal-dark transition-colors shadow-lg"
-              >
-                <ChevronRight className="w-6 h-6" />
-              </button>
             </div>
-          </div>
+          ) : (
+            <p className="text-center text-gray-600">
+              Reviews are coming soon.
+            </p>
+          )}
         </div>
       </section>
 
@@ -590,97 +598,99 @@ export default function Home({ previewCms }: HomeProps) {
       </section>
 
       {/* Newsletter Section */}
-      <section className="py-20 md:py-32 bg-navy text-white">
-        <div className="container mx-auto px-4 max-w-4xl text-center">
-          <h2 className="text-3xl md:text-5xl font-serif mb-6">
-            {cms.newsletterHeading}
-          </h2>
-          <p className="text-gray-300 text-lg mb-12">
-            Stay informed with the latest senior care news and resources
-            delivered to your inbox.
-          </p>
-          <form className="space-y-6" onSubmit={submitNewsletter}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {homeSectionVisibility.newsletter ? (
+        <section className="py-20 md:py-32 bg-navy text-white">
+          <div className="container mx-auto px-4 max-w-4xl text-center">
+            <h2 className="text-3xl md:text-5xl font-serif mb-6">
+              {cms.newsletterHeading}
+            </h2>
+            <p className="text-gray-300 text-lg mb-12">
+              Stay informed with the latest senior care news and resources
+              delivered to your inbox.
+            </p>
+            <form className="space-y-6" onSubmit={submitNewsletter}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="text-left">
+                  <label className="block text-xs uppercase tracking-widest font-bold mb-2 text-gray-400">
+                    First name
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    value={newsletterData.firstName}
+                    onChange={event =>
+                      setNewsletterData(prev => ({
+                        ...prev,
+                        firstName: event.target.value,
+                      }))
+                    }
+                    className="w-full px-4 py-4 bg-white/10 border border-white/20 focus:border-orange outline-none transition-colors text-white font-sans"
+                  />
+                </div>
+                <div className="text-left">
+                  <label className="block text-xs uppercase tracking-widest font-bold mb-2 text-gray-400">
+                    Last name
+                  </label>
+                  <input
+                    type="text"
+                    value={newsletterData.lastName}
+                    onChange={event =>
+                      setNewsletterData(prev => ({
+                        ...prev,
+                        lastName: event.target.value,
+                      }))
+                    }
+                    className="w-full px-4 py-4 bg-white/10 border border-white/20 focus:border-orange outline-none transition-colors text-white font-sans"
+                  />
+                </div>
+              </div>
               <div className="text-left">
                 <label className="block text-xs uppercase tracking-widest font-bold mb-2 text-gray-400">
-                  First name
+                  Email Address
                 </label>
                 <input
                   required
-                  type="text"
-                  value={newsletterData.firstName}
+                  type="email"
+                  value={newsletterData.email}
                   onChange={event =>
                     setNewsletterData(prev => ({
                       ...prev,
-                      firstName: event.target.value,
+                      email: event.target.value,
                     }))
                   }
                   className="w-full px-4 py-4 bg-white/10 border border-white/20 focus:border-orange outline-none transition-colors text-white font-sans"
                 />
               </div>
-              <div className="text-left">
-                <label className="block text-xs uppercase tracking-widest font-bold mb-2 text-gray-400">
-                  Last name
-                </label>
+              <div className="flex items-start gap-3 text-left">
                 <input
-                  type="text"
-                  value={newsletterData.lastName}
-                  onChange={event =>
-                    setNewsletterData(prev => ({
-                      ...prev,
-                      lastName: event.target.value,
-                    }))
-                  }
-                  className="w-full px-4 py-4 bg-white/10 border border-white/20 focus:border-orange outline-none transition-colors text-white font-sans"
+                  type="checkbox"
+                  id="consent"
+                  checked={newsletterConsent}
+                  onChange={event => setNewsletterConsent(event.target.checked)}
+                  className="mt-1 w-4 h-4 accent-orange"
                 />
+                <label
+                  htmlFor="consent"
+                  className="text-sm text-gray-400 leading-relaxed"
+                >
+                  By checking this box and submitting this form, you are
+                  consenting to receive marketing emails from {cms.brandName}.
+                  You can revoke your consent at any time.
+                </label>
               </div>
-            </div>
-            <div className="text-left">
-              <label className="block text-xs uppercase tracking-widest font-bold mb-2 text-gray-400">
-                Email Address
-              </label>
-              <input
-                required
-                type="email"
-                value={newsletterData.email}
-                onChange={event =>
-                  setNewsletterData(prev => ({
-                    ...prev,
-                    email: event.target.value,
-                  }))
-                }
-                className="w-full px-4 py-4 bg-white/10 border border-white/20 focus:border-orange outline-none transition-colors text-white font-sans"
-              />
-            </div>
-            <div className="flex items-start gap-3 text-left">
-              <input
-                type="checkbox"
-                id="consent"
-                checked={newsletterConsent}
-                onChange={event => setNewsletterConsent(event.target.checked)}
-                className="mt-1 w-4 h-4 accent-orange"
-              />
-              <label
-                htmlFor="consent"
-                className="text-sm text-gray-400 leading-relaxed"
+              <button
+                type="submit"
+                className="w-full md:w-auto bg-orange text-white px-16 py-5 font-sans font-bold uppercase tracking-widest hover:bg-orange/90 transition-all shadow-lg"
               >
-                By checking this box and submitting this form, you are
-                consenting to receive marketing emails from {cms.brandName}. You
-                can revoke your consent at any time.
-              </label>
-            </div>
-            <button
-              type="submit"
-              className="w-full md:w-auto bg-orange text-white px-16 py-5 font-sans font-bold uppercase tracking-widest hover:bg-orange/90 transition-all shadow-lg"
-            >
-              Sign up
-            </button>
-            {newsletterStatus && (
-              <p className="text-sm text-gray-300">{newsletterStatus}</p>
-            )}
-          </form>
-        </div>
-      </section>
+                Sign up
+              </button>
+              {newsletterStatus && (
+                <p className="text-sm text-gray-300">{newsletterStatus}</p>
+              )}
+            </form>
+          </div>
+        </section>
+      ) : null}
 
       {/* Footer */}
       <footer className="bg-navy text-white pt-20 pb-10">
