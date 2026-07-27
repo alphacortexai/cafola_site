@@ -108,6 +108,7 @@ export type SiteContent = {
   servicesIntro: string;
   services: Service[];
   servicePages: ServicePage[];
+  servicePageDefaultImageUrl?: string;
   storyHeading: string;
   storyParagraphs: string[];
   caregiversHeading: string;
@@ -354,6 +355,8 @@ export const defaultSiteContent: SiteContent = {
     },
   ],
   servicePages: [],
+  servicePageDefaultImageUrl:
+    "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/nXeqdbNLjMDKrnNe.jpg",
   storyHeading: "Our Story",
   storyParagraphs: [
     "Home is where routines feel familiar and life feels grounded. CAFOLA was built to protect that feeling for older adults and families navigating change.",
