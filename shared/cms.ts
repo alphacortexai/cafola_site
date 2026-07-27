@@ -91,6 +91,7 @@ export type AboutUsContent = {
 export type HomeSectionVisibility = {
   careTeam: boolean;
   articles: boolean;
+  newsletter: boolean;
 };
 
 export type SiteContent = {
@@ -148,6 +149,7 @@ export const defaultSiteContent: SiteContent = {
   homeSectionVisibility: {
     careTeam: true,
     articles: true,
+    newsletter: true,
   },
   servicesHeading: "What CAFOLA Can Do for You",
   servicesIntro:
