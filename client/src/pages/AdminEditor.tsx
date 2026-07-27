@@ -794,6 +794,30 @@ export default function AdminEditor() {
       {uploadingMedia ? (
         <p className="text-sm text-slate-400">Uploading...</p>
       ) : null}
+
+      <div className="grid gap-3 rounded border border-slate-800 bg-slate-900/70 p-3">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+            Default service linked page image
+          </p>
+          <p className="text-xs text-slate-500">
+            Used when a created service linked page does not have its own hero
+            image.
+          </p>
+        </div>
+        <input
+          value={draftCms.servicePageDefaultImageUrl ?? ""}
+          onChange={e =>
+            updateDraft("servicePageDefaultImageUrl", e.target.value)
+          }
+          placeholder="Default service linked page image URL"
+          className="w-full px-3 py-2 bg-slate-950 border border-slate-700"
+        />
+        {renderImagePicker(draftCms.servicePageDefaultImageUrl, asset =>
+          updateDraft("servicePageDefaultImageUrl", asset.url)
+        )}
+      </div>
+
       {(draftCms.mediaLibrary ?? []).length > 0 ? (
         <div className="grid grid-cols-2 gap-3">
           {(draftCms.mediaLibrary ?? []).map(asset => (
