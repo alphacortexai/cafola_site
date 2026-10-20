@@ -62,7 +62,7 @@ export default function CustomPage({ previewCms, previewSlug }: CustomPageProps)
     <div className="min-h-screen bg-white">
       <SiteHeader cms={cms} />
 
-      <main className="container mx-auto px-4 py-12 max-w-4xl">
+      <main className="container py-12 max-w-4xl">
         <div className="space-y-6">
           <div>
             <p className="text-sm uppercase tracking-widest text-orange font-bold">{page.title}</p>

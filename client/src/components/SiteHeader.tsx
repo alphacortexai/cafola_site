@@ -47,7 +47,7 @@ export default function SiteHeader({ cms, showTopBar = false }: SiteHeaderProps)
         </div>
       ) : null}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm">
-        <div className="container mx-auto px-3 sm:px-4 py-3 md:py-4 flex items-center justify-between gap-2 sm:gap-4">
+        <div className="container py-3 md:py-4 flex items-center justify-between gap-2 sm:gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <BrandLogo cms={cms} />
             <div className="text-[10px] md:text-xs text-gray-600 leading-tight hidden sm:block uppercase tracking-wider font-bold">

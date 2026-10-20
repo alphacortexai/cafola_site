@@ -1359,7 +1359,7 @@ export default function AdminEditor() {
     return (
       <div className="min-h-screen bg-slate-950 text-white">
         <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur">
-          <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="container py-4 flex justify-between items-center">
             <div>
               <p className="text-xs uppercase tracking-widest text-slate-400">
                 CAFOLA
@@ -1369,7 +1369,7 @@ export default function AdminEditor() {
           </div>
         </header>
 
-        <main className="container mx-auto px-4 py-10">
+        <main className="container py-10">
           <section className="max-w-2xl bg-slate-900 border border-slate-800 p-6 space-y-4">
             <h2 className="text-xl font-serif">Sign in to edit the site</h2>
             <p className="text-slate-300 text-sm leading-relaxed">
@@ -1428,7 +1428,7 @@ export default function AdminEditor() {
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur">
-        <div className="container mx-auto px-4 py-4 flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
+        <div className="container py-4 flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
           <div>
             <p className="text-xs uppercase tracking-widest text-slate-400">
               CAFOLA
@@ -1460,7 +1460,7 @@ export default function AdminEditor() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-6 space-y-6">
+      <main className="container py-6 space-y-6">
         <section className="bg-slate-900 border border-slate-800 p-6">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
