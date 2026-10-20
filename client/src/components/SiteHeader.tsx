@@ -1,6 +1,6 @@
-import { Phone } from "lucide-react";
 import { Link } from "wouter";
 import { defaultSiteContent, type SiteContent } from "@shared/cms";
+import { HeaderPhones } from "@/components/SiteContact";
 
 type SiteHeaderProps = {
   cms: SiteContent;
@@ -63,14 +63,7 @@ export default function SiteHeader({ cms, showTopBar = false }: SiteHeaderProps)
             ))}
           </nav>
 
-          <a
-            href={`tel:${cms.phone}`}
-            className="font-bold text-[10px] sm:text-xs md:text-base flex items-center gap-1 sm:gap-2 no-underline text-navy hover:text-teal shrink-0"
-            aria-label={`Call ${cms.phone}`}
-          >
-            <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-orange shrink-0" />
-            <span className="leading-none whitespace-nowrap">{cms.phone}</span>
-          </a>
+          <HeaderPhones cms={cms} />
         </div>
       </header>
       <div className={showTopBar ? "h-[72px] md:h-[104px]" : "h-[72px] md:h-[88px]"} />

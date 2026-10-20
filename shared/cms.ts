@@ -101,6 +101,9 @@ export type SiteContent = {
   companyDescriptor: string;
   navItems: string[];
   phone: string;
+  phones?: string[];
+  email?: string;
+  website?: string;
   heroHeading: string;
   heroSubheading: string;
   homeImages: HomeImages;
@@ -127,13 +130,31 @@ export type SiteContent = {
   mediaLibrary: MediaAsset[];
 };
 
+export const cafolaPhones = ["+256 730 728080", "+256 782 512703"] as const;
+export const cafolaEmail = "service@cafolauganda.com";
+export const cafolaWebsite = "http://cafolauganda.com";
+
+export const toTelHref = (phone: string) => `tel:${phone.replace(/[^\d+]/g, "")}`;
+
+export function resolveSiteContact(cms?: Pick<SiteContent, "phones" | "email" | "website">) {
+  const phones = cms?.phones?.map((phone) => phone.trim()).filter(Boolean);
+  return {
+    phones: phones && phones.length > 0 ? phones : [...cafolaPhones],
+    email: cms?.email?.trim() || cafolaEmail,
+    website: cms?.website?.trim() || cafolaWebsite,
+  };
+}
+
 export const defaultSiteContent: SiteContent = {
   brandName: "CAFOLA",
   logoUrl: "",
   tagline: "Compassionate support for living well at home.",
   companyDescriptor: "In-Home Care & Assistance",
   navItems: ["Services", "Resources", "About Us", "Careers", "Contact"],
-  phone: "(+256) 782-512-703",
+  phone: "+256 782 512703",
+  phones: ["+256 730 728080", "+256 782 512703"],
+  email: "service@cafolauganda.com",
+  website: "http://cafolauganda.com",
   heroHeading: "CAFOLA",
   heroSubheading: "Personalized care that helps families thrive at home.",
   homeImages: {
@@ -434,7 +455,7 @@ export const defaultSiteContent: SiteContent = {
     },
   ],
   newsletterHeading: "Get CAFOLA care insights in your inbox",
-  footerAddress: ["6700 Mercy Rd", "Ste 400", "Omaha, NE 68106"],
+  footerAddress: [],
   footerLinks: ["Find Care", "Find Jobs", "Contact Us", "FAQ"],
   customPages: [],
   mediaLibrary: [],
