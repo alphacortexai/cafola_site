@@ -2,7 +2,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Star,
-  Phone,
   CheckCircle2,
   Award,
 } from "lucide-react";
@@ -10,6 +9,7 @@ import { type FormEvent, useEffect, useState } from "react";
 import { defaultSiteContent, type SiteContent } from "@shared/cms";
 import { Link } from "wouter";
 import SiteHeader from "@/components/SiteHeader";
+import { SiteContactList } from "@/components/SiteContact";
 
 type HomeProps = {
   previewCms?: SiteContent;
@@ -199,11 +199,11 @@ export default function Home({ previewCms }: HomeProps) {
             {cms.servicesIntro}
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="flex flex-wrap justify-center gap-5">
             {cms.services.map((service, idx) => (
               <div
                 key={idx}
-                className="group flex flex-col h-full border border-gray-200 p-6 hover:shadow-2xl transition-all duration-300 bg-gray-100 items-center text-center"
+                className="group flex w-full sm:w-[calc(50%-0.625rem)] lg:w-[calc((100%-2.5rem)/3)] flex-col rounded-2xl border border-gray-200 p-6 hover:shadow-2xl transition-all duration-300 bg-gray-100 items-center text-center"
               >
                 <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
                   {service.icon}
@@ -700,20 +700,7 @@ export default function Home({ previewCms }: HomeProps) {
               <div className="text-3xl font-serif font-bold mb-6 text-white">
                 {cms.brandName}
               </div>
-              <div className="space-y-2 text-gray-400 text-sm font-sans">
-                {cms.footerAddress.map(line => (
-                  <p key={line}>{line}</p>
-                ))}
-                <p className="pt-4 flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-orange" />
-                  <a
-                    href={`tel:${cms.phone}`}
-                    className="text-white hover:text-orange no-underline font-bold"
-                  >
-                    {cms.phone}
-                  </a>
-                </p>
-              </div>
+              <SiteContactList cms={cms} />
             </div>
 
             <div>

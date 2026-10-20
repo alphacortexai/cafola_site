@@ -2,7 +2,8 @@ import { type FormEvent, useEffect, useState } from "react";
 import { useRoute, Link } from "wouter";
 import { defaultSiteContent, type ServicePage, type ServicePageSection, type SiteContent } from "@shared/cms";
 import SiteHeader from "@/components/SiteHeader";
-import { ChevronRight, Phone, MapPin, CheckCircle2 } from "lucide-react";
+import { SiteContactList } from "@/components/SiteContact";
+import { ChevronRight, CheckCircle2 } from "lucide-react";
 
 type ServiceDetailProps = {
   previewCms?: SiteContent;
@@ -327,16 +328,7 @@ Talk to us: ${formData.talkToUs.trim()}` : ""}`,
 
                 <div className="bg-gray-50 p-8 border border-gray-100">
                   <h3 className="text-xl font-serif mb-6 text-navy">Need help right now?</h3>
-                  <div className="space-y-6">
-                    <a href={`tel:${cms.phone}`} className="flex items-center gap-3 text-teal hover:underline no-underline font-bold text-lg">
-                      <Phone className="w-5 h-5" />
-                      {cms.phone}
-                    </a>
-                    <div className="flex items-start gap-3 text-gray-600 text-sm">
-                      <MapPin className="w-5 h-5 mt-1 flex-shrink-0 text-orange" />
-                      <span>{cms.footerAddress.join(", ")}</span>
-                    </div>
-                  </div>
+                  <SiteContactList cms={cms} tone="light" />
                 </div>
               </div>
             </div>
@@ -374,13 +366,7 @@ Talk to us: ${formData.talkToUs.trim()}` : ""}`,
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
             <div className="lg:col-span-1">
               <div className="text-2xl font-serif font-bold mb-6 text-white">{cms.brandName}</div>
-              <div className="space-y-2 text-gray-400 text-sm font-sans">
-                {cms.footerAddress.map((line) => <p key={line}>{line}</p>)}
-                <p className="pt-4 flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-orange" />
-                  <a href={`tel:${cms.phone}`} className="text-white hover:text-orange no-underline font-bold">{cms.phone}</a>
-                </p>
-              </div>
+              <SiteContactList cms={cms} />
             </div>
             <div>
               <h4 className="text-xs uppercase tracking-widest font-bold mb-8 text-gray-500">Quick Links</h4>
