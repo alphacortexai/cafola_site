@@ -180,7 +180,7 @@ export default function ServicePageDetail({
           </div>
         </section>
 
-        <section className="container mx-auto px-4 py-12 md:py-16 max-w-5xl">
+        <section className="container py-12 md:py-16 max-w-5xl">
           {page.heroMediaType === "video" && page.heroImageUrl ? (
             <video
               src={page.heroImageUrl}

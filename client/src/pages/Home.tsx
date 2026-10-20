@@ -176,11 +176,11 @@ export default function Home({ previewCms }: HomeProps) {
         />
         <div className="absolute inset-0 bg-navy/40" />
 
-        <div className="relative container mx-auto px-4 h-full" />
+        <div className="relative container h-full" />
       </section>
 
       <section className="relative -mt-16 z-10 pb-8 md:pb-12">
-        <div className="container mx-auto px-4">
+        <div className="container">
           <div className="max-w-4xl mx-auto bg-teal shadow-2xl px-8 py-8 md:px-14 md:py-12 text-center">
             <p className="text-2xl md:text-4xl font-serif text-white leading-tight">
               {cms.heroSubheading}
@@ -191,7 +191,7 @@ export default function Home({ previewCms }: HomeProps) {
 
       {/* Services Section */}
       <section id="services" className="pt-12 pb-12 md:pt-20 md:pb-16 bg-white">
-        <div className="container mx-auto px-4">
+        <div className="container">
           <h2 className="text-4xl md:text-5xl font-serif text-center mb-6 text-navy">
             {cms.servicesHeading}
           </h2>
@@ -289,7 +289,7 @@ export default function Home({ previewCms }: HomeProps) {
 
       {/* Testimonials Section */}
       <section className="py-20 md:py-32 bg-white overflow-hidden">
-        <div className="container mx-auto px-4">
+        <div className="container">
           <h2 className="text-4xl md:text-5xl font-serif text-center mb-16 text-navy">
             Hear What Others Are Saying
           </h2>
@@ -350,7 +350,7 @@ export default function Home({ previewCms }: HomeProps) {
 
       {/* Our Story Section */}
       <section className="py-20 md:py-32 bg-gray-50">
-        <div className="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="container grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="order-2 lg:order-1">
             <h2 className="text-4xl md:text-5xl font-serif mb-8 text-navy">
               {cms.storyHeading}
@@ -420,7 +420,7 @@ export default function Home({ previewCms }: HomeProps) {
       {/* Resources Section */}
       {homeSectionVisibility.articles ? (
         <section className="py-20 md:py-32 bg-white border-t border-gray-100">
-          <div className="container mx-auto px-4">
+          <div className="container">
             <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
               <div className="max-w-2xl">
                 <h2 className="text-4xl md:text-5xl font-serif text-navy mb-4">
@@ -490,7 +490,7 @@ export default function Home({ previewCms }: HomeProps) {
       ) : null}
 
       <section className="py-20 bg-white border-t border-gray-100">
-        <div className="container mx-auto px-4 max-w-4xl">
+        <div className="container max-w-4xl">
           <div className="bg-gray-50 border-t-8 border-orange shadow-xl p-8 md:p-10">
             <h2 className="text-3xl md:text-4xl font-serif mb-8 text-navy text-center">
               Start Care Now
@@ -600,7 +600,7 @@ export default function Home({ previewCms }: HomeProps) {
       {/* Newsletter Section */}
       {homeSectionVisibility.newsletter ? (
         <section className="py-20 md:py-32 bg-navy text-white">
-          <div className="container mx-auto px-4 max-w-4xl text-center">
+          <div className="container max-w-4xl text-center">
             <h2 className="text-3xl md:text-5xl font-serif mb-6">
               {cms.newsletterHeading}
             </h2>
@@ -694,7 +694,7 @@ export default function Home({ previewCms }: HomeProps) {
 
       {/* Footer */}
       <footer className="bg-navy text-white pt-20 pb-10">
-        <div className="container mx-auto px-4">
+        <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
             <div className="lg:col-span-1">
               <div className="text-3xl font-serif font-bold mb-6 text-white">

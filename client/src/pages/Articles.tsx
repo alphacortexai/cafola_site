@@ -52,7 +52,7 @@ export default function Articles({ previewCms }: ArticlesProps) {
     <div className="min-h-screen bg-white">
       <SiteHeader cms={cms} />
 
-      <main className="container mx-auto px-4 py-12">
+      <main className="container py-12">
         <h1 className="text-4xl font-serif text-navy mb-4">Articles & Resources</h1>
         <p className="description-text text-gray-600 mb-10 max-w-3xl">
           Browse the latest articles from our care team. This content is managed in the Admin CMS Articles section.

@@ -528,7 +528,7 @@ export default function Admin() {
     return (
       <div className="min-h-screen bg-slate-950 text-white">
         <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur">
-          <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="container py-4 flex justify-between items-center">
             <div>
               <p className="text-xs uppercase tracking-widest text-slate-400">
                 CAFOLA
@@ -541,7 +541,7 @@ export default function Admin() {
           </div>
         </header>
 
-        <main className="container mx-auto px-4 py-10">
+        <main className="container py-10">
           <section className="max-w-2xl bg-slate-900 border border-slate-800 p-6 space-y-4">
             <h2 className="text-xl font-serif">Continue with Gmail</h2>
             <p className="text-slate-300 text-sm leading-relaxed">
@@ -601,7 +601,7 @@ export default function Admin() {
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div className="container py-4 flex justify-between items-center">
           <div>
             <p className="text-xs uppercase tracking-widest text-slate-400">
               CAFOLA
@@ -627,7 +627,7 @@ export default function Admin() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 space-y-8">
+      <main className="container py-8 space-y-8">
         <section className="bg-slate-900 border border-slate-800 p-6 space-y-4">
           <h2 className="text-xl font-serif">Admin token</h2>
           <form className="flex flex-col md:flex-row gap-3" onSubmit={setToken}>
