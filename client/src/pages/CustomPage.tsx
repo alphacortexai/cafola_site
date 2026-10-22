@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
 import { Link, useRoute } from "wouter";
-import { defaultSiteContent, type CustomPage as CmsCustomPage, type SiteContent } from "@shared/cms";
+import { type CustomPage as CmsCustomPage, type SiteContent } from "@shared/cms";
 import SiteHeader from "@/components/SiteHeader";
+import { ContentLoading, useSiteContent } from "@/hooks/useSiteContent";
 import { Phone } from "lucide-react";
 
 type CustomPageProps = {
@@ -22,32 +22,14 @@ const getNavHref = (item: string, cms: SiteContent) => {
 
 export default function CustomPage({ previewCms, previewSlug }: CustomPageProps) {
   const [, params] = useRoute("/pages/:slug");
-  const [cms, setCms] = useState<SiteContent>(previewCms ?? defaultSiteContent);
-
-  useEffect(() => {
-    if (previewCms) {
-      setCms(previewCms);
-      return;
-    }
-
-    const loadCms = async () => {
-      try {
-        const response = await fetch("/api/cms");
-        if (!response.ok) throw new Error("Failed to load CMS");
-        const payload = (await response.json()) as SiteContent;
-        setCms(payload);
-      } catch {
-        // fallback to defaults
-      }
-    };
-
-    void loadCms();
-  }, [previewCms]);
+  const { cms, ready } = useSiteContent(previewCms);
 
   const slug = previewSlug ?? params?.slug;
   const page = cms.customPages.find((item) => item.slug === slug);
 
   if (!page) {
+    if (!ready) return <ContentLoading />;
+
     return (
       <div className="min-h-screen grid place-items-center p-6">
         <div className="text-center space-y-4">
