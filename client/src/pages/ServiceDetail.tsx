@@ -1,8 +1,9 @@
-import { type FormEvent, useEffect, useState } from "react";
+import { type FormEvent, useState } from "react";
 import { useRoute, Link } from "wouter";
-import { defaultSiteContent, type ServicePage, type ServicePageSection, type SiteContent } from "@shared/cms";
+import { type ServicePage, type ServicePageSection, type SiteContent } from "@shared/cms";
 import SiteHeader from "@/components/SiteHeader";
 import { SiteContactList } from "@/components/SiteContact";
+import { ContentLoading, useSiteContent } from "@/hooks/useSiteContent";
 import { ChevronRight, CheckCircle2 } from "lucide-react";
 
 type ServiceDetailProps = {
@@ -90,7 +91,7 @@ const getNavHref = (item: string, cms: SiteContent) => {
 export default function ServiceDetail({ previewCms, previewSlug }: ServiceDetailProps) {
   const [, params] = useRoute("/services/:slug");
   const slug = previewSlug ?? params?.slug;
-  const [cms, setCms] = useState<SiteContent>(previewCms ?? defaultSiteContent);
+  const { cms, ready } = useSiteContent(previewCms);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -99,25 +100,6 @@ export default function ServiceDetail({ previewCms, previewSlug }: ServiceDetail
     talkToUs: "",
   });
   const [formStatus, setFormStatus] = useState<string>("");
-
-  useEffect(() => {
-    if (previewCms) {
-      setCms(previewCms);
-      return;
-    }
-
-    const loadCms = async () => {
-      try {
-        const response = await fetch("/api/cms");
-        if (!response.ok) throw new Error("Failed to load CMS");
-        const payload = (await response.json()) as SiteContent;
-        setCms(payload);
-      } catch {
-        // Fallback to default
-      }
-    };
-    void loadCms();
-  }, [previewCms]);
 
   const submitContact = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -166,6 +148,8 @@ Talk to us: ${formData.talkToUs.trim()}` : ""}`,
   );
 
   if (!service) {
+    if (!ready) return <ContentLoading />;
+
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">

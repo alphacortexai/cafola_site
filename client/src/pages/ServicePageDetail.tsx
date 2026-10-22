@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Link, useRoute } from "wouter";
 import {
   defaultSiteContent,
@@ -7,6 +7,7 @@ import {
   type SiteContent,
 } from "@shared/cms";
 import SiteHeader from "@/components/SiteHeader";
+import { ContentLoading, useSiteContent } from "@/hooks/useSiteContent";
 import { ChevronRight, Phone } from "lucide-react";
 
 type ServicePageDetailProps = {
@@ -88,27 +89,7 @@ export default function ServicePageDetail({
   previewSlug,
 }: ServicePageDetailProps) {
   const [, params] = useRoute("/services/:serviceSlug/:pageSlug");
-  const [cms, setCms] = useState<SiteContent>(previewCms ?? defaultSiteContent);
-
-  useEffect(() => {
-    if (previewCms) {
-      setCms(previewCms);
-      return;
-    }
-
-    const loadCms = async () => {
-      try {
-        const response = await fetch("/api/cms");
-        if (!response.ok) throw new Error("Failed to load CMS");
-        const payload = (await response.json()) as SiteContent;
-        setCms(payload);
-      } catch {
-        // fallback to defaults
-      }
-    };
-
-    void loadCms();
-  }, [previewCms]);
+  const { cms, ready } = useSiteContent(previewCms);
 
   const page = useMemo<ServicePage | null>(() => {
     const slug = previewSlug ?? params?.pageSlug;
@@ -128,6 +109,8 @@ export default function ServicePageDetail({
   }, [cms.services, page]);
 
   if (!page) {
+    if (!ready) return <ContentLoading />;
+
     return (
       <div className="min-h-screen grid place-items-center p-6">
         <div className="text-center space-y-4">

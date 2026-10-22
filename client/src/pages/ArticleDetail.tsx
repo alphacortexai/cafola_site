@@ -1,6 +1,7 @@
-import { defaultSiteContent, type SiteContent } from "@shared/cms";
+import { type SiteContent } from "@shared/cms";
 import SiteHeader from "@/components/SiteHeader";
-import { useEffect, useMemo, useState } from "react";
+import { ContentLoading, useSiteContent } from "@/hooks/useSiteContent";
+import { useMemo } from "react";
 import { Link, useRoute } from "wouter";
 
 const FALLBACK_IMAGE = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/nXeqdbNLjMDKrnNe.jpg";
@@ -12,27 +13,7 @@ type ArticleDetailProps = {
 
 export default function ArticleDetail({ previewCms, previewSlug }: ArticleDetailProps) {
   const [, params] = useRoute("/articles/:slug");
-  const [cms, setCms] = useState<SiteContent>(previewCms ?? defaultSiteContent);
-
-  useEffect(() => {
-    if (previewCms) {
-      setCms(previewCms);
-      return;
-    }
-
-    const loadCms = async () => {
-      try {
-        const response = await fetch("/api/cms");
-        if (!response.ok) throw new Error("Failed");
-        const payload = (await response.json()) as SiteContent;
-        setCms(payload);
-      } catch {
-        // fallback to defaults
-      }
-    };
-
-    void loadCms();
-  }, [previewCms]);
+  const { cms, ready } = useSiteContent(previewCms);
 
   const article = useMemo(() => {
     const slug = previewSlug ?? params?.slug;
@@ -41,6 +22,8 @@ export default function ArticleDetail({ previewCms, previewSlug }: ArticleDetail
   }, [cms.articles, params?.slug, previewSlug]);
 
   if (!article) {
+    if (!ready) return <ContentLoading />;
+
     return (
       <div className="min-h-screen grid place-items-center p-6">
         <div className="text-center space-y-4">
