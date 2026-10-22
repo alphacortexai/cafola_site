@@ -145,6 +145,40 @@ export function resolveSiteContact(cms?: Pick<SiteContent, "phones" | "email" | 
   };
 }
 
+/** Local WebP stand-in for the original 1.9MB homepage hero PNG. */
+export const optimizedHomeHero = {
+  src: "/images/home-hero.webp",
+  srcSet: "/images/home-hero-960.webp 960w, /images/home-hero.webp 1536w",
+  width: 1536,
+  height: 864,
+} as const;
+
+const legacyHomeHeroMarkers = ["wsYsqfTvfhPHNFhG"];
+
+export function resolveHomeHero(url?: string | null): {
+  src: string;
+  srcSet?: string;
+} {
+  const candidate = url?.trim() || optimizedHomeHero.src;
+  let decoded = candidate;
+  try {
+    decoded = decodeURIComponent(candidate);
+  } catch {
+    decoded = candidate;
+  }
+
+  const usesOptimizedCopy =
+    candidate === optimizedHomeHero.src ||
+    decoded.includes("/images/home-hero") ||
+    legacyHomeHeroMarkers.some(marker => decoded.includes(marker));
+
+  if (usesOptimizedCopy) {
+    return { src: optimizedHomeHero.src, srcSet: optimizedHomeHero.srcSet };
+  }
+
+  return { src: candidate };
+}
+
 export const defaultSiteContent: SiteContent = {
   brandName: "CAFOLA",
   logoUrl: "",
@@ -158,7 +192,7 @@ export const defaultSiteContent: SiteContent = {
   heroHeading: "CAFOLA",
   heroSubheading: "Personalized care that helps families thrive at home.",
   homeImages: {
-    hero: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/wsYsqfTvfhPHNFhG.png",
+    hero: optimizedHomeHero.src,
     story:
       "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/WUcgTLPCbgcQqrTu.jpg",
     caregivers: [
