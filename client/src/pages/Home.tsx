@@ -6,7 +6,11 @@ import {
   Award,
 } from "lucide-react";
 import { type FormEvent, useEffect, useState } from "react";
-import { defaultSiteContent, type SiteContent } from "@shared/cms";
+import {
+  defaultSiteContent,
+  resolveHomeHero,
+  type SiteContent,
+} from "@shared/cms";
 import { Link } from "wouter";
 import SiteHeader from "@/components/SiteHeader";
 import { SiteContactList } from "@/components/SiteContact";
@@ -61,6 +65,7 @@ export default function Home({ previewCms }: HomeProps) {
     ...defaultSiteContent.homeSectionVisibility,
     ...(cms.homeSectionVisibility ?? {}),
   };
+  const heroImage = resolveHomeHero(cms.homeImages?.hero);
 
   useEffect(() => {
     if (previewCms) {
@@ -167,12 +172,16 @@ export default function Home({ previewCms }: HomeProps) {
       <SiteHeader cms={cms} showTopBar />
 
       {/* Hero Section */}
-      <section className="relative -mt-[72px] h-[500px] overflow-hidden md:-mt-[104px] md:h-[600px]">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: `url("${cms.homeImages?.hero ?? defaultSiteContent.homeImages.hero}")`,
-          }}
+      <section className="relative -mt-[72px] h-[500px] overflow-hidden bg-[#8d8a8b] md:-mt-[104px] md:h-[600px]">
+        <img
+          src={heroImage.src}
+          srcSet={heroImage.srcSet}
+          sizes={heroImage.srcSet ? "100vw" : undefined}
+          alt="Caregiver sitting with an older man at home"
+          width={1536}
+          height={864}
+          fetchPriority="high"
+          className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-navy/40" />
 

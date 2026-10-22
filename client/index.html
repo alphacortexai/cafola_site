@@ -15,6 +15,25 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     <title>Cafola Uganda</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!-- Homepage hero preload. Keep these URLs in sync with optimizedHomeHero in shared/cms.ts. -->
+    <script>
+      (function () {
+        var path = location.pathname;
+        if (path !== "/" && path !== "") return;
+        var link = document.createElement("link");
+        link.rel = "preload";
+        link.as = "image";
+        link.href = "/images/home-hero.webp";
+        link.setAttribute(
+          "imagesrcset",
+          "/images/home-hero-960.webp 960w, /images/home-hero.webp 1536w"
+        );
+        link.setAttribute("imagesizes", "100vw");
+        link.type = "image/webp";
+        link.setAttribute("fetchpriority", "high");
+        document.head.appendChild(link);
+      })();
+    </script>
     <!-- THIS IS THE START OF A COMMENT BLOCK, BLOCK TO BE DELETED: Google Fonts here, example:
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
