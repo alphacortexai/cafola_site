@@ -2,6 +2,7 @@ import { type FormEvent, useState } from "react";
 import { useRoute, Link } from "wouter";
 import { type ServicePage, type ServicePageSection, type SiteContent } from "@shared/cms";
 import SiteHeader from "@/components/SiteHeader";
+import { SiteLegalLinks } from "@/components/SiteLegalLinks";
 import { SiteContactList } from "@/components/SiteContact";
 import { ContentLoading, useSiteContent } from "@/hooks/useSiteContent";
 import { ChevronRight, CheckCircle2 } from "lucide-react";
@@ -306,7 +307,8 @@ Talk to us: ${formData.talkToUs.trim()}` : ""}`,
                     {formStatus && <p className="text-xs text-gray-500">{formStatus}</p>}
                   </form>
                   <p className="text-[10px] mt-4 text-gray-400 leading-relaxed">
-                    By submitting this form you are consenting to be contacted by {cms.brandName} regarding our services.
+                    By submitting this form you are consenting to be contacted by {cms.brandName} regarding our services. See our{" "}
+                    <Link href="/privacy" className="text-teal underline">privacy policy</Link>.
                   </p>
                 </div>
 
@@ -361,8 +363,9 @@ Talk to us: ${formData.talkToUs.trim()}` : ""}`,
               </div>
             </div>
           </div>
-          <div className="border-t border-white/10 pt-8 text-center text-gray-500 text-xs">
-            © 2026 {cms.brandName}. All rights reserved. Personalized in-home care and assistance.
+          <div className="border-t border-white/10 pt-8 flex flex-col items-center gap-4 text-center text-gray-500 text-xs">
+            <p>© 2026 {cms.brandName}. All rights reserved. Personalized in-home care and assistance.</p>
+            <SiteLegalLinks className="justify-center" />
           </div>
         </div>
       </footer>

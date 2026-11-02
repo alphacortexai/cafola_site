@@ -99,13 +99,21 @@ function docUrl(path: string) {
   return `https://firestore.googleapis.com/v1/projects/${config.projectId}/databases/(default)/documents/${path}?key=${config.apiKey}`;
 }
 
+function firebaseHeaders(idToken?: string, json = false): HeadersInit {
+  const headers: Record<string, string> = {};
+  if (json) headers["Content-Type"] = "application/json";
+  if (idToken) headers.Authorization = `Bearer ${idToken}`;
+  return headers;
+}
+
 export async function readFirestoreDocument<T>(
-  path: string
+  path: string,
+  idToken?: string
 ): Promise<T | null> {
   const url = docUrl(path);
   if (!url) return null;
 
-  const response = await fetch(url);
+  const response = await fetch(url, { headers: firebaseHeaders(idToken) });
   if (!response.ok) return null;
 
   const body = (await response.json()) as FirestoreDocumentResponse;
@@ -115,18 +123,20 @@ export async function readFirestoreDocument<T>(
 
 async function patchFirestoreDocument(
   url: string,
-  fields: Record<string, FirestoreValue>
+  fields: Record<string, FirestoreValue>,
+  idToken?: string
 ): Promise<Response> {
   return fetch(url, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    headers: firebaseHeaders(idToken, true),
     body: JSON.stringify({ fields }),
   });
 }
 
 export async function writeFirestoreDocument(
   path: string,
-  payload: unknown
+  payload: unknown,
+  idToken?: string
 ): Promise<boolean> {
   const url = docUrl(path);
   if (!url) return false;
@@ -134,7 +144,7 @@ export async function writeFirestoreDocument(
   const map = toFirestoreValue(payload);
   const fields = "mapValue" in map ? map.mapValue.fields : {};
 
-  let response = await patchFirestoreDocument(url, fields);
+  let response = await patchFirestoreDocument(url, fields, idToken);
   if (response.ok) {
     return true;
   }
@@ -142,7 +152,7 @@ export async function writeFirestoreDocument(
   // If the document doesn't exist yet, create it explicitly.
   if (response.status === 404) {
     const createUrl = `${url}?currentDocument.exists=false`;
-    response = await patchFirestoreDocument(createUrl, fields);
+    response = await patchFirestoreDocument(createUrl, fields, idToken);
     return response.ok;
   }
 
@@ -170,7 +180,7 @@ export async function createFirestoreDocument(
 
 export async function listFirestoreCollection<T>(
   collectionPath: string,
-  options?: { pageSize?: number; orderBy?: string }
+  options?: { pageSize?: number; orderBy?: string; idToken?: string }
 ): Promise<T[] | null> {
   const baseUrl = docUrl(collectionPath);
   if (!baseUrl) return null;
@@ -183,7 +193,9 @@ export async function listFirestoreCollection<T>(
     url.searchParams.set("orderBy", options.orderBy);
   }
 
-  const response = await fetch(url.toString());
+  const response = await fetch(url.toString(), {
+    headers: firebaseHeaders(options?.idToken),
+  });
   if (!response.ok) return null;
 
   const body = (await response.json()) as FirestoreCollectionResponse;

@@ -101,6 +101,30 @@ export const uploadMediaAsset = async (file: File) => {
   return getDownloadURL(fileRef);
 };
 
+export async function adminFetch(input: string, init: RequestInit = {}) {
+  const headers = new Headers(init.headers);
+  if (init.body && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
+
+  try {
+    const idToken = auth?.currentUser ? await auth.currentUser.getIdToken() : null;
+    if (idToken) headers.set("Authorization", `Bearer ${idToken}`);
+  } catch (error) {
+    console.error("Could not attach the admin sign-in token", error);
+  }
+
+  return fetch(input, { ...init, headers, cache: "no-store" });
+}
+
+export async function adminError(response: Response, fallback: string) {
+  if (response.ok) return null;
+  if (response.status === 401 || response.status === 403) {
+    return "That action requires the CAFOLA admin Google sign-in. Sign in again and retry.";
+  }
+  return `${fallback} (${response.status}).`;
+}
+
 export const signInWithGoogle = async () => {
   const activeAuth = ensureAuth();
   let result;

@@ -4,7 +4,6 @@ import { HeaderPhones } from "@/components/SiteContact";
 
 type SiteHeaderProps = {
   cms: SiteContent;
-  showTopBar?: boolean;
 };
 
 const getNavHref = (item: string, cms: SiteContent) => {
@@ -35,17 +34,9 @@ export function BrandLogo({ cms, compact = false }: { cms: SiteContent; compact?
   );
 }
 
-export default function SiteHeader({ cms, showTopBar = false }: SiteHeaderProps) {
+export default function SiteHeader({ cms }: SiteHeaderProps) {
   return (
     <>
-      {showTopBar ? (
-        <div className="bg-navy text-white py-2 hidden md:block">
-          <div className="container flex justify-end gap-6 text-xs font-sans">
-            <a href="#" className="hover:text-orange no-underline">Medical & Community Partners</a>
-            <a href="#" className="hover:text-orange no-underline">Franchise Opportunities</a>
-          </div>
-        </div>
-      ) : null}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm">
         <div className="container py-3 md:py-4 flex items-center justify-between gap-2 sm:gap-4">
           <div className="flex items-center gap-3 min-w-0">
@@ -66,7 +57,7 @@ export default function SiteHeader({ cms, showTopBar = false }: SiteHeaderProps)
           <HeaderPhones cms={cms} />
         </div>
       </header>
-      <div className={showTopBar ? "h-[72px] md:h-[104px]" : "h-[72px] md:h-[88px]"} />
+      <div className="h-[72px] md:h-[88px]" />
     </>
   );
 }

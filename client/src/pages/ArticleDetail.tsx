@@ -4,7 +4,7 @@ import { ContentLoading, useSiteContent } from "@/hooks/useSiteContent";
 import { useMemo } from "react";
 import { Link, useRoute } from "wouter";
 
-const FALLBACK_IMAGE = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/nXeqdbNLjMDKrnNe.jpg";
+const FALLBACK_IMAGE = "/images/home-hero.webp";
 
 type ArticleDetailProps = {
   previewCms?: SiteContent;

@@ -12,6 +12,7 @@ import Articles from "./pages/Articles";
 import ArticleDetail from "./pages/ArticleDetail";
 import CustomPage from "./pages/CustomPage";
 import ServicePageDetail from "./pages/ServicePageDetail";
+import Privacy from "./pages/Privacy";
 
 const Admin = lazy(() => import("./pages/Admin"));
 const AdminEditor = lazy(() => import("./pages/AdminEditor"));
@@ -46,6 +47,9 @@ function Router() {
       </Route>
       <Route path="/about">
         <AboutUs />
+      </Route>
+      <Route path="/privacy">
+        <Privacy />
       </Route>
       <Route path="/articles">
         <Articles />

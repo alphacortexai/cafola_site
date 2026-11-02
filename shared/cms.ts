@@ -132,7 +132,7 @@ export type SiteContent = {
 
 export const cafolaPhones = ["+256 730 728080", "+256 782 512703"] as const;
 export const cafolaEmail = "service@cafolauganda.com";
-export const cafolaWebsite = "http://cafolauganda.com";
+export const cafolaWebsite = "https://www.cafolauganda.com";
 
 export const toTelHref = (phone: string) => `tel:${phone.replace(/[^\d+]/g, "")}`;
 
@@ -188,17 +188,17 @@ export const defaultSiteContent: SiteContent = {
   phone: "+256 782 512703",
   phones: ["+256 730 728080", "+256 782 512703"],
   email: "service@cafolauganda.com",
-  website: "http://cafolauganda.com",
+  website: "https://www.cafolauganda.com",
   heroHeading: "CAFOLA",
   heroSubheading: "Personalized care that helps families thrive at home.",
   homeImages: {
     hero: optimizedHomeHero.src,
     story:
-      "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/WUcgTLPCbgcQqrTu.jpg",
+      "/images/home-hero.webp",
     caregivers: [
-      "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/JAwcPqUJQKQRINak.jpg",
-      "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/qkdIlIAqtIkSDlts.jpg",
-      "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/rPgteKUGGaMkPUpt.jpg",
+      "/images/home-hero.webp",
+      "/images/home-hero.webp",
+      "/images/home-hero.webp",
     ],
   },
   homeSectionVisibility: {
@@ -413,7 +413,7 @@ export const defaultSiteContent: SiteContent = {
   ],
   servicePages: [],
   servicePageDefaultImageUrl:
-    "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/nXeqdbNLjMDKrnNe.jpg",
+    "/images/home-hero.webp",
   storyHeading: "Our Story",
   storyParagraphs: [
     "Home is where routines feel familiar and life feels grounded. CAFOLA was built to protect that feeling for older adults and families navigating change.",
@@ -442,7 +442,7 @@ export const defaultSiteContent: SiteContent = {
     staffMatching:
       "In the strive to improve comfort, we pair our residents with the most fit staff to serve the best. Talk to us if you need a Hindi, Chinese, Arabic or Swahili speaker.",
     imageUrl:
-      "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/WUcgTLPCbgcQqrTu.jpg",
+      "/images/home-hero.webp",
     imageAlt: "CAFOLA care team supporting a resident",
     locations: ["Off Mawanda road, Kololo", "Bukoto"],
   },
