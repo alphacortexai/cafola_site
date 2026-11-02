@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { defaultSiteContent, type SiteContent } from "@shared/cms";
+import { sanitizeSiteContent } from "@shared/siteSecurity";
 
 export function useSiteContent(previewCms?: SiteContent) {
   const [cms, setCms] = useState<SiteContent>(previewCms ?? defaultSiteContent);
@@ -18,7 +19,7 @@ export function useSiteContent(previewCms?: SiteContent) {
       try {
         const response = await fetch("/api/cms");
         if (!response.ok) throw new Error("Failed to load CMS");
-        const payload = (await response.json()) as SiteContent;
+        const payload = sanitizeSiteContent((await response.json()) as SiteContent);
         if (!cancelled) setCms(payload);
       } catch {
         // Keep the bundled content if the live CMS cannot be loaded.

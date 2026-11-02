@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function validContact() {
+      let data = request.resource.data;
+      return data.keys().hasOnly([
+          'firstName',
+          'lastName',
+          'email',
+          'phone',
+          'message',
+          'source',
+          'createdAt'
+        ])
+        && data.firstName is string
+        && data.firstName.size() > 0
+        && data.firstName.size() < 80
+        && data.lastName is string
+        && data.lastName.size() < 80
+        && data.email is string
+        && data.email.matches('.*@.*\\..*')
+        && data.email.size() < 160
+        && data.phone is string
+        && data.phone.size() < 40
+        && data.message is string
+        && data.message.size() < 4000
+        && data.source is string
+        && data.source.size() < 80
+        && data.createdAt is string
+        && data.createdAt.size() < 40;
+    }
+
+    match /cms/{docId} {
+      allow read: if true;
+      allow write: if signedIn();
+    }
+
+    match /contactSubmissions/{docId} {
+      allow create: if validContact();
+      allow read, update, delete: if signedIn();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

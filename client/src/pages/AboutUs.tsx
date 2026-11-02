@@ -1,6 +1,8 @@
 import { type FormEvent, useEffect, useState } from "react";
 import { defaultSiteContent, type SiteContent } from "@shared/cms";
+import { sanitizeSiteContent } from "@shared/siteSecurity";
 import SiteHeader from "@/components/SiteHeader";
+import { SiteLegalLinks } from "@/components/SiteLegalLinks";
 import { SiteContactList } from "@/components/SiteContact";
 import { resolveSiteContact, toTelHref } from "@shared/cms";
 import { ChevronRight, MapPin, Users, Award, Heart } from "lucide-react";
@@ -41,7 +43,7 @@ export default function AboutUs({ previewCms }: AboutUsProps) {
       try {
         const response = await fetch("/api/cms");
         if (!response.ok) throw new Error("Failed to load CMS");
-        const payload = (await response.json()) as SiteContent;
+        const payload = sanitizeSiteContent((await response.json()) as SiteContent);
         setCms(payload);
       } catch {
         // Fallback to default
@@ -239,6 +241,10 @@ export default function AboutUs({ previewCms }: AboutUsProps) {
                       Send Message
                     </button>
                     {formStatus && <p className="text-xs text-gray-500">{formStatus}</p>}
+                    <p className="text-xs text-gray-500">
+                      We use this message only to reply. Read the{" "}
+                      <Link href="/privacy" className="text-teal underline">privacy policy</Link>.
+                    </p>
                   </form>
                 </div>
 
@@ -316,8 +322,9 @@ export default function AboutUs({ previewCms }: AboutUsProps) {
               </div>
             </div>
           </div>
-          <div className="border-t border-white/10 pt-8 text-center text-gray-500 text-xs">
-            © 2026 {cms.brandName}. All rights reserved. Personalized in-home care and assistance.
+          <div className="border-t border-white/10 pt-8 flex flex-col items-center gap-4 text-center text-gray-500 text-xs">
+            <p>© 2026 {cms.brandName}. All rights reserved. Personalized in-home care and assistance.</p>
+            <SiteLegalLinks className="justify-center" />
           </div>
         </div>
       </footer>

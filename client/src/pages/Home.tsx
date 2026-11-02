@@ -11,20 +11,17 @@ import {
   resolveHomeHero,
   type SiteContent,
 } from "@shared/cms";
+import { sanitizeSiteContent } from "@shared/siteSecurity";
 import { Link } from "wouter";
 import SiteHeader from "@/components/SiteHeader";
 import { SiteContactList } from "@/components/SiteContact";
+import { SiteLegalLinks } from "@/components/SiteLegalLinks";
 
 type HomeProps = {
   previewCms?: SiteContent;
 };
 
-const DEFAULT_ARTICLE_IMAGES = [
-  "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/nXeqdbNLjMDKrnNe.jpg",
-  "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/RlyEdRBUevkWVZSQ.jpg",
-  "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/ONOUdGEpIDXDmimL.jpg",
-  "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/nXeqdbNLjMDKrnNe.jpg",
-];
+const DEFAULT_ARTICLE_IMAGE = "/images/home-hero.webp";
 
 const getNavHref = (item: string, cms: SiteContent) => {
   if (item === "Services") return "#services";
@@ -77,7 +74,7 @@ export default function Home({ previewCms }: HomeProps) {
       try {
         const response = await fetch("/api/cms");
         if (!response.ok) throw new Error("Failed to load CMS");
-        const payload = (await response.json()) as SiteContent;
+        const payload = sanitizeSiteContent((await response.json()) as SiteContent);
         setCms(payload);
       } catch {
         // Fallback to default
@@ -169,7 +166,7 @@ export default function Home({ previewCms }: HomeProps) {
 
   return (
     <div className="min-h-screen bg-white">
-      <SiteHeader cms={cms} showTopBar />
+      <SiteHeader cms={cms} />
 
       {/* Hero Section */}
       <section className="relative -mt-[72px] h-[500px] overflow-hidden bg-[#8d8a8b] md:-mt-[104px] md:h-[600px]">
@@ -457,12 +454,7 @@ export default function Home({ previewCms }: HomeProps) {
                     className={`relative overflow-hidden ${article.featured ? "lg:w-1/2 aspect-video lg:aspect-auto" : "aspect-video"}`}
                   >
                     <img
-                      src={
-                        article.imageUrl ??
-                        DEFAULT_ARTICLE_IMAGES[
-                          idx % DEFAULT_ARTICLE_IMAGES.length
-                        ]
-                      }
+                      src={article.imageUrl || DEFAULT_ARTICLE_IMAGE}
                       alt={article.title}
                       className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
@@ -684,7 +676,11 @@ export default function Home({ previewCms }: HomeProps) {
                 >
                   By checking this box and submitting this form, you are
                   consenting to receive marketing emails from {cms.brandName}.
-                  You can revoke your consent at any time.
+                  You can revoke your consent at any time. Read the{" "}
+                  <Link href="/privacy" className="text-orange underline">
+                    privacy policy
+                  </Link>
+                  .
                 </label>
               </div>
               <button
@@ -769,17 +765,7 @@ export default function Home({ previewCms }: HomeProps) {
               © 2026 {cms.brandName}. All rights reserved. Personalized in-home
               care and assistance.
             </p>
-            <div className="flex gap-6">
-              <a href="#" className="hover:text-white no-underline">
-                Privacy Policy
-              </a>
-              <a href="#" className="hover:text-white no-underline">
-                Accessibility
-              </a>
-              <a href="#" className="hover:text-white no-underline">
-                Sitemap
-              </a>
-            </div>
+            <SiteLegalLinks />
           </div>
         </div>
       </footer>

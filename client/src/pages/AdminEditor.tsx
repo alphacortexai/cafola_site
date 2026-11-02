@@ -20,6 +20,7 @@ import {
   type ServicePageSection,
   type SiteContent,
 } from "@shared/cms";
+import { sanitizeSiteContent } from "@shared/siteSecurity";
 import { getLoginConfigIssue } from "@/const";
 import {
   signInWithGoogle,
@@ -27,6 +28,8 @@ import {
   onAuthStateChanged,
   firebaseInitError,
   uploadMediaAsset,
+  adminFetch,
+  adminError,
   type User,
 } from "@/lib/firebase";
 import Home from "./Home";
@@ -165,12 +168,20 @@ export default function AdminEditor() {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    const meta = document.createElement("meta");
+    meta.name = "robots";
+    meta.content = "noindex, nofollow";
+    document.head.appendChild(meta);
+    return () => meta.remove();
+  }, []);
+
   const loadCms = async () => {
     try {
       const response = await fetch("/api/cms");
       if (!response.ok)
         throw new Error(`Failed to load CMS (${response.status})`);
-      const payload = (await response.json()) as SiteContent;
+      const payload = sanitizeSiteContent((await response.json()) as SiteContent);
       setCms(payload);
       setDraftCms(payload);
       setStatus("Loaded current Firebase CMS content");
@@ -602,15 +613,13 @@ export default function AdminEditor() {
   const saveCms = async () => {
     setStatus("Publishing changes to Firebase...");
     try {
-      const response = await fetch("/api/cms", {
+      const response = await adminFetch("/api/cms", {
         method: "PUT",
         headers,
         body: JSON.stringify(draftCms),
       });
-      if (!response.ok) {
-        const details = await response.text();
-        throw new Error(`Failed to save CMS (${response.status}): ${details}`);
-      }
+      const saveError = await adminError(response, "Could not publish the CMS");
+      if (saveError) throw new Error(saveError);
       await loadCms();
       setStatus("Published draft to Firebase");
     } catch (error) {

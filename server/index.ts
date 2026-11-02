@@ -3,6 +3,12 @@ import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
 import { defaultSiteContent, type SiteContent } from "../shared/cms";
+import {
+  parseContactSubmission,
+  privateApiHeaders,
+  sanitizeSiteContent,
+} from "../shared/siteSecurity";
+import { requireAdmin } from "./adminAuth";
 import { mkdir, readFile, writeFile } from "fs/promises";
 import { existsSync, readFileSync } from "fs";
 import {
@@ -68,19 +74,20 @@ async function ensureContactFile() {
   }
 }
 
-function isAdminRequest(req: express.Request) {
-  const adminToken = process.env.ADMIN_TOKEN;
-  if (!adminToken) return true;
-  return req.header("x-admin-token") === adminToken;
+function applyPrivateHeaders(res: express.Response) {
+  for (const [name, value] of Object.entries(privateApiHeaders())) {
+    res.setHeader(name, value);
+  }
 }
 
-async function readContactSubmissions(): Promise<ContactSubmission[]> {
+async function readContactSubmissions(idToken?: string): Promise<ContactSubmission[]> {
   try {
     const remote = await listFirestoreCollection<ContactSubmission>(
       "contactSubmissions",
       {
         pageSize: 200,
         orderBy: "createdAt desc",
+        idToken,
       }
     );
     if (remote) {
@@ -121,7 +128,7 @@ async function readCmsContent(): Promise<SiteContent> {
     const remoteContent =
       await readFirestoreDocument<SiteContent>("cms/siteContent");
     if (remoteContent) {
-      return { ...defaultSiteContent, ...remoteContent };
+      return sanitizeSiteContent({ ...defaultSiteContent, ...remoteContent });
     }
   } catch {
     // Fallback to file-based CMS
@@ -129,18 +136,23 @@ async function readCmsContent(): Promise<SiteContent> {
 
   try {
     const raw = await readFile(cmsFile, "utf-8");
-    return { ...defaultSiteContent, ...JSON.parse(raw) };
+    return sanitizeSiteContent({ ...defaultSiteContent, ...JSON.parse(raw) });
   } catch {
-    return defaultSiteContent;
+    return sanitizeSiteContent(defaultSiteContent);
   }
 }
 
-async function saveCmsContent(content: SiteContent) {
+async function saveCmsContent(content: SiteContent, idToken?: string) {
+  const sanitized = sanitizeSiteContent({
+    ...content,
+    updatedAt: new Date().toISOString(),
+  });
   try {
-    const wroteToFirebase = await writeFirestoreDocument("cms/siteContent", {
-      ...content,
-      updatedAt: new Date().toISOString(),
-    });
+    const wroteToFirebase = await writeFirestoreDocument(
+      "cms/siteContent",
+      sanitized,
+      idToken
+    );
     if (wroteToFirebase) {
       return;
     }
@@ -148,7 +160,7 @@ async function saveCmsContent(content: SiteContent) {
     // Fallback to file-based CMS
   }
 
-  await writeFile(cmsFile, JSON.stringify(content, null, 2));
+  await writeFile(cmsFile, JSON.stringify(sanitized, null, 2));
 }
 
 async function startServer() {
@@ -158,14 +170,14 @@ async function startServer() {
   await ensureCmsFile();
   await ensureContactFile();
 
-  app.use(express.json({ limit: "1mb" }));
+  app.use(express.json({ limit: "100kb" }));
+  app.use("/api", (_req, res, next) => {
+    applyPrivateHeaders(res);
+    next();
+  });
 
   app.get("/api/health", (_req, res) => {
-    res.json({ ok: true, env: {
-      FIREBASE_API_KEY: Boolean(process.env.FIREBASE_API_KEY),
-      FIREBASE_PROJECT_ID: Boolean(process.env.FIREBASE_PROJECT_ID),
-      PORT: process.env.PORT || "3001",
-    } });
+    res.json({ ok: true });
   });
 
   app.get("/api/cms", async (_req, res) => {
@@ -174,51 +186,39 @@ async function startServer() {
   });
 
   app.put("/api/cms", async (req, res) => {
+    const admin = await requireAdmin(req);
+    if (!admin.ok) {
+      return res.status(admin.status).json({ error: admin.error });
+    }
+
     const nextContent = req.body as SiteContent;
 
-    if (!nextContent || typeof nextContent !== "object") {
+    if (!nextContent || typeof nextContent !== "object" || Array.isArray(nextContent)) {
       return res.status(400).json({ error: "Invalid CMS payload." });
     }
 
-    await saveCmsContent({ ...defaultSiteContent, ...nextContent });
+    await saveCmsContent({ ...defaultSiteContent, ...nextContent }, admin.idToken);
     return res.status(204).send();
   });
 
   app.post("/api/contact", async (req, res) => {
-    const payload = req.body as {
-      firstName?: string;
-      lastName?: string;
-      email?: string;
-      phone?: string;
-      message?: string;
-      source?: string;
-    };
+    const payload = parseContactSubmission(req.body ?? {});
 
-    if (!payload?.firstName || !payload?.email) {
-      return res
-        .status(400)
-        .json({ error: "firstName and email are required." });
+    if (!payload) {
+      return res.status(400).json({ error: "A name and valid email are required." });
     }
 
-    await saveContactSubmission({
-      firstName: payload.firstName.trim(),
-      lastName: payload.lastName?.trim() ?? "",
-      email: payload.email.trim(),
-      phone: payload.phone?.trim() ?? "",
-      message: payload.message?.trim() ?? "",
-      source: payload.source?.trim() ?? "unknown",
-      createdAt: new Date().toISOString(),
-    });
-
+    await saveContactSubmission(payload);
     return res.status(201).json({ ok: true });
   });
 
   app.get("/api/contact", async (req, res) => {
-    if (!isAdminRequest(req)) {
-      return res.status(401).json({ error: "Unauthorized" });
+    const admin = await requireAdmin(req);
+    if (!admin.ok) {
+      return res.status(admin.status).json({ error: admin.error });
     }
 
-    const submissions = await readContactSubmissions();
+    const submissions = await readContactSubmissions(admin.idToken);
     return res.json(submissions);
   });
 

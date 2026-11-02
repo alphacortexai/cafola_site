@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 import { defaultSiteContent, type SiteContent } from "@shared/cms";
+import { sanitizeSiteContent } from "@shared/siteSecurity";
 import { Link } from "wouter";
 import { getLoginConfigIssue } from "@/const";
 import {
@@ -15,6 +16,8 @@ import {
   onAuthStateChanged,
   firebaseInitError,
   uploadArticleImage,
+  adminFetch,
+  adminError,
   type User,
 } from "@/lib/firebase";
 import type { Article, Testimonial } from "@shared/cms";
@@ -181,6 +184,14 @@ export default function Admin() {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    const meta = document.createElement("meta");
+    meta.name = "robots";
+    meta.content = "noindex, nofollow";
+    document.head.appendChild(meta);
+    return () => meta.remove();
+  }, []);
+
   const handleLogin = async () => {
     try {
       setLoginError(null);
@@ -212,7 +223,7 @@ export default function Admin() {
     try {
       const response = await fetch("/api/cms");
       if (!response.ok) throw new Error("Failed to load CMS");
-      const payload = (await response.json()) as SiteContent;
+      const payload = sanitizeSiteContent((await response.json()) as SiteContent);
       setCms(payload);
       setDraftCms(payload);
       setRawCms(JSON.stringify(payload, null, 2));
@@ -234,13 +245,11 @@ export default function Admin() {
     setSubmissionsStatus("Loading contact submissions...");
 
     try {
-      const response = await fetch("/api/contact", {
-        headers: activeToken ? { "X-Admin-Token": activeToken } : undefined,
-      });
+      const response = await adminFetch("/api/contact", { headers });
 
-      if (response.status === 401) {
+      if (response.status === 401 || response.status === 403) {
         setSubmissionsStatus(
-          "Unauthorized. Enter your admin token and click Set token."
+          "Submissions are private. Sign in again with the CAFOLA admin Google account."
         );
         return;
       }
@@ -283,18 +292,19 @@ export default function Admin() {
     }
 
     try {
-      const response = await fetch("/api/cms", {
+      const response = await adminFetch("/api/cms", {
         method: "PUT",
         headers,
         body: JSON.stringify(parsed),
       });
-      if (!response.ok) throw new Error("Failed to save CMS");
+      const saveError = await adminError(response, "Could not save CMS");
+      if (saveError) throw new Error(saveError);
       setCms(parsed);
       setDraftCms(parsed);
       setPreviewError(null);
       setCmsStatus("CMS saved");
-    } catch {
-      setCmsStatus("Invalid JSON or save failed");
+    } catch (error) {
+      setCmsStatus(error instanceof Error ? error.message : "Invalid JSON or save failed");
     }
   };
 
@@ -312,20 +322,21 @@ export default function Admin() {
     try {
       const parsed = articlesDraft;
 
-      const response = await fetch("/api/cms", {
+      const response = await adminFetch("/api/cms", {
         method: "PUT",
         headers,
         body: JSON.stringify({ ...cms, articles: parsed }),
       });
-      if (!response.ok) throw new Error("Failed to save articles");
+      const saveError = await adminError(response, "Could not save articles");
+      if (saveError) throw new Error(saveError);
 
       const nextCms = { ...cms, articles: parsed };
       setCms(nextCms);
       setRawCms(JSON.stringify(nextCms, null, 2));
       setRawArticles(JSON.stringify(parsed, null, 2));
       setArticlesStatus("Articles saved");
-    } catch {
-      setArticlesStatus("Invalid JSON or save failed");
+    } catch (error) {
+      setArticlesStatus(error instanceof Error ? error.message : "Invalid JSON or save failed");
     }
   };
 
@@ -349,19 +360,20 @@ export default function Admin() {
   const saveAboutPage = async () => {
     try {
       const nextCms = { ...cms, aboutUs: aboutDraft };
-      const response = await fetch("/api/cms", {
+      const response = await adminFetch("/api/cms", {
         method: "PUT",
         headers,
         body: JSON.stringify(nextCms),
       });
-      if (!response.ok) throw new Error("Failed to save about page");
+      const saveError = await adminError(response, "Could not save about page");
+      if (saveError) throw new Error(saveError);
 
       setCms(nextCms);
       setDraftCms(nextCms);
       setRawCms(JSON.stringify(nextCms, null, 2));
       setAboutStatus("About page saved");
-    } catch {
-      setAboutStatus("About page save failed");
+    } catch (error) {
+      setAboutStatus(error instanceof Error ? error.message : "About page save failed");
     }
   };
 
@@ -373,19 +385,22 @@ export default function Admin() {
   const saveHomepageVisibility = async () => {
     try {
       const nextCms = { ...cms, homeSectionVisibility: visibilityDraft };
-      const response = await fetch("/api/cms", {
+      const response = await adminFetch("/api/cms", {
         method: "PUT",
         headers,
         body: JSON.stringify(nextCms),
       });
-      if (!response.ok) throw new Error("Failed to save visibility");
+      const saveError = await adminError(response, "Could not save visibility");
+      if (saveError) throw new Error(saveError);
 
       setCms(nextCms);
       setDraftCms(nextCms);
       setRawCms(JSON.stringify(nextCms, null, 2));
       setVisibilityStatus("Homepage visibility saved");
-    } catch {
-      setVisibilityStatus("Homepage visibility save failed");
+    } catch (error) {
+      setVisibilityStatus(
+        error instanceof Error ? error.message : "Homepage visibility save failed"
+      );
     }
   };
 
@@ -428,19 +443,20 @@ export default function Admin() {
   const saveReviews = async () => {
     try {
       const nextCms = { ...cms, testimonials: reviewsDraft };
-      const response = await fetch("/api/cms", {
+      const response = await adminFetch("/api/cms", {
         method: "PUT",
         headers,
         body: JSON.stringify(nextCms),
       });
-      if (!response.ok) throw new Error("Failed to save reviews");
+      const saveError = await adminError(response, "Could not save reviews");
+      if (saveError) throw new Error(saveError);
 
       setCms(nextCms);
       setDraftCms(nextCms);
       setRawCms(JSON.stringify(nextCms, null, 2));
       setReviewsStatus("Reviews saved");
-    } catch {
-      setReviewsStatus("Reviews save failed");
+    } catch (error) {
+      setReviewsStatus(error instanceof Error ? error.message : "Reviews save failed");
     }
   };
 
@@ -635,7 +651,7 @@ export default function Admin() {
               type="password"
               value={tokenInput}
               onChange={event => setTokenInput(event.target.value)}
-              placeholder="Optional ADMIN_TOKEN"
+              placeholder="ADMIN_TOKEN, if the server requires one"
               className="flex-1 px-4 py-3 bg-slate-950 border border-slate-700"
             />
             <Button type="submit" className="bg-orange hover:bg-orange/90">
@@ -643,7 +659,7 @@ export default function Admin() {
             </Button>
           </form>
           <p className="text-sm text-slate-400">
-            If ADMIN_TOKEN is configured on the server, enter it here.
+            Google sign-in authorizes saves. If ADMIN_TOKEN is set on the server, enter that password here as well. Contact submissions stay private.
           </p>
           <div className="mt-4">
             <Link href="/admin/editor">

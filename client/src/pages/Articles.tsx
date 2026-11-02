@@ -1,4 +1,5 @@
 import { defaultSiteContent, type SiteContent } from "@shared/cms";
+import { sanitizeSiteContent } from "@shared/siteSecurity";
 import SiteHeader from "@/components/SiteHeader";
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
@@ -7,12 +8,7 @@ type ArticlesProps = {
   previewCms?: SiteContent;
 };
 
-const DEFAULT_ARTICLE_IMAGES = [
-  "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/nXeqdbNLjMDKrnNe.jpg",
-  "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/RlyEdRBUevkWVZSQ.jpg",
-  "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/ONOUdGEpIDXDmimL.jpg",
-  "https://files.manuscdn.com/user_upload_by_module/session_file/310519663269964698/nXeqdbNLjMDKrnNe.jpg",
-];
+const DEFAULT_ARTICLE_IMAGE = "/images/home-hero.webp";
 
 const getNavHref = (item: string, cms: SiteContent) => {
   if (item === "Services") return "/#services";
@@ -38,7 +34,7 @@ export default function Articles({ previewCms }: ArticlesProps) {
       try {
         const response = await fetch("/api/cms");
         if (!response.ok) throw new Error("Failed to load CMS");
-        const payload = (await response.json()) as SiteContent;
+        const payload = sanitizeSiteContent((await response.json()) as SiteContent);
         setCms(payload);
       } catch {
         // Use defaults
@@ -65,7 +61,7 @@ export default function Articles({ previewCms }: ArticlesProps) {
               className="border border-gray-200 p-6 bg-white"
             >
               <img
-                src={article.imageUrl ?? DEFAULT_ARTICLE_IMAGES[index % DEFAULT_ARTICLE_IMAGES.length]}
+                src={article.imageUrl || DEFAULT_ARTICLE_IMAGE}
                 alt={article.title}
                 className="w-full aspect-[16/9] object-cover mb-4"
                 loading="lazy"
