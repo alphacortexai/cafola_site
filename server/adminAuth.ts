@@ -1,4 +1,4 @@
-import { isAdminEmail } from "../shared/adminEmails";
+import { isAdminEmail } from "../shared/adminEmails.js";
 
 type HeaderValue = string | string[] | undefined;
 
