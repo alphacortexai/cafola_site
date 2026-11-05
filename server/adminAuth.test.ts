@@ -49,6 +49,13 @@ describe("requireAdmin", () => {
   });
 });
 
+describe("vercel module loading", () => {
+  it("imports the staff list with a .js extension so the live API can start", () => {
+    const source = readFileSync(new URL("./adminAuth.ts", import.meta.url), "utf8");
+    expect(source).toContain('from "../shared/adminEmails.js"');
+  });
+});
+
 describe("firebase rules", () => {
   it("names every staff address in Firestore and Storage rules", () => {
     const firestore = readFileSync(new URL("../firestore.rules", import.meta.url), "utf8");
