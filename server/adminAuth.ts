@@ -1,3 +1,5 @@
+import { isAdminEmail } from "../shared/adminEmails";
+
 type HeaderValue = string | string[] | undefined;
 
 export type HeaderSource = {
@@ -35,13 +37,6 @@ function tokensMatch(presented: string, expected: string): boolean {
 
 function firebaseApiKey(): string {
   return (process.env.FIREBASE_API_KEY ?? process.env.VITE_FIREBASE_API_KEY ?? "").trim();
-}
-
-function allowedEmails(): string[] {
-  return (process.env.ADMIN_EMAILS ?? "")
-    .split(",")
-    .map(email => email.trim().toLowerCase())
-    .filter(Boolean);
 }
 
 async function lookupFirebaseUser(
@@ -85,9 +80,8 @@ export async function requireAdmin(req: HeaderSource): Promise<AdminDecision> {
     return { ok: false, status: 401, error: "Unauthorized" };
   }
 
-  const allowlist = allowedEmails();
-  if (allowlist.length > 0 && !allowlist.includes(user.email.toLowerCase())) {
-    return { ok: false, status: 403, error: "Forbidden" };
+  if (!isAdminEmail(user.email)) {
+    return { ok: false, status: 403, error: "This Google account is not a CAFOLA admin." };
   }
 
   return { ok: true, idToken, email: user.email };

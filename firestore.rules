@@ -1,8 +1,12 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function signedIn() {
-      return request.auth != null;
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email.lower() in [
+          "alphacortexai@gmail.com"
+        ];
     }
 
     function validContact() {
@@ -36,12 +40,12 @@ service cloud.firestore {
 
     match /cms/{docId} {
       allow read: if true;
-      allow write: if signedIn();
+      allow write: if isAdmin();
     }
 
     match /contactSubmissions/{docId} {
       allow create: if validContact();
-      allow read, update, delete: if signedIn();
+      allow read, update, delete: if isAdmin();
     }
 
     match /{document=**} {

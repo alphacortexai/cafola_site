@@ -25,13 +25,12 @@ import { getLoginConfigIssue } from "@/const";
 import {
   signInWithGoogle,
   logout,
-  onAuthStateChanged,
   firebaseInitError,
   uploadMediaAsset,
   adminFetch,
   adminError,
-  type User,
 } from "@/lib/firebase";
+import { useStaffSession } from "@/lib/useStaffSession";
 import Home from "./Home";
 import AboutUs from "./AboutUs";
 import Articles from "./Articles";
@@ -131,8 +130,7 @@ function EditorSection({ title, description, children }: EditorSectionProps) {
 }
 
 export default function AdminEditor() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, loading, loginError, setLoginError } = useStaffSession();
   const [tokenInput, setTokenInput] = useState("");
   const [activeToken, setActiveToken] = useState("");
   const [cms, setCms] = useState<SiteContent>(defaultSiteContent);
@@ -141,7 +139,6 @@ export default function AdminEditor() {
   const [navInput, setNavInput] = useState("");
   const [footerLinkInput, setFooterLinkInput] = useState("");
   const [addressInput, setAddressInput] = useState("");
-  const [loginError, setLoginError] = useState<string | null>(null);
   const [previewPage, setPreviewPage] = useState<PreviewPage>("home");
   const [previewSlug, setPreviewSlug] = useState<string>("");
   const [customPageTitleInput, setCustomPageTitleInput] = useState("");
@@ -159,14 +156,6 @@ export default function AdminEditor() {
     if (activeToken) nextHeaders["X-Admin-Token"] = activeToken;
     return nextHeaders;
   }, [activeToken]);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(currentUser => {
-      setUser(currentUser);
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
 
   useEffect(() => {
     const meta = document.createElement("meta");
@@ -1382,8 +1371,8 @@ export default function AdminEditor() {
           <section className="max-w-2xl bg-slate-900 border border-slate-800 p-6 space-y-4">
             <h2 className="text-xl font-serif">Sign in to edit the site</h2>
             <p className="text-slate-300 text-sm leading-relaxed">
-              You must sign in with Gmail before you can use the full site
-              editor.
+              Sign in with the CAFOLA staff Gmail account. Any other Google
+              account is signed back out.
             </p>
             <div className="flex flex-wrap gap-3">
               {!loginConfigIssue ? (

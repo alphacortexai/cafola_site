@@ -13,13 +13,12 @@ import { getLoginConfigIssue } from "@/const";
 import {
   signInWithGoogle,
   logout,
-  onAuthStateChanged,
   firebaseInitError,
   uploadArticleImage,
   adminFetch,
   adminError,
-  type User,
 } from "@/lib/firebase";
+import { useStaffSession } from "@/lib/useStaffSession";
 import type { Article, Testimonial } from "@shared/cms";
 
 type ContactSubmission = {
@@ -97,8 +96,7 @@ function CmsPreview({ cms }: { cms: SiteContent }) {
 }
 
 export default function Admin() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, loading, loginError, setLoginError } = useStaffSession();
   const [tokenInput, setTokenInput] = useState("");
   const [activeToken, setActiveToken] = useState("");
   const [cms, setCms] = useState<SiteContent>(defaultSiteContent);
@@ -155,7 +153,6 @@ export default function Admin() {
   );
   const [aboutStatus, setAboutStatus] = useState("About page ready");
   const [uploadingArticleImage, setUploadingArticleImage] = useState(false);
-  const [loginError, setLoginError] = useState<string | null>(null);
   const loginConfigIssue = getLoginConfigIssue() ?? firebaseInitError;
 
   useEffect(() => {
@@ -175,14 +172,6 @@ export default function Admin() {
     if (activeToken) nextHeaders["X-Admin-Token"] = activeToken;
     return nextHeaders;
   }, [activeToken]);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(currentUser => {
-      setUser(currentUser);
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
 
   useEffect(() => {
     const meta = document.createElement("meta");
@@ -561,8 +550,8 @@ export default function Admin() {
           <section className="max-w-2xl bg-slate-900 border border-slate-800 p-6 space-y-4">
             <h2 className="text-xl font-serif">Continue with Gmail</h2>
             <p className="text-slate-300 text-sm leading-relaxed">
-              You must sign in with Gmail before you can access the admin
-              console.
+              Sign in with the CAFOLA staff Gmail account. Any other Google
+              account is signed back out.
             </p>
             <div className="flex flex-wrap gap-3">
               {!loginConfigIssue ? (
